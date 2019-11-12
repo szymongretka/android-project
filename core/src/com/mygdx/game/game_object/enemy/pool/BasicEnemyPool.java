@@ -1,0 +1,28 @@
+package com.mygdx.game.game_object.enemy.pool;
+
+import com.badlogic.gdx.utils.Pool;
+import com.mygdx.game.game_object.enemy.BasicEnemy;
+
+public class BasicEnemyPool extends Pool<BasicEnemy> {
+
+    // constructor with initial object count and max object count
+    // max is the maximum of object held in the pool and not the
+    // maximum amount of objects that can be created by the pool
+    public BasicEnemyPool(int init, int max) {
+        super(init, max);
+    }
+
+    // make pool with default 16 initial objects and no max
+    public BasicEnemyPool() {
+        super();
+    }
+
+
+    // method to create a single object
+    @Override
+    protected BasicEnemy newObject() {
+        System.out.println("Creating new enemy");
+
+        return new BasicEnemy();
+    }
+}

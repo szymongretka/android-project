@@ -17,12 +17,11 @@ import com.mygdx.game.game_object.bullet.BasicBullet;
 import com.mygdx.game.game_object.bullet.BasicBulletPool;
 
 
-public class GameScreen implements Screen {
+public class GameScreen extends AbstractScreen {
 
     public static final int HEIGHT = 800; //Gdx.graphics.getHeight();
     public static final int WIDTH = 480; //Gdx.graphics.getWidth();
 
-    private final MyGdxGame game;
     private OrthographicCamera camera;
 
     private Texture spaceshipImage;
@@ -43,8 +42,7 @@ public class GameScreen implements Screen {
 
 
     public GameScreen(final MyGdxGame game) {
-
-        this.game = game;
+        super(game);
 
         //load all assets
         game.assets.load();
@@ -64,6 +62,11 @@ public class GameScreen implements Screen {
         //spawnBullets();
 
         logger = new FPSLogger();
+
+    }
+
+    @Override
+    public void update(float delta) {
 
     }
 

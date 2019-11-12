@@ -12,12 +12,12 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.MyGdxGame;
+import com.mygdx.game.screen.AbstractScreen;
 import com.mygdx.game.screen.GameScreen;
 
 
-public class MainMenuScreen implements Screen {
+public class MainMenuScreen extends AbstractScreen {
 
-    private final MyGdxGame game;
     //private OrthographicCamera camera;
 
     private Stage stage;
@@ -30,7 +30,7 @@ public class MainMenuScreen implements Screen {
 
 
     public MainMenuScreen(final MyGdxGame game) {
-        this.game = game;
+        super(game);
 
         game.assets.load();
         game.assets.manager.finishLoading();
@@ -89,6 +89,11 @@ public class MainMenuScreen implements Screen {
         stage.addActor(table);
 
         Gdx.input.setInputProcessor(stage);
+    }
+
+    @Override
+    public void update(float delta) {
+
     }
 
     @Override
