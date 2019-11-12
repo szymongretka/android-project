@@ -4,10 +4,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
@@ -17,12 +17,10 @@ import com.mygdx.game.game_object.bullet.BasicBullet;
 import com.mygdx.game.game_object.bullet.BasicBulletPool;
 
 
-import java.util.Iterator;
-
 public class GameScreen implements Screen {
 
-    public static final int HEIGHT = Gdx.graphics.getHeight();
-    public static final int WIDTH = Gdx.graphics.getWidth();
+    public static final int HEIGHT = 800; //Gdx.graphics.getHeight();
+    public static final int WIDTH = 480; //Gdx.graphics.getWidth();
 
     private final MyGdxGame game;
     private OrthographicCamera camera;
@@ -39,7 +37,9 @@ public class GameScreen implements Screen {
     private long lastBulletTime;
     private int bulletsShot = 0;
 
+
     private PlayerSpaceship playerSpaceship;
+    private FPSLogger logger;
 
 
     public GameScreen(final MyGdxGame game) {
@@ -50,7 +50,7 @@ public class GameScreen implements Screen {
         game.assets.load();
         game.assets.manager.finishLoading();
 
-        if(game.assets.manager.isFinished()){
+        if (game.assets.manager.isFinished()) {
             loadAssets();
         }
 
@@ -59,9 +59,11 @@ public class GameScreen implements Screen {
 
 
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, 480, 800);
+        camera.setToOrtho(false, WIDTH, HEIGHT);
 
-        spawnBullets();
+        //spawnBullets();
+
+        logger = new FPSLogger();
 
     }
 
@@ -71,21 +73,17 @@ public class GameScreen implements Screen {
         Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
         camera.update();
         game.batch.setProjectionMatrix(camera.combined);
+
+        logger.log();
+
         game.batch.begin();
-
-        //game.batch.draw(spaceshipImage, spaceShip.x, spaceShip.y);
         game.font.draw(game.batch, "Bullets shot: " + bulletsShot, 0, 800);
-
         playerSpaceship.draw(game.batch);
 
-        /*for (Rectangle bullet : bullets) {
-            game.batch.draw(bulletImage, bullet.x, bullet.y);
-        }*/
         for (BasicBullet bullet : activeBullets) {
             bullet.update(delta);
             game.batch.draw(bulletImage, bullet.getPosition().x, bullet.getPosition().y);
         }
-
 
         game.batch.end();
 
@@ -95,34 +93,23 @@ public class GameScreen implements Screen {
             playerSpaceship.setX(touchPos.x - 64 / 2);
         }
 
-        if (TimeUtils.nanoTime() - lastBulletTime > 1000000000)
-            if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-                spawnBullets();
-                bulletsShot++;
-                shootSound.play();
-            }
+        if (TimeUtils.nanoTime() - lastBulletTime > 200000000) {
+            spawnBullets();
+            bulletsShot++;
+            shootSound.play();
+        }
 
 
-
-        for(BasicBullet bullet : activeBullets){
+        for (BasicBullet bullet : activeBullets) {
             // check if bullet is off screen
-            if(bullet.getPosition().y > Gdx.graphics.getHeight()){
+            if (bullet.getPosition().y > Gdx.graphics.getHeight()) {
                 // bullet is off screen so free it and then remove it
                 bulletPool.free(bullet); // place back in pool
                 activeBullets.removeValue(bullet, true); // remove bullet from our array so we don't render it anymore
             }
         }
 
-        /*for (Iterator<BasicBullet> iter = bullets.iterator(); iter.hasNext(); ) {
-            BasicBullet bullet = iter.next();
-            bullet.update(delta); //delta time to roznica pomiedzy poprzednia a nastepna klatka
-                                                        // wyrenderowana w metodzie render - gra bedzie tak samo wygladac na lepszym i wolniejszym urzadzeniu
-            if (bullet.y - 64 > 800) iter.remove();
-			/*if(bullet.overlaps(spaceShip)) {
-				shootSound.play();
-				iter.remove();
-			}
-        }*/
+        //if(bullet.overlaps(spaceShip))
 
     }
 
@@ -165,11 +152,11 @@ public class GameScreen implements Screen {
     }
 
     private void spawnBullets() {
+        /** Returns an object from this pool. The object may be new (from {@link #newObject()}) or reused (previously
+         * {@link #free(Object) freed}). */
         // get a bullet from our pool
         BasicBullet basicBullet = bulletPool.obtain();
         basicBullet.init(playerSpaceship.getX(), playerSpaceship.getY(), bulletImage);
-        basicBullet.width = 32;
-        basicBullet.height = 32;
         // add to our array of bullets so we can access them in our render method
         activeBullets.add(basicBullet);
         System.out.println(bulletPool.getFree());

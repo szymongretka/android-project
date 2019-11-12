@@ -1,6 +1,7 @@
 package com.mygdx.game.game_object.bullet;
 
 import com.badlogic.gdx.utils.Pool;
+import com.mygdx.game.game_object.GameObject;
 
 public class BasicBulletPool extends Pool<BasicBullet> {
 
@@ -16,10 +17,12 @@ public class BasicBulletPool extends Pool<BasicBullet> {
         super();
     }
 
+
     // method to create a single object
     @Override
     protected BasicBullet newObject() {
         System.out.println("Creating new bullet");
+
         return new BasicBullet();
     }
 }

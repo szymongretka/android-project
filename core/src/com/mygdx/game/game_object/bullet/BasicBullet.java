@@ -12,6 +12,8 @@ public class BasicBullet extends GameObject implements Pool.Poolable{
     public BasicBullet() {
         super(ID.BULLET, new Vector2(0, 0), false);
         velY = 200;
+        width = 32;
+        height = 32;
     }
 
     /**
