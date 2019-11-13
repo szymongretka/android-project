@@ -31,11 +31,13 @@ public class GameScreen extends AbstractScreen {
     //private Music rainMusic;
 
     private final Array<BasicBullet> activeBullets = new Array<BasicBullet>();
+
+    //Pools
     private final BasicBulletPool bulletPool = new BasicBulletPool();
+
     private Vector3 touchPos = new Vector3();
     private long lastBulletTime;
     private int bulletsShot = 0;
-
 
     private PlayerSpaceship playerSpaceship;
     private FPSLogger logger;
@@ -72,8 +74,9 @@ public class GameScreen extends AbstractScreen {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(0, 0, 0.2f, 1);
-        Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
+
+        super.render(delta);
+
         camera.update();
         game.batch.setProjectionMatrix(camera.combined);
 
