@@ -21,7 +21,7 @@ public class BasicBulletPool extends Pool<BasicBullet> {
     // method to create a single object
     @Override
     protected BasicBullet newObject() {
-        System.out.println("Creating new bullet");
+        //System.out.println("Creating new bullet");
 
         return new BasicBullet();
     }

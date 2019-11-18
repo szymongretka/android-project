@@ -13,6 +13,8 @@ public class GameScreenManager {
     private Map<GameState, AbstractScreen> gameScreens;
     private MainMenuScreen mainMenuScreen;
 
+    private GameState activeScreen;
+
     public GameScreenManager(final MyGdxGame game) {
         this.game = game;
         this.mainMenuScreen = new MainMenuScreen(game);
@@ -33,7 +35,7 @@ public class GameScreenManager {
             gameScreens.put(gameStateScreen, screen);
             game.setScreen(gameScreens.get(gameStateScreen));
         }
-        //game.setScreen(gameScreens.get(gameStateScreen));
+        activeScreen = gameStateScreen;
     }
 
     public void dispose() {
@@ -44,4 +46,11 @@ public class GameScreenManager {
         }
     }
 
+    public GameState getActiveScreen() {
+        return activeScreen;
+    }
+
+    public void setActiveScreen(GameState gameState) {
+        this.activeScreen = gameState;
+    }
 }

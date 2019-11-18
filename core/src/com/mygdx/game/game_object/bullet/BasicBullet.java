@@ -1,6 +1,5 @@
 package com.mygdx.game.game_object.bullet;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Pool;
@@ -19,9 +18,9 @@ public class BasicBullet extends GameObject implements Pool.Poolable{
     /**
      * Initialize the bullet. Call this method after getting a bullet from the pool.
      */
-    public void init(float posX, float posY, Texture texture) {
+    public void init(float posX, float posY){//}, Texture texture) {
         position.set(posX,  posY);
-        this.texture = texture;
+        //this.texture = texture;
         alive = true;
     }
 
@@ -49,6 +48,11 @@ public class BasicBullet extends GameObject implements Pool.Poolable{
     public void reset() {
         position.set(0,0);
         alive = false;
-        System.out.println("Bullet is reset");
+        //System.out.println("Bullet is reset");
     }
+
+    public boolean isOverlapping(GameObject object) {
+        return this.overlaps(object);
+    }
+
 }

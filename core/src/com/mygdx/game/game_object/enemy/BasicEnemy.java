@@ -11,8 +11,8 @@ public class BasicEnemy extends GameObject implements Pool.Poolable{
 
     public BasicEnemy() {
         super(ID.ENEMY, new Vector2(0, 0), false);
-        velY = 50;
-        velX = 50;
+        velY = 20;
+        velX = 20;
         width = 32;
         height = 32;
     }
@@ -20,9 +20,8 @@ public class BasicEnemy extends GameObject implements Pool.Poolable{
     /**
      * Initialize the bullet. Call this method after getting a bullet from the pool.
      */
-    public void init(float posX, float posY, Texture texture) {
+    public void init(float posX, float posY) {
         position.set(posX,  posY);
-        this.texture = texture;
         alive = true;
     }
 

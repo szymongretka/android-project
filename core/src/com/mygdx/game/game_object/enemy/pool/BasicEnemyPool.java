@@ -1,9 +1,11 @@
 package com.mygdx.game.game_object.enemy.pool;
 
 import com.badlogic.gdx.utils.Pool;
+import com.mygdx.game.game_object.GameObject;
 import com.mygdx.game.game_object.enemy.BasicEnemy;
 
-public class BasicEnemyPool extends Pool<BasicEnemy> {
+public class BasicEnemyPool extends Pool {
+
 
     // constructor with initial object count and max object count
     // max is the maximum of object held in the pool and not the

@@ -52,6 +52,7 @@ public class LevelScreen extends AbstractScreen {
             @Override
             public void clicked (InputEvent event, float x, float y){
                 dispose();
+                game.gameScreenManager.setActiveScreen(GameState.LEVEL1);
                 game.gameScreenManager.setScreen(GameState.LEVEL1, new GameScreen(game));
             }
         });

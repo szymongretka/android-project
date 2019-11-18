@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
@@ -15,6 +16,11 @@ import com.mygdx.game.MyGdxGame;
 import com.mygdx.game.game_object.PlayerSpaceship;
 import com.mygdx.game.game_object.bullet.BasicBullet;
 import com.mygdx.game.game_object.bullet.BasicBulletPool;
+import com.mygdx.game.game_object.enemy.BasicEnemy;
+import com.mygdx.game.game_object.enemy.pool.BasicEnemyPool;
+import com.mygdx.game.spawn.SpawningSystem;
+
+import java.util.Iterator;
 
 
 public class GameScreen extends AbstractScreen {
@@ -23,17 +29,22 @@ public class GameScreen extends AbstractScreen {
     public static final int WIDTH = 480; //Gdx.graphics.getWidth();
 
     private OrthographicCamera camera;
+    private SpawningSystem spawningSystem;
 
+    //textures
     private Texture spaceshipImage;
     private Texture bulletImage;
 
     private Sound shootSound;
     //private Music rainMusic;
 
+    //Arrays
     private final Array<BasicBullet> activeBullets = new Array<BasicBullet>();
+    private final Array<BasicEnemy> activeEnemies = new Array<BasicEnemy>();
 
     //Pools
     private final BasicBulletPool bulletPool = new BasicBulletPool();
+    private final BasicEnemyPool enemyPool = new BasicEnemyPool();
 
     private Vector3 touchPos = new Vector3();
     private long lastBulletTime;
@@ -46,6 +57,8 @@ public class GameScreen extends AbstractScreen {
     public GameScreen(final MyGdxGame game) {
         super(game);
 
+        spawningSystem = new SpawningSystem(game);
+
         //load all assets
         game.assets.load();
         game.assets.manager.finishLoading();
@@ -54,9 +67,10 @@ public class GameScreen extends AbstractScreen {
             loadAssets();
         }
 
+        spawningSystem.spawn(enemyPool, activeEnemies);
+
         playerSpaceship = new PlayerSpaceship(HEIGHT / 2 - 64 / 2, 20, 100,
                 50, 50, spaceshipImage);
-
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, WIDTH, HEIGHT);
@@ -82,6 +96,7 @@ public class GameScreen extends AbstractScreen {
 
         logger.log();
 
+
         game.batch.begin();
         game.font.draw(game.batch, "Bullets shot: " + bulletsShot, 0, 800);
         playerSpaceship.draw(game.batch);
@@ -89,6 +104,11 @@ public class GameScreen extends AbstractScreen {
         for (BasicBullet bullet : activeBullets) {
             bullet.update(delta);
             game.batch.draw(bulletImage, bullet.getPosition().x, bullet.getPosition().y);
+        }
+
+        for (BasicEnemy enemy : activeEnemies) {
+            enemy.update(delta);
+            game.batch.draw(spaceshipImage, enemy.getPosition().x, enemy.getPosition().y);
         }
 
         game.batch.end();
@@ -107,13 +127,16 @@ public class GameScreen extends AbstractScreen {
 
 
         for (BasicBullet bullet : activeBullets) {
+
             // check if bullet is off screen
             if (bullet.getPosition().y > Gdx.graphics.getHeight()) {
                 // bullet is off screen so free it and then remove it
                 bulletPool.free(bullet); // place back in pool
                 activeBullets.removeValue(bullet, true); // remove bullet from our array so we don't render it anymore
             }
+
         }
+
 
         //if(bullet.overlaps(spaceShip))
 
@@ -162,10 +185,10 @@ public class GameScreen extends AbstractScreen {
          * {@link #free(Object) freed}). */
         // get a bullet from our pool
         BasicBullet basicBullet = bulletPool.obtain();
-        basicBullet.init(playerSpaceship.getX(), playerSpaceship.getY(), bulletImage);
+        basicBullet.init(playerSpaceship.getX(), playerSpaceship.getY());//, bulletImage);
         // add to our array of bullets so we can access them in our render method
         activeBullets.add(basicBullet);
-        System.out.println(bulletPool.getFree());
+        //System.out.println(bulletPool.getFree());
 
         //bullets.add(basicBullet);
         lastBulletTime = TimeUtils.nanoTime();
