@@ -1,26 +1,25 @@
 package com.mygdx.game.screen;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.FPSLogger;
-import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.mygdx.game.MyGdxGame;
 import com.mygdx.game.game_object.PlayerSpaceship;
-import com.mygdx.game.game_object.bullet.BasicBullet;
-import com.mygdx.game.game_object.bullet.BasicBulletPool;
+import com.mygdx.game.game_object.bullet.BulletBox2D;
+import com.mygdx.game.game_object.bullet.pool.BulletBox2DPool;
 import com.mygdx.game.game_object.enemy.BasicEnemy;
+import com.mygdx.game.game_object.enemy.EnemyBox2D;
 import com.mygdx.game.game_object.enemy.pool.BasicEnemyPool;
+import com.mygdx.game.game_object.enemy.pool.EnemyBox2DPool;
 import com.mygdx.game.spawn.SpawningSystem;
-
-import java.util.Iterator;
 
 
 public class GameScreen extends AbstractScreen {
@@ -30,6 +29,8 @@ public class GameScreen extends AbstractScreen {
 
     private OrthographicCamera camera;
     private SpawningSystem spawningSystem;
+    private Box2DDebugRenderer box2DDebugRenderer;
+    private World world;
 
     //textures
     private Texture spaceshipImage;
@@ -39,12 +40,16 @@ public class GameScreen extends AbstractScreen {
     //private Music rainMusic;
 
     //Arrays
-    private final Array<BasicBullet> activeBullets = new Array<BasicBullet>();
-    private final Array<BasicEnemy> activeEnemies = new Array<BasicEnemy>();
+    //private final Array<BasicBullet> activeBullets = new Array<BasicBullet>();
+    //private final Array<BasicEnemy> activeEnemies = new Array<BasicEnemy>();
+    private final Array<EnemyBox2D> activeEnemies = new Array<>();
+    private final Array<BulletBox2D> activeBullet2D = new Array<>();
 
     //Pools
-    private final BasicBulletPool bulletPool = new BasicBulletPool();
-    private final BasicEnemyPool enemyPool = new BasicEnemyPool();
+    //private final BasicBulletPool bulletPool = new BasicBulletPool();
+    //private final BasicEnemyPool enemyPool = new BasicEnemyPool();
+    private final EnemyBox2DPool enemyPool;
+    private final BulletBox2DPool bulletBox2DPool;
 
     private Vector3 touchPos = new Vector3();
     private long lastBulletTime;
@@ -56,6 +61,12 @@ public class GameScreen extends AbstractScreen {
 
     public GameScreen(final MyGdxGame game) {
         super(game);
+
+        world = new World(new Vector2(0, 0), false);
+        bulletBox2DPool = new BulletBox2DPool(world);
+        enemyPool = new EnemyBox2DPool(world);
+
+        box2DDebugRenderer = new Box2DDebugRenderer();
 
         spawningSystem = new SpawningSystem(game);
 
@@ -101,12 +112,12 @@ public class GameScreen extends AbstractScreen {
         game.font.draw(game.batch, "Bullets shot: " + bulletsShot, 0, 800);
         playerSpaceship.draw(game.batch);
 
-        for (BasicBullet bullet : activeBullets) {
+        for (BulletBox2D bullet : activeBullet2D) {
             bullet.update(delta);
             game.batch.draw(bulletImage, bullet.getPosition().x, bullet.getPosition().y);
         }
 
-        for (BasicEnemy enemy : activeEnemies) {
+        for (EnemyBox2D enemy : activeEnemies) {
             enemy.update(delta);
             game.batch.draw(spaceshipImage, enemy.getPosition().x, enemy.getPosition().y);
         }
@@ -120,23 +131,26 @@ public class GameScreen extends AbstractScreen {
         }
 
         if (TimeUtils.nanoTime() - lastBulletTime > 200000000) {
-            spawnBullets();
+            spawnBox2DBullets();
             bulletsShot++;
             shootSound.play();
         }
 
 
-        for (BasicBullet bullet : activeBullets) {
+        for (BulletBox2D bullet : activeBullet2D) {
 
             // check if bullet is off screen
             if (bullet.getPosition().y > Gdx.graphics.getHeight()) {
                 // bullet is off screen so free it and then remove it
-                bulletPool.free(bullet); // place back in pool
-                activeBullets.removeValue(bullet, true); // remove bullet from our array so we don't render it anymore
+                bulletBox2DPool.free(bullet); // place back in pool
+                activeBullet2D.removeValue(bullet, true); // remove bullet from our array so we don't render it anymore
             }
 
         }
 
+
+        box2DDebugRenderer.render(this.world, camera.combined);
+        this.world.step(1/60f, 6, 2);
 
         //if(bullet.overlaps(spaceShip))
 
@@ -172,6 +186,8 @@ public class GameScreen extends AbstractScreen {
         bulletImage.dispose();
         shootSound.dispose();
         //rainMusic.dispose();
+        box2DDebugRenderer.dispose();
+        world.dispose();
     }
 
     private void loadAssets() {
@@ -180,11 +196,11 @@ public class GameScreen extends AbstractScreen {
         shootSound = game.assets.manager.get("sfx-laser.wav", Sound.class);
     }
 
-    private void spawnBullets() {
+    /*private void spawnBullets() {
         /** Returns an object from this pool. The object may be new (from {@link #newObject()}) or reused (previously
          * {@link #free(Object) freed}). */
         // get a bullet from our pool
-        BasicBullet basicBullet = bulletPool.obtain();
+        /*BasicBullet basicBullet = bulletPool.obtain();
         basicBullet.init(playerSpaceship.getX(), playerSpaceship.getY());//, bulletImage);
         // add to our array of bullets so we can access them in our render method
         activeBullets.add(basicBullet);
@@ -192,6 +208,21 @@ public class GameScreen extends AbstractScreen {
 
         //bullets.add(basicBullet);
         lastBulletTime = TimeUtils.nanoTime();
+    }*/
+
+    private void spawnBox2DBullets() {
+        /** Returns an object from this pool. The object may be new (from {@link #newObject()}) or reused (previously
+         * {@link #free(Object) freed}). */
+        // get a bullet from our pool
+        BulletBox2D bulletBox2D = bulletBox2DPool.obtain();
+        bulletBox2D.init(playerSpaceship.getX(), playerSpaceship.getY());
+        // add to our array of bullets so we can access them in our render method
+        activeBullet2D.add(bulletBox2D);
+        //System.out.println(bulletBox2DPool.getFree());
+
+        //bullets.add(basicBullet);
+        lastBulletTime = TimeUtils.nanoTime();
     }
+
 
 }

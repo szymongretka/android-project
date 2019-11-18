@@ -7,6 +7,9 @@ import com.badlogic.gdx.utils.Pool;
 import com.mygdx.game.enums.ID;
 import com.mygdx.game.game_object.GameObject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class BasicEnemy extends GameObject implements Pool.Poolable{
 
     public BasicEnemy() {
@@ -49,6 +52,7 @@ public class BasicEnemy extends GameObject implements Pool.Poolable{
     public void reset() {
         position.set(0,0);
         alive = false;
-        System.out.println("Enemy is reset");
+        //System.out.println("Enemy is reset");
     }
+
 }
