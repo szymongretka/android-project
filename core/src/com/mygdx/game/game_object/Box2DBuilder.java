@@ -12,7 +12,7 @@ import static com.mygdx.game.util.Constants.PPM;
 public class Box2DBuilder {
 
 
-    public Body createBox(World world, ID id, float x, float y, float width, float height, boolean isStatic) {
+    public Body createBox(World world, float x, float y, float width, float height, boolean isStatic) {
         Body body;
 
         BodyDef bodyDef = new BodyDef();
@@ -22,6 +22,7 @@ public class Box2DBuilder {
             bodyDef.type = BodyDef.BodyType.DynamicBody;
         bodyDef.fixedRotation = true; //don t rotate
         bodyDef.position.set(x /PPM, y /PPM);
+
         body = world.createBody(bodyDef);
 
         PolygonShape polygonShape = new PolygonShape();
@@ -30,8 +31,10 @@ public class Box2DBuilder {
         FixtureDef def = new FixtureDef();
         def.shape = polygonShape;
         def.density = 1.0f;
-        body.createFixture(def);
+        body.createFixture(def).setUserData(this);
         polygonShape.dispose();
+
+        body.setActive(false);
 
         return body;
     }

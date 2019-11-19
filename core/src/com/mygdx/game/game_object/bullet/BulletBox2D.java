@@ -18,33 +18,39 @@ public class BulletBox2D implements Pool.Poolable{
     private Texture texture;
     private boolean alive;
 
-    public BulletBox2D(World world) {
-        this.position = new Vector2();
+    public BulletBox2D(World world, Vector2 position) {
+        //this.position = new Vector2();
+        this.position = position;
         alive = false;
-        velY = 200;
+        velY = 150;
         width = 32;
         height = 32;
         this.builder = new Box2DBuilder();
-        this.body = builder.createBox(world, ID.BULLET, 0, 0, width, height, false);
+        this.body = builder.createBox(world,position.x, position.y + 120, width, height, false);
+        this.body.setActive(true);
     }
 
     @Override
     public void reset() {
         position.set(0,0);
+        this.body.setActive(false);
         alive = false;
         //System.out.println("Bullet is reset");
     }
 
 
     public void init(float x, float y) {
-        position.set(x, y);
+        this.position.set(x, y);
         //this.texture = texture;
+        this.body.setActive(true);
         alive = true;
     }
 
     public void update(float deltaTime) {
         //if(isOutOfScreen())
-        position.add(0, velY * deltaTime);
+        this.body.setLinearVelocity(0, velY * deltaTime);
+        //position.y += velY * deltaTime;
+        //position.add(0, velY * deltaTime);
         //y += velY * deltaTime;
     }
 
@@ -59,4 +65,10 @@ public class BulletBox2D implements Pool.Poolable{
     public Body getBody() {
         return body;
     }
+
+    public boolean isAlive() {
+        return alive;
+    }
+
+
 }

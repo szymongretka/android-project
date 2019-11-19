@@ -26,7 +26,8 @@ public class EnemyBox2D implements Pool.Poolable{
         width = 32;
         height = 32;
         this.builder = new Box2DBuilder();
-        this.body = builder.createBox(world, ID.ENEMY, 0, 0, width, height, false);
+        this.body = builder.createBox(world,0, 0, width, height, false);
+        this.body.setActive(true);
     }
 
     @Override
@@ -44,13 +45,14 @@ public class EnemyBox2D implements Pool.Poolable{
 
     public void update(float deltaTime) {
         //if(isOutOfScreen())
-        position.add(velX * deltaTime, velY * deltaTime);
+        this.body.setLinearVelocity(velX * deltaTime, velY * deltaTime);
+        //position.add(velX * deltaTime, velY * deltaTime);
         //y += velY * deltaTime;
     }
 
-    public void draw(SpriteBatch batch) {
+    /*public void draw(SpriteBatch batch) {
         batch.draw(texture, position.x, position.y);
-    }
+    }*/
 
     public Vector2 getPosition() {
         return position;

@@ -1,5 +1,6 @@
 package com.mygdx.game.game_object.bullet.pool;
 
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Pool;
 import com.mygdx.game.game_object.bullet.BulletBox2D;
@@ -7,6 +8,7 @@ import com.mygdx.game.game_object.bullet.BulletBox2D;
 public class BulletBox2DPool extends Pool<BulletBox2D> {
 
     private World world;
+    private Vector2 position;
 
     // constructor with initial object count and max object count
     // max is the maximum of object held in the pool and not the
@@ -16,9 +18,10 @@ public class BulletBox2DPool extends Pool<BulletBox2D> {
     }
 
     // make pool with default 16 initial objects and no max
-    public BulletBox2DPool(World world){
+    public BulletBox2DPool(World world, Vector2 position){
         super();
         this.world = world;
+        this.position = position;
     }
 
 
@@ -27,6 +30,6 @@ public class BulletBox2DPool extends Pool<BulletBox2D> {
     protected BulletBox2D newObject() {
         //System.out.println("Creating new bullet");
 
-        return new BulletBox2D(this.world);
+        return new BulletBox2D(this.world, this.position);
     }
 }
