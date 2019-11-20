@@ -18,18 +18,17 @@ public class BulletBox2DPool extends Pool<BulletBox2D> {
     }
 
     // make pool with default 16 initial objects and no max
-    public BulletBox2DPool(World world, Vector2 position){
+    public BulletBox2DPool(World world){
         super();
         this.world = world;
-        this.position = position;
     }
 
 
     // method to create a single object
     @Override
     protected BulletBox2D newObject() {
-        //System.out.println("Creating new bullet");
+        System.out.println("Creating new bullet");
 
-        return new BulletBox2D(this.world, this.position);
+        return new BulletBox2D(this.world);
     }
 }

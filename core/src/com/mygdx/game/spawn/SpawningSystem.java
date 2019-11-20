@@ -40,7 +40,7 @@ public class SpawningSystem<T> {
 
         EnemyBox2D basicEnemy = enemyPool.obtain();
 
-        basicEnemy.init(100, 100);
+        basicEnemy.init(200, 200);
         // add to our array of bullets so we can access them in our render method
         activeEnemies.add(basicEnemy);
 

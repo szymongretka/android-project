@@ -21,12 +21,12 @@ public class Box2DBuilder {
         else
             bodyDef.type = BodyDef.BodyType.DynamicBody;
         bodyDef.fixedRotation = true; //don t rotate
-        bodyDef.position.set(x /PPM, y /PPM);
+        bodyDef.position.set(x, y);
 
         body = world.createBody(bodyDef);
 
         PolygonShape polygonShape = new PolygonShape();
-        polygonShape.setAsBox(width / PPM, height / PPM);
+        polygonShape.setAsBox(width, height);
 
         FixtureDef def = new FixtureDef();
         def.shape = polygonShape;
