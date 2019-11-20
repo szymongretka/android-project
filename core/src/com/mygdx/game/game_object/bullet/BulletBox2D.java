@@ -1,62 +1,59 @@
 package com.mygdx.game.game_object.bullet;
 
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
-import com.mygdx.game.enums.ID;
+import com.badlogic.gdx.utils.TimeUtils;
 import com.mygdx.game.game_object.Box2DBuilder;
+import com.mygdx.game.game_object.bullet.pool.BulletBox2DPool;
 
-public class BulletBox2D implements Pool.Poolable{
+import static com.mygdx.game.util.Constants.PPM;
+
+public class BulletBox2D implements Pool.Poolable {
 
     private Box2DBuilder builder;
     private Body body;
-    private Vector2 position;
-    private float width, height, velX, velY;
-    private Texture texture;
-    private boolean alive;
+    private float width, height, velY;
+
 
     public BulletBox2D(World world) {
-        this.position = new Vector2();
-        alive = false;
-        velY = 200;
+        velY = 15000;
         width = 32;
         height = 32;
         this.builder = new Box2DBuilder();
-        this.body = builder.createBox(world, ID.BULLET, 0, 0, width, height, false);
+        this.body = builder.createBox(world, 0, 0, width, height, false);
     }
 
     @Override
     public void reset() {
-        position.set(0,0);
-        alive = false;
-        //System.out.println("Bullet is reset");
+        this.body.setTransform(0, 0, 0);
+        this.body.setLinearVelocity(0, 0);
+        this.body.setActive(false);
+        System.out.println("Bullet reset!");
     }
 
 
     public void init(float x, float y) {
-        position.set(x, y);
-        //this.texture = texture;
-        alive = true;
+        this.body.setTransform(x, y, 0);
+        this.body.setActive(true);
     }
 
     public void update(float deltaTime) {
-        //if(isOutOfScreen())
-        position.add(0, velY * deltaTime);
-        //y += velY * deltaTime;
-    }
-
-    public void draw(SpriteBatch batch) {
-        batch.draw(texture, position.x, position.y);
-    }
-
-    public Vector2 getPosition() {
-        return position;
+        this.body.setLinearVelocity(0, velY * deltaTime);
     }
 
     public Body getBody() {
-        return body;
+        return this.body;
+    }
+
+    public float getHeight() {
+        return height;
+    }
+
+    public float getWidth() {
+        return width;
     }
 }
