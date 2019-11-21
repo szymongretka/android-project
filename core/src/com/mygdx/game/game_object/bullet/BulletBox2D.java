@@ -1,20 +1,32 @@
 package com.mygdx.game.game_object.bullet;
 
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.Pool;
-import com.badlogic.gdx.utils.TimeUtils;
-import com.mygdx.game.game_object.Box2DBuilder;
-import com.mygdx.game.game_object.bullet.pool.BulletBox2DPool;
+import com.mygdx.game.game_object.Box2DObject;
 
-import static com.mygdx.game.util.Constants.PPM;
 
-public class BulletBox2D implements Pool.Poolable {
+public class BulletBox2D extends Box2DObject {
 
-    private Box2DBuilder builder;
+    private float width = 32;
+    private float height = 32;
+    private float velX = 0;
+    private float velY = 15000;
+
+
+    public BulletBox2D(World world) {
+        super(world, 0, 0, 32, 32, 150000, 0,
+                BodyDef.BodyType.DynamicBody);
+
+    }
+
+    @Override
+    public void update(float deltaTime) {
+        this.body.setLinearVelocity(0, velY * deltaTime);
+    }
+
+
+
+    /*private Box2DBuilder builder;
     private Body body;
     private float width, height, velY;
 
@@ -32,7 +44,6 @@ public class BulletBox2D implements Pool.Poolable {
         this.body.setTransform(0, 0, 0);
         this.body.setLinearVelocity(0, 0);
         this.body.setActive(false);
-        System.out.println("Bullet reset!");
     }
 
 
@@ -55,5 +66,5 @@ public class BulletBox2D implements Pool.Poolable {
 
     public float getWidth() {
         return width;
-    }
+    }*/
 }

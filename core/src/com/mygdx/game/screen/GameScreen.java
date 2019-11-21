@@ -1,7 +1,6 @@
 package com.mygdx.game.screen;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -14,21 +13,18 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.mygdx.game.MyGdxGame;
 import com.mygdx.game.game_object.PlayerSpaceship;
-import com.mygdx.game.game_object.TestObject;
 import com.mygdx.game.game_object.bullet.BulletBox2D;
 import com.mygdx.game.game_object.bullet.pool.BulletBox2DPool;
-import com.mygdx.game.game_object.enemy.BasicEnemy;
 import com.mygdx.game.game_object.enemy.EnemyBox2D;
-import com.mygdx.game.game_object.enemy.pool.BasicEnemyPool;
 import com.mygdx.game.game_object.enemy.pool.EnemyBox2DPool;
 import com.mygdx.game.handler.CollisionManager;
 import com.mygdx.game.spawn.SpawningSystem;
-import static com.mygdx.game.util.Constants.PPM;
 
 public class GameScreen extends AbstractScreen {
 
     public static final int HEIGHT = 800; //Gdx.graphics.getHeight();
     public static final int WIDTH = 480; //Gdx.graphics.getWidth();
+    public static float totalGameTime = 0;
 
     private OrthographicCamera camera;
     private SpawningSystem spawningSystem;
@@ -59,8 +55,6 @@ public class GameScreen extends AbstractScreen {
 
     private BulletBox2D bulletBox2D;
 
-
-    private TestObject player, obj1, obj2;
 
     public GameScreen(final MyGdxGame game) {
         super(game);
@@ -97,28 +91,13 @@ public class GameScreen extends AbstractScreen {
 
         logger = new FPSLogger();
 
-        //player = new TestObject(world, "PLAYER", 64, 64);
-        //obj1 = new TestObject(world, "obj1", 150, 150);
-        //obj2 = new TestObject(world, "obj2", 50, 50);
 
     }
 
     @Override
     public void update(float delta) {
         this.world.step(1/60f, 6, 2);
-
-        /*float x = 0, y = 0;
-        if(Gdx.input.isKeyPressed(Input.Keys.UP))
-            y += 1;
-        if(Gdx.input.isKeyPressed(Input.Keys.DOWN))
-            y -= 1;
-        if(Gdx.input.isKeyPressed(Input.Keys.LEFT))
-            x -= 1;
-        if(Gdx.input.isKeyPressed(Input.Keys.RIGHT))
-            x += 1;
-
-        player.body.setLinearVelocity(x * 5, y * 5);*/
-
+        totalGameTime += delta;
     }
 
     @Override
@@ -134,17 +113,20 @@ public class GameScreen extends AbstractScreen {
 
         game.batch.begin();
         game.font.draw(game.batch, "Bullets shot: " + bulletsShot, 0, 800);
+        game.font.draw(game.batch, "Game Time: " + totalGameTime, 0, 700);
         playerSpaceship.draw(game.batch);
 
         for (BulletBox2D bullet : activeBullet2D) {
             bullet.update(delta);
+
             game.batch.draw(bulletImage, bullet.getBody().getPosition().x - bullet.getWidth(),
                     bullet.getBody().getPosition().y - bullet.getHeight());
         }
 
         for (EnemyBox2D enemy : activeEnemies) {
             enemy.update(delta);
-            game.batch.draw(spaceshipImage, enemy.getBody().getPosition().x - enemy.getWidth(), enemy.getBody().getPosition().y - enemy.getHeight());
+            game.batch.draw(spaceshipImage, enemy.getBody().getPosition().x - enemy.getWidth(),
+                    enemy.getBody().getPosition().y - enemy.getHeight());
         }
 
         game.batch.end();
