@@ -18,12 +18,23 @@ public class CollisionManager implements ContactListener {
         if(fixtureA == null || fixtureB == null) return;
         if(fixtureA.getUserData() == null || fixtureB.getUserData() == null) return;
 
-        System.out.println("HIT");
 
-    }
+        if(isBulletEnemyContact(fixtureA, fixtureB)) {
+            EnemyBox2D enemyBox2D;
+            BulletBox2D bulletBox2D;
+            if (fixtureA.getUserData() instanceof EnemyBox2D) {
+                enemyBox2D =  (EnemyBox2D) fixtureA.getUserData();
+                bulletBox2D =  (BulletBox2D) fixtureB.getUserData();
+            } else {
+                enemyBox2D =  (EnemyBox2D) fixtureB.getUserData();
+                bulletBox2D =  (BulletBox2D) fixtureA.getUserData();
+            }
 
-    public boolean isHit(Fixture a, Fixture b) {
-        return (a.getUserData() instanceof BulletBox2D && b.getUserData() instanceof EnemyBox2D);
+            bulletBox2D.hitEnemy(enemyBox2D);
+
+        }
+
+
     }
 
     @Override
@@ -40,4 +51,14 @@ public class CollisionManager implements ContactListener {
     public void postSolve(Contact contact, ContactImpulse impulse) {
 
     }
+
+    private boolean isBulletEnemyContact(Fixture a, Fixture b) {
+        if(a.getUserData() instanceof BulletBox2D || b.getUserData() instanceof BulletBox2D) {
+            if(a.getUserData() instanceof EnemyBox2D || b.getUserData() instanceof EnemyBox2D) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

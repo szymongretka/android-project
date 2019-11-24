@@ -12,18 +12,23 @@ public abstract class Box2DObject implements Pool.Poolable {
 
     protected Body body;
     protected float width, height, velY, velX;
+    protected int hp, damage;
 
     public Box2DObject(World world, float x, float y, float width, float height,
-                       float velY, float velX, BodyDef.BodyType bodyType) {
+                       float velY, float velX, int hp, int damage, BodyDef.BodyType bodyType,
+                       short categoryBits, short maskBits, short gIndex) {
         this.width = width;
         this.height = height;
         this.velY = velY;
         this.velX = velX;
-        this.body = this.createBox(world, x, y, this.width, this.height, bodyType);
+        this.hp = hp;
+        this.damage = damage;
+        this.body = this.createBox(world, x, y, this.width, this.height, bodyType, categoryBits,
+                maskBits, gIndex);
     }
 
     private Body createBox(World world, float x, float y, float width, float height,
-                             BodyDef.BodyType bodyType) {
+                             BodyDef.BodyType bodyType, short categoryBits, short maskBits, short gIndex) {
         Body body;
 
         BodyDef bodyDef = new BodyDef();
@@ -44,6 +49,9 @@ public abstract class Box2DObject implements Pool.Poolable {
         FixtureDef def = new FixtureDef();
         def.shape = polygonShape;
         def.density = 1.0f;
+        def.filter.categoryBits = categoryBits; //Is a
+        def.filter.maskBits = maskBits; //Collides with
+        def.filter.groupIndex = gIndex;
         body.createFixture(def).setUserData(this);
         polygonShape.dispose();
 
@@ -61,7 +69,7 @@ public abstract class Box2DObject implements Pool.Poolable {
 
     @Override
     public void reset() {
-        this.body.setTransform(0, 0, 0);
+        this.body.setTransform(32, 32, 0);
         this.body.setLinearVelocity(0, 0);
         this.body.setActive(false);
     }
@@ -105,5 +113,21 @@ public abstract class Box2DObject implements Pool.Poolable {
 
     public void setVelX(float velX) {
         this.velX = velX;
+    }
+
+    public int getHp() {
+        return hp;
+    }
+
+    public void setHp(int hp) {
+        this.hp = hp;
+    }
+
+    public int getDamage() {
+        return damage;
+    }
+
+    public void setDamage(int damage) {
+        this.damage = damage;
     }
 }

@@ -138,7 +138,7 @@ public class GameScreen extends AbstractScreen {
 
         }
 
-        if (TimeUtils.nanoTime() - lastBulletTime > 1200000000) {
+        if (TimeUtils.nanoTime() - lastBulletTime > 800000000) {
             spawnBox2DBullets();
             bulletsShot++;
             shootSound.play();
@@ -147,12 +147,22 @@ public class GameScreen extends AbstractScreen {
 
         for (BulletBox2D bullet : activeBullet2D) {
             // check if bullet is off screen
-            if (bullet.getBody().getPosition().y > HEIGHT) {
+            if (bullet.getBody().getPosition().y > HEIGHT - 60 || !bullet.getBody().isActive()) {
                 bulletBox2DPool.free(bullet); // place back in pool
                 activeBullet2D.removeValue(bullet, true); // remove bullet from our array so we don't render it anymore
             }
 
         }
+
+        for (EnemyBox2D enemyBox2D : activeEnemies) {
+            // check if bullet is off screen
+            if (!enemyBox2D.getBody().isActive()) {
+                enemyPool.free(enemyBox2D); // place back in pool
+                activeEnemies.removeValue(enemyBox2D, true); // remove bullet from our array so we don't render it anymore
+            }
+
+        }
+
 
         box2DDebugRenderer.render(this.world, camera.combined);
 

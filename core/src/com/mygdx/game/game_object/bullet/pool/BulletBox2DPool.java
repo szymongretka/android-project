@@ -27,7 +27,7 @@ public class BulletBox2DPool extends Pool<BulletBox2D> {
     // method to create a single object
     @Override
     protected BulletBox2D newObject() {
-        System.out.println("Creating new bullet");
+        //System.out.println("Creating new bullet");
 
         return new BulletBox2D(this.world);
     }

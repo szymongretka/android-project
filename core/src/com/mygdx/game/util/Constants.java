@@ -10,4 +10,9 @@ public class Constants {
     public static final int BASICBULLETWIDTH = 32;
     public static final int BASICULLETWIDTH = 32;
 
+    public static final short BIT_PLAYER = 1;
+    public static final short BIT_ENEMY = 2;
+    public static final short BIT_BULLET = 4;
+    public static final short BIT_OBSTACLE = 8;
+
 }
