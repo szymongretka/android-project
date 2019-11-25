@@ -2,7 +2,6 @@ package com.mygdx.game.spawn;
 
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.MyGdxGame;
-import com.mygdx.game.game_object.enemy.BasicEnemy;
 import com.mygdx.game.game_object.enemy.EnemyBox2D;
 import com.mygdx.game.game_object.enemy.pool.EnemyBox2DPool;
 

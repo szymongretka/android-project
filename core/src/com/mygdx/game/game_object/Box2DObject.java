@@ -130,4 +130,13 @@ public abstract class Box2DObject implements Pool.Poolable {
     public void setDamage(int damage) {
         this.damage = damage;
     }
+
+    public float getX() {
+        return this.getBody().getPosition().x;
+    }
+
+    public float getY() {
+        return this.getBody().getPosition().y;
+    }
+
 }

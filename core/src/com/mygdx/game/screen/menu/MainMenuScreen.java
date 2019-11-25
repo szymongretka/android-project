@@ -1,4 +1,4 @@
-package com.mygdx.game.menu;
+package com.mygdx.game.screen.menu;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -12,28 +12,30 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.MyGdxGame;
 import com.mygdx.game.enums.GameState;
 import com.mygdx.game.screen.AbstractScreen;
-import com.mygdx.game.screen.GameScreen;
 
-public class LevelScreen extends AbstractScreen {
+
+public class MainMenuScreen extends AbstractScreen {
+
+    //private OrthographicCamera camera;
 
     private Stage stage;
     private Table table;
     private Skin skin;
-    private TextButton level1Button;
-    private TextButton level2Button;
-    private TextButton level3Button;
-    private TextButton backButton;
+    private TextButton startButton;
+    private TextButton quitButton;
+    private TextButton settingsButton;
+    private TextButton openBrowserButton;
 
 
-    public LevelScreen(final MyGdxGame game) {
+    public MainMenuScreen(final MyGdxGame game) {
         super(game);
-
-        game.assets.load();
-        game.assets.manager.finishLoading();
 
         if(game.assets.manager.isFinished()){
             loadAssets();
         }
+
+        //camera = new OrthographicCamera();
+        //camera.setToOrtho(false, 480, 800);
 
         stage = new Stage(new ScreenViewport());
         table = new Table();
@@ -41,35 +43,47 @@ public class LevelScreen extends AbstractScreen {
         table.align(Align.center|Align.top);
         table.setPosition(0, Gdx.graphics.getHeight());
 
-        level1Button = new TextButton("Level 1", skin);
-        level2Button = new TextButton("Level 2",skin);
-        level3Button = new TextButton("Level 3",skin);
+        startButton = new TextButton("Start!", skin);
+        openBrowserButton = new TextButton("Check Stats",skin);
+        quitButton = new TextButton("Quit Game",skin);
 
-        //level2Button.setDisabled(true);
-        //level3Button.setDisabled(true);
 
-        level1Button.addListener(new ClickListener(){
+        startButton.addListener(new ClickListener(){
             @Override
             public void clicked (InputEvent event, float x, float y){
                 dispose();
-                game.gameScreenManager.setActiveScreen(GameState.LEVEL1);
-                game.gameScreenManager.setScreen(GameState.LEVEL1, new GameScreen(game));
+                game.gameScreenManager.setScreen(GameState.LEVELSCREEN, new LevelScreen(game));
+            }
+        });
+
+        quitButton.addListener(new ClickListener(){
+            @Override
+            public void clicked (InputEvent event, float x, float y){
+                dispose();
+                Gdx.app.exit();
+            }
+        });
+
+        openBrowserButton.addListener(new ClickListener(){
+            @Override
+            public void clicked (InputEvent event, float x, float y){
+                dispose();
+                String url = "http://192.168.1.107:8080/player/all";
+                Gdx.net.openURI(url);
             }
         });
 
 
-
         table.padTop(30);
-        table.add(level1Button).height(200f).width(500f).padBottom(60);
+        table.add(startButton).height(200f).width(500f).padBottom(30);
         table.row();
-        table.add(level2Button).height(200f).width(500f).padBottom(60);
+        table.add(openBrowserButton).height(200f).width(500f).padBottom(30);
         table.row();
-        table.add(level3Button).height(200f).width(500f);
+        table.add(quitButton).height(200f).width(500f);
 
         stage.addActor(table);
 
         Gdx.input.setInputProcessor(stage);
-
     }
 
     @Override
@@ -78,15 +92,15 @@ public class LevelScreen extends AbstractScreen {
     }
 
     @Override
-    public void render(float delta) {
-        super.render(delta);
-
-        stage.draw();
+    public void show() {
 
     }
 
     @Override
-    public void show() {
+    public void render(float delta) {
+        super.render(delta);
+
+        stage.draw();
 
     }
 
@@ -118,5 +132,6 @@ public class LevelScreen extends AbstractScreen {
     private void loadAssets() {
         skin = game.assets.manager.get("data/uiskin.json", Skin.class);//game.assets.manager.get("uiskin.json", Skin.class);
     }
+
 
 }

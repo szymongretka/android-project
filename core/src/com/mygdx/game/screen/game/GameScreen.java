@@ -1,4 +1,4 @@
-package com.mygdx.game.screen;
+package com.mygdx.game.screen.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
@@ -12,12 +12,13 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.mygdx.game.MyGdxGame;
-import com.mygdx.game.game_object.PlayerSpaceship;
+import com.mygdx.game.game_object.player.PlayerSpaceship;
 import com.mygdx.game.game_object.bullet.BulletBox2D;
 import com.mygdx.game.game_object.bullet.pool.BulletBox2DPool;
 import com.mygdx.game.game_object.enemy.EnemyBox2D;
 import com.mygdx.game.game_object.enemy.pool.EnemyBox2DPool;
 import com.mygdx.game.handler.CollisionManager;
+import com.mygdx.game.screen.AbstractScreen;
 import com.mygdx.game.spawn.SpawningSystem;
 
 public class GameScreen extends AbstractScreen {
@@ -69,8 +70,8 @@ public class GameScreen extends AbstractScreen {
         spawningSystem = new SpawningSystem(game);
 
         //load all assets
-        game.assets.load();
-        game.assets.manager.finishLoading();
+        //game.assets.load();
+        //game.assets.manager.finishLoading();
 
         if (game.assets.manager.isFinished()) {
             loadAssets();
@@ -78,8 +79,7 @@ public class GameScreen extends AbstractScreen {
 
         spawningSystem.spawn(enemyPool, activeEnemies);
 
-        playerSpaceship = new PlayerSpaceship(HEIGHT / 2 - 64 / 2, 20, 100,
-                50, 50, spaceshipImage);
+        playerSpaceship = new PlayerSpaceship(world);
 
 
         bulletBox2DPool = new BulletBox2DPool(world);
@@ -113,8 +113,11 @@ public class GameScreen extends AbstractScreen {
 
         game.batch.begin();
         game.font.draw(game.batch, "Bullets shot: " + bulletsShot, 0, 800);
-        game.font.draw(game.batch, "Game Time: " + totalGameTime, 0, 700);
-        playerSpaceship.draw(game.batch);
+        game.font.draw(game.batch, "Game Time: " + totalGameTime, 0, 780);
+
+
+        game.batch.draw(spaceshipImage, playerSpaceship.getBody().getPosition().x - playerSpaceship.getWidth(),
+                playerSpaceship.getBody().getPosition().y - playerSpaceship.getHeight());
 
         for (BulletBox2D bullet : activeBullet2D) {
             bullet.update(delta);
@@ -134,7 +137,7 @@ public class GameScreen extends AbstractScreen {
         if (Gdx.input.isTouched()) {
             touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
             camera.unproject(touchPos);
-            playerSpaceship.setX(touchPos.x - 64 / 2);
+            playerSpaceship.getBody().setTransform(touchPos.x - 32 / 2, touchPos.y - 32 / 2, 0);
 
         }
 
