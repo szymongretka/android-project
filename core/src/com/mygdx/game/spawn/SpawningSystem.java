@@ -1,9 +1,9 @@
 package com.mygdx.game.spawn;
 
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Pool;
 import com.mygdx.game.MyGdxGame;
 import com.mygdx.game.game_object.enemy.EnemyBox2D;
-import com.mygdx.game.game_object.enemy.pool.EnemyBox2DPool;
 
 public class SpawningSystem<T> {
 
@@ -14,7 +14,7 @@ public class SpawningSystem<T> {
     }
 
 
-    public void spawn(EnemyBox2DPool pool, Array array) {
+    public void spawn(Pool pool, Array array) {
 
         switch (game.gameScreenManager.getActiveScreen()) {
 
@@ -35,14 +35,10 @@ public class SpawningSystem<T> {
 
     }
 
-    private void firstLevel(EnemyBox2DPool enemyPool, Array<EnemyBox2D> activeEnemies) {
-
-        EnemyBox2D basicEnemy = enemyPool.obtain();
-
+    private void firstLevel(Pool enemyPool, Array<EnemyBox2D> activeEnemies) {
+        EnemyBox2D basicEnemy = (EnemyBox2D) enemyPool.obtain();
         basicEnemy.init(0, 500);
-        // add to our array of bullets so we can access them in our render method
         activeEnemies.add(basicEnemy);
-
     }
 
 
