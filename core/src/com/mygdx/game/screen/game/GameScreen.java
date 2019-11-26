@@ -10,13 +10,13 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.mygdx.game.MyGdxGame;
 import com.mygdx.game.game_object.player.PlayerSpaceship;
 import com.mygdx.game.game_object.bullet.BulletBox2D;
-import com.mygdx.game.game_object.bullet.pool.BulletBox2DPool;
 import com.mygdx.game.game_object.enemy.EnemyBox2D;
-import com.mygdx.game.game_object.enemy.pool.EnemyBox2DPool;
+import com.mygdx.game.game_object.pool.GenericPool;
 import com.mygdx.game.handler.CollisionManager;
 import com.mygdx.game.screen.AbstractScreen;
 import com.mygdx.game.spawn.SpawningSystem;
@@ -44,8 +44,9 @@ public class GameScreen extends AbstractScreen {
     private final Array<BulletBox2D> activeBullet2D = new Array<>();
 
     //Pools
-    private final EnemyBox2DPool enemyPool;
-    private final BulletBox2DPool bulletBox2DPool;
+    private final GenericPool genericPool;
+    private final Pool enemyPool;
+    private final Pool bulletBox2DPool;
 
     private Vector3 touchPos = new Vector3();
     private long lastBulletTime;
@@ -63,7 +64,10 @@ public class GameScreen extends AbstractScreen {
         this.world = new World(new Vector2(0, 0), false);
         this.world.setContactListener(new CollisionManager());
 
-        enemyPool = new EnemyBox2DPool(world);
+        genericPool = new GenericPool(world);
+
+        enemyPool = genericPool.getEnemyPool();
+        bulletBox2DPool = genericPool.getBulletPool();
 
         box2DDebugRenderer = new Box2DDebugRenderer();
 
@@ -80,9 +84,6 @@ public class GameScreen extends AbstractScreen {
         spawningSystem.spawn(enemyPool, activeEnemies);
 
         playerSpaceship = new PlayerSpaceship(world);
-
-
-        bulletBox2DPool = new BulletBox2DPool(world);
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, WIDTH, HEIGHT);
@@ -216,7 +217,7 @@ public class GameScreen extends AbstractScreen {
         /** Returns an object from this pool. The object may be new (from {@link #newObject()}) or reused (previously
          * {@link #free(Object) freed}). */
         // get a bullet from our pool
-        BulletBox2D bulletBox2D = bulletBox2DPool.obtain();
+        BulletBox2D bulletBox2D = (BulletBox2D) bulletBox2DPool.obtain();
         bulletBox2D.init(playerSpaceship.getX(), (playerSpaceship.getY() + 60));
         // add to our array of bullets so we can access them in our render method
         activeBullet2D.add(bulletBox2D);
