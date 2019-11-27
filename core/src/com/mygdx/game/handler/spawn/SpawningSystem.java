@@ -1,9 +1,9 @@
-package com.mygdx.game.spawn;
+package com.mygdx.game.handler.spawn;
 
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import com.mygdx.game.MyGdxGame;
-import com.mygdx.game.game_object.enemy.EnemyBox2D;
+import com.mygdx.game.game_object.enemy.basic_enemy.BasicEnemy;
 
 public class SpawningSystem<T> {
 
@@ -35,8 +35,8 @@ public class SpawningSystem<T> {
 
     }
 
-    private void firstLevel(Pool enemyPool, Array<EnemyBox2D> activeEnemies) {
-        EnemyBox2D basicEnemy = (EnemyBox2D) enemyPool.obtain();
+    private void firstLevel(Pool enemyPool, Array<BasicEnemy> activeEnemies) {
+        BasicEnemy basicEnemy = (BasicEnemy) enemyPool.obtain();
         basicEnemy.init(0, 500);
         activeEnemies.add(basicEnemy);
     }

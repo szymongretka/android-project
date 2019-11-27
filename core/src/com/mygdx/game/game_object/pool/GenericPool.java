@@ -2,9 +2,8 @@ package com.mygdx.game.game_object.pool;
 
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Pool;
-import com.mygdx.game.game_object.Box2DObject;
-import com.mygdx.game.game_object.bullet.BulletBox2D;
-import com.mygdx.game.game_object.enemy.EnemyBox2D;
+import com.mygdx.game.game_object.bullet.basic_bullet.BasicBullet;
+import com.mygdx.game.game_object.enemy.basic_enemy.BasicEnemy;
 
 public class GenericPool {
 
@@ -14,25 +13,25 @@ public class GenericPool {
         this.world = world;
     }
 
-    private final Pool<EnemyBox2D> enemyPool = new Pool<EnemyBox2D>() {
+    private final Pool<BasicEnemy> enemyPool = new Pool<BasicEnemy>() {
         @Override
-        protected EnemyBox2D newObject() {
-            return new EnemyBox2D(world);
+        protected BasicEnemy newObject() {
+            return new BasicEnemy(world);
         }
     };
 
-    private final Pool<BulletBox2D> bulletPool = new Pool<BulletBox2D>() {
+    private final Pool<BasicBullet> bulletPool = new Pool<BasicBullet>() {
         @Override
-        protected BulletBox2D newObject() {
-            return new BulletBox2D(world);
+        protected BasicBullet newObject() {
+            return new BasicBullet(world);
         }
     };
 
-    public Pool<BulletBox2D> getBulletPool() {
+    public Pool<BasicBullet> getBulletPool() {
         return bulletPool;
     }
 
-    public Pool<EnemyBox2D> getEnemyPool() {
+    public Pool<BasicEnemy> getEnemyPool() {
         return enemyPool;
     }
 }

@@ -5,8 +5,10 @@ import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
-import com.mygdx.game.game_object.bullet.BulletBox2D;
-import com.mygdx.game.game_object.enemy.EnemyBox2D;
+import com.mygdx.game.game_object.bullet.Bullet;
+import com.mygdx.game.game_object.bullet.basic_bullet.BasicBullet;
+import com.mygdx.game.game_object.enemy.Enemy;
+import com.mygdx.game.game_object.enemy.basic_enemy.BasicEnemy;
 
 public class CollisionManager implements ContactListener {
 
@@ -20,17 +22,30 @@ public class CollisionManager implements ContactListener {
 
 
         if(isBulletEnemyContact(fixtureA, fixtureB)) {
-            EnemyBox2D enemyBox2D;
-            BulletBox2D bulletBox2D;
-            if (fixtureA.getUserData() instanceof EnemyBox2D) {
-                enemyBox2D =  (EnemyBox2D) fixtureA.getUserData();
-                bulletBox2D =  (BulletBox2D) fixtureB.getUserData();
+            Enemy enemy;
+            Bullet bullet;
+
+            BasicBullet basicBullet;
+            BasicEnemy basicEnemy;
+
+            if (fixtureA.getUserData() instanceof Enemy) {
+                if (isBasicEnemy(fixtureA)) {
+                    basicEnemy = (BasicEnemy) fixtureA.getUserData();
+                    basicBullet = (BasicBullet) fixtureB.getUserData();
+                    basicBullet.hitEnemy(basicEnemy);
+                }
+                //other enemies
+
             } else {
-                enemyBox2D =  (EnemyBox2D) fixtureB.getUserData();
-                bulletBox2D =  (BulletBox2D) fixtureA.getUserData();
+                if(isBasicBullet(fixtureA)) {
+                    basicEnemy = (BasicEnemy) fixtureB.getUserData();
+                    basicBullet = (BasicBullet) fixtureA.getUserData();
+                    basicBullet.hitEnemy(basicEnemy);
+                }
+                //other bullets
             }
 
-            bulletBox2D.hitEnemy(enemyBox2D);
+            //bullet.hitEnemy(enemy);
 
         }
 
@@ -53,12 +68,27 @@ public class CollisionManager implements ContactListener {
     }
 
     private boolean isBulletEnemyContact(Fixture a, Fixture b) {
-        if(a.getUserData() instanceof BulletBox2D || b.getUserData() instanceof BulletBox2D) {
-            if(a.getUserData() instanceof EnemyBox2D || b.getUserData() instanceof EnemyBox2D) {
+        if(a.getUserData() instanceof Bullet || b.getUserData() instanceof Bullet) {
+            if(a.getUserData() instanceof Enemy || b.getUserData() instanceof Enemy) {
                 return true;
             }
         }
         return false;
     }
+
+    private boolean isBasicBullet(Fixture fix) {
+        if(fix.getUserData() instanceof BasicBullet)
+            return true;
+
+        return false;
+    }
+
+    private boolean isBasicEnemy(Fixture fix) {
+        if(fix.getUserData() instanceof BasicEnemy)
+            return true;
+
+        return false;
+    }
+
 
 }

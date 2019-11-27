@@ -17,12 +17,12 @@ import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.mygdx.game.MyGdxGame;
 import com.mygdx.game.game_object.player.PlayerSpaceship;
-import com.mygdx.game.game_object.bullet.BulletBox2D;
-import com.mygdx.game.game_object.enemy.EnemyBox2D;
+import com.mygdx.game.game_object.bullet.basic_bullet.BasicBullet;
+import com.mygdx.game.game_object.enemy.basic_enemy.BasicEnemy;
 import com.mygdx.game.game_object.pool.GenericPool;
 import com.mygdx.game.handler.CollisionManager;
 import com.mygdx.game.screen.AbstractScreen;
-import com.mygdx.game.spawn.SpawningSystem;
+import com.mygdx.game.handler.spawn.SpawningSystem;
 
 public class GameScreen extends AbstractScreen {
 
@@ -52,8 +52,8 @@ public class GameScreen extends AbstractScreen {
     private ParticleEffectPool effectPool;
 
     //Arrays
-    private final Array<EnemyBox2D> activeEnemies = new Array<>();
-    private final Array<BulletBox2D> activeBullet2D = new Array<>();
+    private final Array<BasicEnemy> activeEnemies = new Array<>();
+    private final Array<BasicBullet> activeBullet2D = new Array<>();
     private Array<PooledEffect> activeEffects = new Array<>();
 
 
@@ -132,21 +132,22 @@ public class GameScreen extends AbstractScreen {
         game.batch.draw(spaceshipImage, playerSpaceship.getBody().getPosition().x - playerSpaceship.getWidth(),
                 playerSpaceship.getBody().getPosition().y - playerSpaceship.getHeight());
 
-        for (BulletBox2D bullet : activeBullet2D) {
+        for (BasicBullet bullet : activeBullet2D) {
             bullet.update(delta);
 
             game.batch.draw(bulletImage, bullet.getBody().getPosition().x - bullet.getWidth(),
                     bullet.getBody().getPosition().y - bullet.getHeight());
         }
 
-        for (EnemyBox2D enemy : activeEnemies) {
+        for (BasicEnemy enemy : activeEnemies) {
             enemy.update(delta);
             game.batch.draw(spaceshipImage, enemy.getBody().getPosition().x - enemy.getWidth(),
                     enemy.getBody().getPosition().y - enemy.getHeight());
         }
 
         for(PooledEffect effect : activeEffects) {
-            effect.draw(game.batch, delta);
+            effect.update(delta);
+            effect.draw(game.batch);
             if(effect.isComplete()) {
                 activeEffects.removeValue(effect, true);
                 effect.free();
@@ -169,7 +170,7 @@ public class GameScreen extends AbstractScreen {
         }
 
 
-        for (BulletBox2D bullet : activeBullet2D) {
+        for (BasicBullet bullet : activeBullet2D) {
             // check if bullet is off screen
             if (bullet.getBody().getPosition().y > HEIGHT - 60 || !bullet.getBody().isActive()) {
                 bulletBox2DPool.free(bullet); // place back in pool
@@ -178,12 +179,12 @@ public class GameScreen extends AbstractScreen {
 
         }
 
-        for (EnemyBox2D enemyBox2D : activeEnemies) {
+        for (BasicEnemy basicEnemy : activeEnemies) {
             // check if bullet is off screen
-            if (!enemyBox2D.getBody().isActive()) {
-                spawnEffects(enemyBox2D.getX(), enemyBox2D.getY());
-                enemyPool.free(enemyBox2D); // place back in pool
-                activeEnemies.removeValue(enemyBox2D, true); // remove bullet from our array so we don't render it anymore
+            if (!basicEnemy.getBody().isActive()) {
+                spawnEffects(basicEnemy.getOnDestroyCoordX(), basicEnemy.getOnDestroyCoordY());
+                enemyPool.free(basicEnemy); // place back in pool
+                activeEnemies.removeValue(basicEnemy, true); // remove bullet from our array so we don't render it anymore
             }
 
         }
@@ -241,17 +242,17 @@ public class GameScreen extends AbstractScreen {
         /** Returns an object from this pool. The object may be new (from {@link #newObject()}) or reused (previously
          * {@link #free(Object) freed}). */
         // get a bullet from our pool
-        BulletBox2D bulletBox2D = (BulletBox2D) bulletBox2DPool.obtain();
-        bulletBox2D.init(playerSpaceship.getX(), (playerSpaceship.getY() + 60));
+        BasicBullet basicBullet = (BasicBullet) bulletBox2DPool.obtain();
+        basicBullet.init(playerSpaceship.getX(), (playerSpaceship.getY() + 60));
         // add to our array of bullets so we can access them in our render method
-        activeBullet2D.add(bulletBox2D);
+        activeBullet2D.add(basicBullet);
         //System.out.println(bulletBox2DPool.getFree());
         lastBulletTime = TimeUtils.nanoTime();
     }
 
     private void spawnEffects(float x, float y) {
         PooledEffect effect = effectPool.obtain();
-        effect.getEmitters().first().setPosition(200, 200);
+        effect.getEmitters().first().setPosition(x, y);
         activeEffects.add(effect);
         effect.start();
     }
