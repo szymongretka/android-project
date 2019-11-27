@@ -5,6 +5,9 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
+import com.badlogic.gdx.graphics.g2d.ParticleEffectPool.PooledEffect;
+import com.badlogic.gdx.graphics.g2d.ParticleEffectPool;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
@@ -36,17 +39,23 @@ public class GameScreen extends AbstractScreen {
     private Texture spaceshipImage;
     private Texture bulletImage;
 
+    //effects
+    private ParticleEffect flameEffect;
+
     private Sound shootSound;
     //private Music rainMusic;
-
-    //Arrays
-    private final Array<EnemyBox2D> activeEnemies = new Array<>();
-    private final Array<BulletBox2D> activeBullet2D = new Array<>();
 
     //Pools
     private final GenericPool genericPool;
     private final Pool enemyPool;
     private final Pool bulletBox2DPool;
+    private ParticleEffectPool effectPool;
+
+    //Arrays
+    private final Array<EnemyBox2D> activeEnemies = new Array<>();
+    private final Array<BulletBox2D> activeBullet2D = new Array<>();
+    private Array<PooledEffect> activeEffects = new Array<>();
+
 
     private Vector3 touchPos = new Vector3();
     private long lastBulletTime;
@@ -55,8 +64,6 @@ public class GameScreen extends AbstractScreen {
     private PlayerSpaceship playerSpaceship;
     private FPSLogger logger;
 
-    private BulletBox2D bulletBox2D;
-
 
     public GameScreen(final MyGdxGame game) {
         super(game);
@@ -64,34 +71,36 @@ public class GameScreen extends AbstractScreen {
         this.world = new World(new Vector2(0, 0), false);
         this.world.setContactListener(new CollisionManager());
 
-        genericPool = new GenericPool(world);
-
-        enemyPool = genericPool.getEnemyPool();
-        bulletBox2DPool = genericPool.getBulletPool();
-
+        //for testing only
         box2DDebugRenderer = new Box2DDebugRenderer();
 
         spawningSystem = new SpawningSystem(game);
 
-        //load all assets
-        //game.assets.load();
-        //game.assets.manager.finishLoading();
+        flameEffect = new ParticleEffect();
 
         if (game.assets.manager.isFinished()) {
             loadAssets();
         }
 
+        //pools
+        genericPool = new GenericPool(world);
+        enemyPool = genericPool.getEnemyPool();
+        bulletBox2DPool = genericPool.getBulletPool();
+        effectPool = new ParticleEffectPool(flameEffect, 0, 70);
+
         spawningSystem.spawn(enemyPool, activeEnemies);
 
         playerSpaceship = new PlayerSpaceship(world);
 
+        flameEffect.getEmitters().first();
+        flameEffect.start();
+
         camera = new OrthographicCamera();
         camera.setToOrtho(false, WIDTH, HEIGHT);
 
-        //spawnBullets();
+
 
         logger = new FPSLogger();
-
 
     }
 
@@ -111,11 +120,14 @@ public class GameScreen extends AbstractScreen {
 
         logger.log();
 
+        //flameEffect.update(delta);
+
 
         game.batch.begin();
         game.font.draw(game.batch, "Bullets shot: " + bulletsShot, 0, 800);
         game.font.draw(game.batch, "Game Time: " + totalGameTime, 0, 780);
 
+        //flameEffect.draw(game.batch);
 
         game.batch.draw(spaceshipImage, playerSpaceship.getBody().getPosition().x - playerSpaceship.getWidth(),
                 playerSpaceship.getBody().getPosition().y - playerSpaceship.getHeight());
@@ -131,6 +143,14 @@ public class GameScreen extends AbstractScreen {
             enemy.update(delta);
             game.batch.draw(spaceshipImage, enemy.getBody().getPosition().x - enemy.getWidth(),
                     enemy.getBody().getPosition().y - enemy.getHeight());
+        }
+
+        for(PooledEffect effect : activeEffects) {
+            effect.draw(game.batch, delta);
+            if(effect.isComplete()) {
+                activeEffects.removeValue(effect, true);
+                effect.free();
+            }
         }
 
         game.batch.end();
@@ -161,6 +181,7 @@ public class GameScreen extends AbstractScreen {
         for (EnemyBox2D enemyBox2D : activeEnemies) {
             // check if bullet is off screen
             if (!enemyBox2D.getBody().isActive()) {
+                spawnEffects(enemyBox2D.getX(), enemyBox2D.getY());
                 enemyPool.free(enemyBox2D); // place back in pool
                 activeEnemies.removeValue(enemyBox2D, true); // remove bullet from our array so we don't render it anymore
             }
@@ -169,7 +190,8 @@ public class GameScreen extends AbstractScreen {
 
 
         box2DDebugRenderer.render(this.world, camera.combined);
-
+        /*Gdx.app.log("pool stats", "active: " + activeEffects.size + " | free: "
+                + effectPool.getFree() + "/" + effectPool.max + " | record: " + effectPool.peak);*/
     }
 
     @Override
@@ -204,12 +226,14 @@ public class GameScreen extends AbstractScreen {
         //rainMusic.dispose();
         box2DDebugRenderer.dispose();
         world.dispose();
+        flameEffect.dispose();
     }
 
     private void loadAssets() {
         spaceshipImage = game.assets.manager.get("spaceship.png", Texture.class);
         bulletImage = game.assets.manager.get("droplet.png", Texture.class);
         shootSound = game.assets.manager.get("sfx-laser.wav", Sound.class);
+        flameEffect = game.assets.manager.get("effects/Particle.flame", ParticleEffect.class);
     }
 
 
@@ -223,6 +247,13 @@ public class GameScreen extends AbstractScreen {
         activeBullet2D.add(bulletBox2D);
         //System.out.println(bulletBox2DPool.getFree());
         lastBulletTime = TimeUtils.nanoTime();
+    }
+
+    private void spawnEffects(float x, float y) {
+        PooledEffect effect = effectPool.obtain();
+        effect.getEmitters().first().setPosition(200, 200);
+        activeEffects.add(effect);
+        effect.start();
     }
 
 
