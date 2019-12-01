@@ -5,6 +5,8 @@ import com.mygdx.game.game_object.bullet.Bullet;
 import com.mygdx.game.game_object.enemy.Enemy;
 import com.mygdx.game.game_object.enemy.basic_enemy.BasicEnemy;
 
+import java.util.Objects;
+
 public class BasicBullet extends Bullet {
 
     private float width = 32;
@@ -22,14 +24,10 @@ public class BasicBullet extends Bullet {
         this.body.setLinearVelocity(0, velY * deltaTime * 4);
     }
 
-
-    public void hitEnemy(BasicEnemy basicEnemy) {
-        basicEnemy.setHp(basicEnemy.getHp() - this.getDamage());
+    @Override
+    public void hitEnemy(Enemy enemy) {
+        enemy.setHp(enemy.getHp() - this.getDamage());
         reset();
     }
 
-    @Override
-    public void hitEnemy(Enemy enemy) {
-
-    }
 }
