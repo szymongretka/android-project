@@ -22,7 +22,7 @@ public class BasicEnemy extends Enemy {
 
     @Override
     public void update(float deltaTime) {
-        this.body.setLinearVelocity(velX * deltaTime, velY * deltaTime);
+        this.body.setLinearVelocity(-velX * deltaTime, -velY * deltaTime);
         if(this.getHp() <= 0 && this.getBody().isActive()) {
             this.onDestroyCoordX = this.getX();
             this.onDestroyCoordY = this.getY();

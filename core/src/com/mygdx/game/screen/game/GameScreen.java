@@ -16,6 +16,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.mygdx.game.MyGdxGame;
+import com.mygdx.game.enums.GameState;
 import com.mygdx.game.game_object.player.PlayerSpaceship;
 import com.mygdx.game.game_object.bullet.basic_bullet.BasicBullet;
 import com.mygdx.game.game_object.enemy.basic_enemy.BasicEnemy;
@@ -74,7 +75,7 @@ public class GameScreen extends AbstractScreen {
         //for testing only
         box2DDebugRenderer = new Box2DDebugRenderer();
 
-        spawningSystem = new SpawningSystem(game);
+        //spawningSystem = new SpawningSystem(game);
 
         flameEffect = new ParticleEffect();
 
@@ -88,7 +89,14 @@ public class GameScreen extends AbstractScreen {
         bulletBox2DPool = genericPool.getBulletPool();
         effectPool = new ParticleEffectPool(flameEffect, 0, 70);
 
-        spawningSystem.spawn(enemyPool, activeEnemies);
+        switch (game.gameScreenManager.getActiveScreen()) {
+            case LEVEL1:
+                new SpawningSystem(game, enemyPool, activeEnemies).spawn();
+                break;
+            case LEVEL2:
+                break;
+        }
+
 
         playerSpaceship = new PlayerSpaceship(world);
 
@@ -106,7 +114,7 @@ public class GameScreen extends AbstractScreen {
 
     @Override
     public void update(float delta) {
-        this.world.step(1/60f, 6, 2);
+        //this.world.step(1/60f, 6, 2);
         totalGameTime += delta;
     }
 
@@ -191,6 +199,7 @@ public class GameScreen extends AbstractScreen {
 
 
         box2DDebugRenderer.render(this.world, camera.combined);
+        world.step(1/60f, 6, 2);
         /*Gdx.app.log("pool stats", "active: " + activeEffects.size + " | free: "
                 + effectPool.getFree() + "/" + effectPool.max + " | record: " + effectPool.peak);*/
     }
