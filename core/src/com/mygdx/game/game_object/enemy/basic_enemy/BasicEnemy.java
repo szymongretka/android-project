@@ -11,13 +11,10 @@ public class BasicEnemy extends Enemy {
     private float height = 32;
     private float velX = 500;
     private float velY = 500;
-    private float onDestroyCoordX;
-    private float onDestroyCoordY;
 
 
     public BasicEnemy(World world) {
         super(world, 0, 0, 32, 32, 50, 50, 3, 1);
-
     }
 
     @Override
@@ -30,11 +27,4 @@ public class BasicEnemy extends Enemy {
         }
     }
 
-    public float getOnDestroyCoordX() {
-        return onDestroyCoordX;
-    }
-
-    public float getOnDestroyCoordY() {
-        return onDestroyCoordY;
-    }
 }

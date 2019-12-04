@@ -18,6 +18,7 @@ import com.badlogic.gdx.utils.TimeUtils;
 import com.mygdx.game.MyGdxGame;
 import com.mygdx.game.enums.GameState;
 import com.mygdx.game.game_object.bullet.Bullet;
+import com.mygdx.game.game_object.enemy.Enemy;
 import com.mygdx.game.game_object.player.PlayerSpaceship;
 import com.mygdx.game.game_object.bullet.basic_bullet.BasicBullet;
 import com.mygdx.game.game_object.enemy.basic_enemy.BasicEnemy;
@@ -33,7 +34,6 @@ public class GameScreen extends AbstractScreen {
     public static float totalGameTime = 0;
 
     private OrthographicCamera camera;
-    private SpawningSystem spawningSystem;
     private Box2DDebugRenderer box2DDebugRenderer;
     private World world;
 
@@ -54,8 +54,8 @@ public class GameScreen extends AbstractScreen {
     private ParticleEffectPool effectPool;
 
     //Arrays
-    private final Array<BasicEnemy> activeEnemies = new Array<>();
-    private final Array<BasicBullet> activeBullet2D = new Array<>();
+    private final Array<Enemy> activeEnemies = new Array<>();
+    private final Array<Bullet> activeBullet2D = new Array<>();
     private Array<PooledEffect> activeEffects = new Array<>();
 
 
@@ -142,17 +142,29 @@ public class GameScreen extends AbstractScreen {
         game.batch.draw(spaceshipImage, playerSpaceship.getBody().getPosition().x - playerSpaceship.getWidth(),
                 playerSpaceship.getBody().getPosition().y - playerSpaceship.getHeight());
 
-        for (BasicBullet bullet : activeBullet2D) {
+        for (Bullet bullet : activeBullet2D) {
             bullet.update(delta);
 
             game.batch.draw(bulletImage, bullet.getBody().getPosition().x - bullet.getWidth(),
                     bullet.getBody().getPosition().y - bullet.getHeight());
+
+            if (bullet.getBody().getPosition().y > HEIGHT - 60 || !bullet.getBody().isActive() || bullet.isToDestroy()) {
+                bulletBox2DPool.free(bullet); // reset and place back in pool
+                activeBullet2D.removeValue(bullet, true); // remove bullet from our array so we don't render it anymore
+            }
+
         }
 
-        for (BasicEnemy enemy : activeEnemies) {
+        for (Enemy enemy : activeEnemies) {
             enemy.update(delta);
             game.batch.draw(spaceshipImage, enemy.getBody().getPosition().x - enemy.getWidth(),
                     enemy.getBody().getPosition().y - enemy.getHeight());
+
+            if (!enemy.getBody().isActive()) {
+                spawnEffects(enemy.getOnDestroyCoordX(), enemy.getOnDestroyCoordY());
+                enemyPool.free(enemy); // place back in pool
+                activeEnemies.removeValue(enemy, true); // remove bullet from our array so we don't render it anymore
+            }
         }
 
         for(PooledEffect effect : activeEffects) {
@@ -174,37 +186,14 @@ public class GameScreen extends AbstractScreen {
         }
 
         if (TimeUtils.nanoTime() - lastBulletTime > 800000000) {
-            spawnBox2DBullets();
+            spawnBasicBullets();
             bulletsShot++;
             shootSound.play();
         }
 
 
-        for (BasicBullet bullet : activeBullet2D) {
-            // check if bullet is off screen
-            if (bullet.getBody().getPosition().y > HEIGHT - 60 || !bullet.getBody().isActive() || bullet.isToDestroy()) {
-                bulletBox2DPool.free(bullet); // reset and place back in pool
-                activeBullet2D.removeValue(bullet, true); // remove bullet from our array so we don't render it anymore
-            }
-
-        }
-
-        for (BasicEnemy basicEnemy : activeEnemies) {
-            // check if bullet is off screen
-            if (!basicEnemy.getBody().isActive()) {
-                spawnEffects(basicEnemy.getOnDestroyCoordX(), basicEnemy.getOnDestroyCoordY());
-                enemyPool.free(basicEnemy); // place back in pool
-                activeEnemies.removeValue(basicEnemy, true); // remove bullet from our array so we don't render it anymore
-            }
-
-        }
-
-
-
         box2DDebugRenderer.render(this.world, camera.combined);
         world.step(1/60f, 6, 2);
-        /*Gdx.app.log("pool stats", "active: " + activeEffects.size + " | free: "
-                + effectPool.getFree() + "/" + effectPool.max + " | record: " + effectPool.peak);*/
     }
 
     @Override
@@ -250,7 +239,7 @@ public class GameScreen extends AbstractScreen {
     }
 
 
-    private void spawnBox2DBullets() {
+    private void spawnBasicBullets() {
         /** Returns an object from this pool. The object may be new (from {@link #newObject()}) or reused (previously
          * {@link #free(Object) freed}). */
         // get a bullet from our pool

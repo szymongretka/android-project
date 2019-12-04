@@ -14,7 +14,7 @@ public abstract class Bullet extends Box2DObject {
 
     public Bullet(World world, float x, float y, float width, float height, float velY, float velX, int hp, int damage) {
         super(world, x, y, width, height, velY, velX, hp, damage, BodyDef.BodyType.DynamicBody,
-                BIT_BULLET, BIT_ENEMY, (short) 0);
+                BIT_BULLET, BIT_ENEMY, (short) 0, true);
     }
 
     @Override

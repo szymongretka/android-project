@@ -16,7 +16,7 @@ public abstract class Box2DObject implements Pool.Poolable {
 
     public Box2DObject(World world, float x, float y, float width, float height,
                        float velY, float velX, int hp, int damage, BodyDef.BodyType bodyType,
-                       short categoryBits, short maskBits, short gIndex) {
+                       short categoryBits, short maskBits, short gIndex, boolean isBullet) {
         this.width = width;
         this.height = height;
         this.velY = velY;
@@ -24,11 +24,11 @@ public abstract class Box2DObject implements Pool.Poolable {
         this.hp = hp;
         this.damage = damage;
         this.body = this.createBox(world, x, y, this.width, this.height, bodyType, categoryBits,
-                maskBits, gIndex);
+                maskBits, gIndex, isBullet);
     }
 
     private Body createBox(World world, float x, float y, float width, float height,
-                             BodyDef.BodyType bodyType, short categoryBits, short maskBits, short gIndex) {
+                             BodyDef.BodyType bodyType, short categoryBits, short maskBits, short gIndex, boolean isBullet) {
         Body body;
 
         BodyDef bodyDef = new BodyDef();
@@ -48,7 +48,12 @@ public abstract class Box2DObject implements Pool.Poolable {
 
         FixtureDef def = new FixtureDef();
         def.shape = polygonShape;
-        def.density = 1.0f;
+
+        if(isBullet)
+            def.density = 0.0f;
+        else
+            def.density = 1.0f;
+
         def.filter.categoryBits = categoryBits; //Is a
         def.filter.maskBits = maskBits; //Collides with
         def.filter.groupIndex = gIndex;
@@ -69,9 +74,9 @@ public abstract class Box2DObject implements Pool.Poolable {
 
     @Override
     public void reset() {
+        this.body.setActive(false);
         this.body.setTransform(32, 32, 0);
         this.body.setLinearVelocity(0, 0);
-        this.body.setActive(false);
     }
 
 

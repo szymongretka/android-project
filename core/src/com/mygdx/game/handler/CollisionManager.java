@@ -18,25 +18,24 @@ public class CollisionManager implements ContactListener {
         Fixture fixtureA = contact.getFixtureA();
         Fixture fixtureB = contact.getFixtureB();
 
-        if(fixtureA == null || fixtureB == null) return;
-        if(fixtureA.getUserData() == null || fixtureB.getUserData() == null) return;
+        if (fixtureA == null || fixtureB == null) return;
+        if (fixtureA.getUserData() == null || fixtureB.getUserData() == null) return;
 
-
-        if(isBulletEnemyContact(fixtureA, fixtureB)) {
-            if (fixtureA.getUserData() instanceof Enemy && fixtureB.getUserData() instanceof Bullet) {
+        if (isBulletEnemyContact(fixtureA, fixtureB)) {
+            if (fixtureA.getUserData() instanceof Enemy) {
                 ((Bullet) fixtureB.getUserData()).hitEnemy((Enemy) fixtureA.getUserData());
                 ((Bullet) fixtureB.getUserData()).setToDestroy(true); //because multiple contacts can happen
-            } else if(fixtureB.getUserData() instanceof Enemy && fixtureA.getUserData() instanceof Bullet) {
+            } else {
                 ((Bullet) fixtureA.getUserData()).hitEnemy((Enemy) fixtureB.getUserData());
-                ((Bullet) fixtureB.getUserData()).setToDestroy(true);
+                ((Bullet) fixtureA.getUserData()).setToDestroy(true);
             }
         }
 
-        if(isPlayerEnemyContact(fixtureA, fixtureB)) {
+        if (isPlayerEnemyContact(fixtureA, fixtureB)) {
 
         }
 
-        if(isPlayerItemContact(fixtureA, fixtureB)) {
+        if (isPlayerItemContact(fixtureA, fixtureB)) {
 
         }
 
@@ -59,8 +58,8 @@ public class CollisionManager implements ContactListener {
     }
 
     private boolean isBulletEnemyContact(Fixture a, Fixture b) {
-        if(a.getUserData() instanceof Bullet || b.getUserData() instanceof Bullet) {
-            if(a.getUserData() instanceof Enemy || b.getUserData() instanceof Enemy) {
+        if (a.getUserData() instanceof Bullet || b.getUserData() instanceof Bullet) {
+            if (a.getUserData() instanceof Enemy || b.getUserData() instanceof Enemy) {
                 return true;
             }
         }
@@ -68,8 +67,8 @@ public class CollisionManager implements ContactListener {
     }
 
     private boolean isPlayerEnemyContact(Fixture a, Fixture b) {
-        if(a.getUserData() instanceof PlayerSpaceship || b.getUserData() instanceof Enemy) {
-            if(a.getUserData() instanceof Enemy || b.getUserData() instanceof PlayerSpaceship) {
+        if (a.getUserData() instanceof PlayerSpaceship || b.getUserData() instanceof Enemy) {
+            if (a.getUserData() instanceof Enemy || b.getUserData() instanceof PlayerSpaceship) {
                 return true;
             }
         }
@@ -77,8 +76,8 @@ public class CollisionManager implements ContactListener {
     }
 
     private boolean isPlayerItemContact(Fixture a, Fixture b) {
-        if(a.getUserData() instanceof PlayerSpaceship || b.getUserData() instanceof Item) {
-            if(a.getUserData() instanceof Item || b.getUserData() instanceof PlayerSpaceship) {
+        if (a.getUserData() instanceof PlayerSpaceship || b.getUserData() instanceof Item) {
+            if (a.getUserData() instanceof Item || b.getUserData() instanceof PlayerSpaceship) {
                 return true;
             }
         }
