@@ -17,6 +17,7 @@ import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.mygdx.game.MyGdxGame;
 import com.mygdx.game.enums.GameState;
+import com.mygdx.game.game_object.bullet.Bullet;
 import com.mygdx.game.game_object.player.PlayerSpaceship;
 import com.mygdx.game.game_object.bullet.basic_bullet.BasicBullet;
 import com.mygdx.game.game_object.enemy.basic_enemy.BasicEnemy;
@@ -69,8 +70,9 @@ public class GameScreen extends AbstractScreen {
     public GameScreen(final MyGdxGame game) {
         super(game);
 
+        CollisionManager collisionManager = new CollisionManager();
         this.world = new World(new Vector2(0, 0), false);
-        this.world.setContactListener(new CollisionManager());
+        this.world.setContactListener(collisionManager);
 
         //for testing only
         box2DDebugRenderer = new Box2DDebugRenderer();
@@ -180,8 +182,8 @@ public class GameScreen extends AbstractScreen {
 
         for (BasicBullet bullet : activeBullet2D) {
             // check if bullet is off screen
-            if (bullet.getBody().getPosition().y > HEIGHT - 60 || !bullet.getBody().isActive()) {
-                bulletBox2DPool.free(bullet); // place back in pool
+            if (bullet.getBody().getPosition().y > HEIGHT - 60 || !bullet.getBody().isActive() || bullet.isToDestroy()) {
+                bulletBox2DPool.free(bullet); // reset and place back in pool
                 activeBullet2D.removeValue(bullet, true); // remove bullet from our array so we don't render it anymore
             }
 
@@ -196,6 +198,7 @@ public class GameScreen extends AbstractScreen {
             }
 
         }
+
 
 
         box2DDebugRenderer.render(this.world, camera.combined);

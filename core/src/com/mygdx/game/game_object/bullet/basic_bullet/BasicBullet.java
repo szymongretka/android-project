@@ -27,7 +27,7 @@ public class BasicBullet extends Bullet {
     @Override
     public void hitEnemy(Enemy enemy) {
         enemy.setHp(enemy.getHp() - this.getDamage());
-        reset();
+        //reset();
     }
 
 }

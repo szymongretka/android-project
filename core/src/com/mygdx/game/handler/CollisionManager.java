@@ -10,6 +10,7 @@ import com.mygdx.game.game_object.enemy.Enemy;
 import com.mygdx.game.game_object.item.Item;
 import com.mygdx.game.game_object.player.PlayerSpaceship;
 
+
 public class CollisionManager implements ContactListener {
 
     @Override
@@ -24,8 +25,10 @@ public class CollisionManager implements ContactListener {
         if(isBulletEnemyContact(fixtureA, fixtureB)) {
             if (fixtureA.getUserData() instanceof Enemy && fixtureB.getUserData() instanceof Bullet) {
                 ((Bullet) fixtureB.getUserData()).hitEnemy((Enemy) fixtureA.getUserData());
+                ((Bullet) fixtureB.getUserData()).setToDestroy(true); //because multiple contacts can happen
             } else if(fixtureB.getUserData() instanceof Enemy && fixtureA.getUserData() instanceof Bullet) {
                 ((Bullet) fixtureA.getUserData()).hitEnemy((Enemy) fixtureB.getUserData());
+                ((Bullet) fixtureB.getUserData()).setToDestroy(true);
             }
         }
 
@@ -36,9 +39,6 @@ public class CollisionManager implements ContactListener {
         if(isPlayerItemContact(fixtureA, fixtureB)) {
 
         }
-
-
-
 
     }
 
