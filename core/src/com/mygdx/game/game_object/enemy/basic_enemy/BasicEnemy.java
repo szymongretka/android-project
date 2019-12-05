@@ -2,6 +2,7 @@ package com.mygdx.game.game_object.enemy.basic_enemy;
 
 import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.game.game_object.enemy.Enemy;
+import com.mygdx.game.util.Constants;
 
 
 public class BasicEnemy extends Enemy {
@@ -14,7 +15,7 @@ public class BasicEnemy extends Enemy {
 
 
     public BasicEnemy(World world) {
-        super(world, 0, 0, 32, 32, 50, 50, 3, 1);
+        super(world, 0, 0, 32, 32, 2500, 2500, 3, 1);
     }
 
     @Override
@@ -25,6 +26,10 @@ public class BasicEnemy extends Enemy {
             this.onDestroyCoordY = this.getY();
             reset();
         }
+        if(this.getBody().getPosition().x <= this.getWidth() ||
+                this.getBody().getPosition().x >= Constants.WIDTH - this.getWidth())
+            velX = -velX;
+
     }
 
 }

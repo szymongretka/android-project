@@ -8,12 +8,12 @@ import com.mygdx.game.util.Constants;
 
 import java.util.Random;
 
-public class SpawningSystem {//} implements Runnable{
+public class SpawningSystem implements Runnable{
 
     private final MyGdxGame game;
     private Pool pool;
     private Array array;
-    //private Thread thread;
+    private Thread thread;
 
     private int wave1;
     private int wave2;
@@ -26,8 +26,8 @@ public class SpawningSystem {//} implements Runnable{
         this.game = game;
         this.pool = pool;
         this.array = array;
-        //thread = new Thread(this);
-        //thread.start();
+        thread = new Thread(this);
+        thread.start();
     }
 
     public void spawn() {
@@ -51,10 +51,10 @@ public class SpawningSystem {//} implements Runnable{
 
     }
 
-    /*@Override
+    @Override
     public void run() {
         spawn();
-    }*/
+    }
 
     private void firstLevel(Pool enemyPool, Array<BasicEnemy> activeEnemies) {
 
@@ -64,16 +64,7 @@ public class SpawningSystem {//} implements Runnable{
 
         random = new Random();
         BasicEnemy basicEnemy;
-        BasicEnemy basicEnemy2;
 
-        basicEnemy = (BasicEnemy) enemyPool.obtain();
-        basicEnemy.init(270, 300);
-        activeEnemies.add(basicEnemy);
-
-        basicEnemy2 = (BasicEnemy) enemyPool.obtain();
-        basicEnemy2.init(330, 300);
-        activeEnemies.add(basicEnemy2);
-/*
         try {
             Thread.sleep(1000);
             for (int i = 0; i < wave1; i++) {
@@ -83,7 +74,7 @@ public class SpawningSystem {//} implements Runnable{
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
-        }*/
+        }
 
     }
 

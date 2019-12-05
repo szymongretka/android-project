@@ -93,7 +93,7 @@ public class GameScreen extends AbstractScreen {
 
         switch (game.gameScreenManager.getActiveScreen()) {
             case LEVEL1:
-                new SpawningSystem(game, enemyPool, activeEnemies).spawn();
+                new SpawningSystem(game, enemyPool, activeEnemies);
                 break;
             case LEVEL2:
                 break;
@@ -130,14 +130,9 @@ public class GameScreen extends AbstractScreen {
 
         logger.log();
 
-        //flameEffect.update(delta);
-
-
         game.batch.begin();
         game.font.draw(game.batch, "Bullets shot: " + bulletsShot, 0, 800);
         game.font.draw(game.batch, "Game Time: " + totalGameTime, 0, 780);
-
-        //flameEffect.draw(game.batch);
 
         game.batch.draw(spaceshipImage, playerSpaceship.getBody().getPosition().x - playerSpaceship.getWidth(),
                 playerSpaceship.getBody().getPosition().y - playerSpaceship.getHeight());
