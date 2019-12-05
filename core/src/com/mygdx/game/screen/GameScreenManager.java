@@ -54,6 +54,10 @@ public class GameScreenManager {
         }
     }
 
+    public AbstractScreen getGameScreen(GameState state) {
+        return gameScreens.get(state);
+    }
+
     public GameState getActiveScreen() {
         return activeScreen;
     }
