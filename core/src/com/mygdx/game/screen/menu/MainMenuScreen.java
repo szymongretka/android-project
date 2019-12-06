@@ -38,6 +38,7 @@ public class MainMenuScreen extends AbstractScreen {
         //camera.setToOrtho(false, 480, 800);
 
         stage = new Stage(new ScreenViewport());
+        Gdx.input.setInputProcessor(stage);
         table = new Table();
         table.setWidth(stage.getWidth());
         table.align(Align.center|Align.top);
@@ -52,14 +53,14 @@ public class MainMenuScreen extends AbstractScreen {
             @Override
             public void clicked (InputEvent event, float x, float y){
                 dispose();
-                game.gameScreenManager.setScreen(GameState.LEVELSCREEN, new LevelScreen(game));
+                game.gameScreenManager.setStageScreen(GameState.LEVELSCREEN, LevelScreen.class);
             }
         });
 
         quitButton.addListener(new ClickListener(){
             @Override
             public void clicked (InputEvent event, float x, float y){
-                dispose();
+                game.dispose();
                 Gdx.app.exit();
             }
         });
@@ -83,7 +84,6 @@ public class MainMenuScreen extends AbstractScreen {
 
         stage.addActor(table);
 
-        Gdx.input.setInputProcessor(stage);
     }
 
     @Override
@@ -101,7 +101,7 @@ public class MainMenuScreen extends AbstractScreen {
         super.render(delta);
 
         stage.draw();
-
+        stage.act();
     }
 
     @Override

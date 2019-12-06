@@ -13,6 +13,7 @@ import com.mygdx.game.MyGdxGame;
 import com.mygdx.game.enums.GameState;
 import com.mygdx.game.screen.AbstractScreen;
 import com.mygdx.game.screen.game.GameScreen;
+import com.mygdx.game.screen.menu.MainMenuScreen;
 
 public class PauseScreen extends AbstractScreen {
 
@@ -29,6 +30,7 @@ public class PauseScreen extends AbstractScreen {
             loadAssets();
         }
         stage = new Stage(new ScreenViewport());
+        Gdx.input.setInputProcessor(stage);
         table = new Table();
         table.setWidth(stage.getWidth());
         table.align(Align.center|Align.top);
@@ -41,10 +43,8 @@ public class PauseScreen extends AbstractScreen {
         resumeButton.addListener(new ClickListener(){
             @Override
             public void clicked (InputEvent event, float x, float y){
-                dispose();
-                game.gameScreenManager.setActiveScreen(GameState.PLAYSCREEN); //TODO //////////////////
-                game.gameScreenManager.setScreen(GameState.PLAYSCREEN,
-                        game.gameScreenManager.getGameScreen(GameState.PLAYSCREEN));
+                game.gameScreenManager.setActiveScreen(GameState.LEVEL1); //TODO //////////////////
+                game.gameScreenManager.setPlayScreen(GameState.LEVEL1, GameScreen.class);
             }
         });
 
@@ -53,8 +53,7 @@ public class PauseScreen extends AbstractScreen {
             public void clicked (InputEvent event, float x, float y){
                 dispose();
                 game.gameScreenManager.setActiveScreen(GameState.MENU);
-                game.gameScreenManager.setScreen(GameState.MENU,
-                        game.gameScreenManager.getGameScreen(GameState.MENU));
+                game.gameScreenManager.setStageScreen(GameState.MENU, MainMenuScreen.class);
             }
         });
 
@@ -68,7 +67,6 @@ public class PauseScreen extends AbstractScreen {
 
         stage.addActor(table);
 
-        Gdx.input.setInputProcessor(stage);
 
     }
 
@@ -77,6 +75,7 @@ public class PauseScreen extends AbstractScreen {
         super.render(delta);
 
         stage.draw();
+        stage.act();
 
     }
 

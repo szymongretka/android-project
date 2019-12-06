@@ -28,10 +28,11 @@ public class MyGdxGame extends Game {
 	}
 
 	public void dispose() {
+        gameScreenManager.dispose();
         batch.dispose();
         font.dispose();
         assets.dispose();
-        gameScreenManager.dispose();
+
 	}
 
 

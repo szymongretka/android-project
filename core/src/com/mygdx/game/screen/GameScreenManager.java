@@ -4,47 +4,48 @@ import com.mygdx.game.MyGdxGame;
 import com.mygdx.game.enums.GameState;
 import com.mygdx.game.screen.menu.LoadingScreen;
 import com.mygdx.game.screen.menu.MainMenuScreen;
+import com.mygdx.game.screen.pause.PauseScreen;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class GameScreenManager {
+public class GameScreenManager<T extends AbstractScreen> {
 
     public final MyGdxGame game;
     private Map<GameState, AbstractScreen> gameScreens;
-    private LoadingScreen loadingScreen;
-    //private MainMenuScreen mainMenuScreen;
 
     private GameState activeScreen;
 
     public GameScreenManager(final MyGdxGame game) {
         this.game = game;
-        this.loadingScreen = new LoadingScreen(game);
-        initScreens(loadingScreen);
-        setScreen(GameState.LOADINGSCREEN, loadingScreen);
-
-
-        /*this.mainMenuScreen = new MainMenuScreen(game);
-        initScreens(mainMenuScreen);
-        setScreen(GameState.MENU, mainMenuScreen);*/
+        initScreens();
+        setStageScreen(GameState.LOADINGSCREEN, (Class<T>) LoadingScreen.class);
     }
 
-    private void initScreens(LoadingScreen loadingScreen) {
+    private void initScreens() {
         gameScreens = new HashMap<>();
-        gameScreens.put(GameState.LOADINGSCREEN, loadingScreen);
-
-        //gameScreens.put(GameState.MENU, mainMenuScreen);
+        gameScreens.put(GameState.LOADINGSCREEN, new LoadingScreen(game));
     }
 
-    public void setScreen(GameState gameStateScreen, AbstractScreen screen) {
-        if (gameScreens.containsValue(gameStateScreen))
-            game.setScreen(gameScreens.get(gameStateScreen));
-        else {
-            gameScreens.put(gameStateScreen, screen);
-            game.setScreen(gameScreens.get(gameStateScreen));
+    public void setStageScreen(GameState gameStateScreen, Class<T> clazz) {
+        try {
+            gameScreens.put(gameStateScreen, clazz.getConstructor(game.getClass()).newInstance(game));
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            e.printStackTrace();
         }
-        activeScreen = gameStateScreen;
+        game.setScreen(gameScreens.get(gameStateScreen));
     }
+
+    public void setPlayScreen(GameState gameStateScreen, Class<T> clazz) {
+        try {
+            gameScreens.putIfAbsent(gameStateScreen, clazz.getConstructor(game.getClass()).newInstance(game));
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+        game.setScreen(gameScreens.get(gameStateScreen));
+    }
+
 
     public void dispose() {
         for (AbstractScreen screen : gameScreens.values()) {

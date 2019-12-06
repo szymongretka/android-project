@@ -12,6 +12,7 @@ public class Assets implements Disposable {
     public final AssetManager manager = new AssetManager();
 
     public void load() {
+        manager.load("menu/pause.png", Texture.class);
         manager.load("spaceship.png", Texture.class);
         manager.load("droplet.png", Texture.class);
         manager.load("sfx-laser.wav", Sound.class);

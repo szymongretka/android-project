@@ -8,13 +8,25 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.ParticleEffectPool.PooledEffect;
 import com.badlogic.gdx.graphics.g2d.ParticleEffectPool;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.TimeUtils;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.MyGdxGame;
 import com.mygdx.game.enums.GameState;
 import com.mygdx.game.game_object.bullet.Bullet;
@@ -26,6 +38,9 @@ import com.mygdx.game.game_object.pool.GenericPool;
 import com.mygdx.game.handler.CollisionManager;
 import com.mygdx.game.screen.AbstractScreen;
 import com.mygdx.game.handler.spawn.SpawningSystem;
+import com.mygdx.game.screen.pause.PauseScreen;
+
+import java.lang.reflect.InvocationTargetException;
 
 public class GameScreen extends AbstractScreen {
 
@@ -36,10 +51,15 @@ public class GameScreen extends AbstractScreen {
     private OrthographicCamera camera;
     private Box2DDebugRenderer box2DDebugRenderer;
     private World world;
+    private Stage stage;
+    private Table table;
 
     //textures
     private Texture spaceshipImage;
     private Texture bulletImage;
+    private Texture pauseTexture;
+
+    private ImageButton pauseButton;
 
     //effects
     private ParticleEffect flameEffect;
@@ -70,20 +90,19 @@ public class GameScreen extends AbstractScreen {
     public GameScreen(final MyGdxGame game) {
         super(game);
 
-        CollisionManager collisionManager = new CollisionManager();
         this.world = new World(new Vector2(0, 0), false);
-        this.world.setContactListener(collisionManager);
+        this.world.setContactListener(new CollisionManager());
 
         //for testing only
         box2DDebugRenderer = new Box2DDebugRenderer();
-
-        //spawningSystem = new SpawningSystem(game);
 
         flameEffect = new ParticleEffect();
 
         if (game.assets.manager.isFinished()) {
             loadAssets();
         }
+
+        initTableStageAndPauseButton();
 
         //pools
         genericPool = new GenericPool(world);
@@ -99,7 +118,6 @@ public class GameScreen extends AbstractScreen {
                 break;
         }
 
-
         playerSpaceship = new PlayerSpaceship(world);
 
         flameEffect.getEmitters().first();
@@ -108,23 +126,18 @@ public class GameScreen extends AbstractScreen {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, WIDTH, HEIGHT);
 
-
-
         logger = new FPSLogger();
 
     }
 
     @Override
     public void update(float delta) {
-        //this.world.step(1/60f, 6, 2);
         totalGameTime += delta;
     }
 
     @Override
     public void render(float delta) {
-
         super.render(delta);
-
         camera.update();
         game.batch.setProjectionMatrix(camera.combined);
 
@@ -137,39 +150,9 @@ public class GameScreen extends AbstractScreen {
         game.batch.draw(spaceshipImage, playerSpaceship.getBody().getPosition().x - playerSpaceship.getWidth(),
                 playerSpaceship.getBody().getPosition().y - playerSpaceship.getHeight());
 
-        for (Bullet bullet : activeBullet2D) {
-            bullet.update(delta);
-
-            game.batch.draw(bulletImage, bullet.getBody().getPosition().x - bullet.getWidth(),
-                    bullet.getBody().getPosition().y - bullet.getHeight());
-
-            if (bullet.getBody().getPosition().y > HEIGHT - 60 || !bullet.getBody().isActive() || bullet.isToDestroy()) {
-                bulletBox2DPool.free(bullet); // reset and place back in pool
-                activeBullet2D.removeValue(bullet, true); // remove bullet from our array so we don't render it anymore
-            }
-
-        }
-
-        for (Enemy enemy : activeEnemies) {
-            enemy.update(delta);
-            game.batch.draw(spaceshipImage, enemy.getBody().getPosition().x - enemy.getWidth(),
-                    enemy.getBody().getPosition().y - enemy.getHeight());
-
-            if (!enemy.getBody().isActive()) {
-                spawnEffects(enemy.getOnDestroyCoordX(), enemy.getOnDestroyCoordY());
-                enemyPool.free(enemy); // place back in pool
-                activeEnemies.removeValue(enemy, true); // remove bullet from our array so we don't render it anymore
-            }
-        }
-
-        for(PooledEffect effect : activeEffects) {
-            effect.update(delta);
-            effect.draw(game.batch);
-            if(effect.isComplete()) {
-                activeEffects.removeValue(effect, true);
-                effect.free();
-            }
-        }
+        updateAndDrawBullets(delta);
+        updateAndDrawEnemies(delta);
+        updateAndDrawEffects(delta);
 
         game.batch.end();
 
@@ -189,6 +172,9 @@ public class GameScreen extends AbstractScreen {
 
         box2DDebugRenderer.render(this.world, camera.combined);
         world.step(1/60f, 6, 2);
+
+        stage.draw();
+        stage.act(delta);
     }
 
     @Override
@@ -200,6 +186,7 @@ public class GameScreen extends AbstractScreen {
         // start the playback of the background music
         // when the screen is shown
         //rainMusic.play();
+        Gdx.input.setInputProcessor(stage);
     }
 
     @Override
@@ -208,10 +195,14 @@ public class GameScreen extends AbstractScreen {
 
     @Override
     public void pause() {
+        game.gameScreenManager.setActiveScreen(GameState.PAUSE);
+        game.gameScreenManager.setStageScreen(GameState.PAUSE, PauseScreen.class);
+
     }
 
     @Override
     public void resume() {
+
     }
 
 
@@ -231,6 +222,7 @@ public class GameScreen extends AbstractScreen {
         bulletImage = game.assets.manager.get("droplet.png", Texture.class);
         shootSound = game.assets.manager.get("sfx-laser.wav", Sound.class);
         flameEffect = game.assets.manager.get("effects/Particle.flame", ParticleEffect.class);
+        pauseTexture = game.assets.manager.get("menu/pause.png", Texture.class);
     }
 
 
@@ -253,5 +245,68 @@ public class GameScreen extends AbstractScreen {
         effect.start();
     }
 
+    private void updateAndDrawBullets(float delta) {
+        for (Bullet bullet : activeBullet2D) {
+            bullet.update(delta);
+
+            game.batch.draw(bulletImage, bullet.getBody().getPosition().x - bullet.getWidth(),
+                    bullet.getBody().getPosition().y - bullet.getHeight());
+
+            if (bullet.getBody().getPosition().y > HEIGHT - 60 || !bullet.getBody().isActive() || bullet.isToDestroy()) {
+                bulletBox2DPool.free(bullet); // reset and place back in pool
+                activeBullet2D.removeValue(bullet, true); // remove bullet from our array so we don't render it anymore
+            }
+
+        }
+    }
+
+    private void updateAndDrawEnemies(float delta) {
+        for (Enemy enemy : activeEnemies) {
+            enemy.update(delta);
+            game.batch.draw(spaceshipImage, enemy.getBody().getPosition().x - enemy.getWidth(),
+                    enemy.getBody().getPosition().y - enemy.getHeight());
+
+            if (!enemy.getBody().isActive()) {
+                spawnEffects(enemy.getOnDestroyCoordX(), enemy.getOnDestroyCoordY());
+                enemyPool.free(enemy); // place back in pool
+                activeEnemies.removeValue(enemy, true); // remove bullet from our array so we don't render it anymore
+            }
+        }
+    }
+
+    private void updateAndDrawEffects(float delta) {
+        for(PooledEffect effect : activeEffects) {
+            effect.update(delta);
+            effect.draw(game.batch);
+            if(effect.isComplete()) {
+                activeEffects.removeValue(effect, true);
+                effect.free();
+            }
+        }
+    }
+
+    private void initTableStageAndPauseButton() {
+        //stage & table
+        stage = new Stage(new ScreenViewport());
+        table = new Table();
+        table.setWidth(stage.getWidth());
+        table.align(Align.topRight);
+        table.setPosition(0, Gdx.graphics.getHeight());
+
+        TextureRegion region = new TextureRegion(pauseTexture);
+        Drawable drawable = new TextureRegionDrawable(region);
+        pauseButton = new ImageButton(drawable);
+
+        pauseButton.addListener(new ChangeListener(){
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                System.out.println("elo");
+                pause();
+            }
+        });
+
+        table.add(pauseButton).size(50f, 50f);
+        stage.addActor(table);
+    }
 
 }

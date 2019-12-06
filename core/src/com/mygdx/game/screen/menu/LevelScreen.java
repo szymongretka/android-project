@@ -1,12 +1,18 @@
 package com.mygdx.game.screen.menu;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.TextureData;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.MyGdxGame;
@@ -28,8 +34,6 @@ public class LevelScreen extends AbstractScreen {
     public LevelScreen(final MyGdxGame game) {
         super(game);
 
-        //game.assets.load();
-        //game.assets.manager.finishLoading();
 
         if(game.assets.manager.isFinished()){
             loadAssets();
@@ -45,19 +49,15 @@ public class LevelScreen extends AbstractScreen {
         level2Button = new TextButton("Level 2",skin);
         level3Button = new TextButton("Level 3",skin);
 
-        //level2Button.setDisabled(true);
-        //level3Button.setDisabled(true);
 
         level1Button.addListener(new ClickListener(){
             @Override
             public void clicked (InputEvent event, float x, float y){
                 dispose();
                 game.gameScreenManager.setActiveScreen(GameState.LEVEL1);
-                game.gameScreenManager.setScreen(GameState.LEVEL1, new GameScreen(game));
+                game.gameScreenManager.setPlayScreen(GameState.LEVEL1, GameScreen.class);
             }
         });
-
-
 
         table.padTop(30);
         table.add(level1Button).height(200f).width(500f).padBottom(60);
@@ -67,6 +67,8 @@ public class LevelScreen extends AbstractScreen {
         table.add(level3Button).height(200f).width(500f);
 
         stage.addActor(table);
+
+        table.setDebug(true);
 
         Gdx.input.setInputProcessor(stage);
 
