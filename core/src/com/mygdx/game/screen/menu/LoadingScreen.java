@@ -25,7 +25,7 @@ public class LoadingScreen extends AbstractScreen {
         progress = MathUtils.lerp(progress, game.assets.manager.getProgress(), .1f);
         if(game.assets.manager.update() && progress <= game.assets.manager.getProgress() - .001f) {
             game.gameScreenManager.setActiveScreen(GameState.MENU);
-            game.gameScreenManager.setStageScreen(GameState.MENU, MainMenuScreen.class);
+            game.gameScreenManager.setScreen(GameState.MENU, MainMenuScreen.class);
         }
     }
 

@@ -55,7 +55,7 @@ public class LevelScreen extends AbstractScreen {
             public void clicked (InputEvent event, float x, float y){
                 dispose();
                 game.gameScreenManager.setActiveScreen(GameState.LEVEL1);
-                game.gameScreenManager.setPlayScreen(GameState.LEVEL1, GameScreen.class);
+                game.gameScreenManager.setScreen(GameState.LEVEL1, GameScreen.class);
             }
         });
 
@@ -69,8 +69,6 @@ public class LevelScreen extends AbstractScreen {
         stage.addActor(table);
 
         table.setDebug(true);
-
-        Gdx.input.setInputProcessor(stage);
 
     }
 
@@ -89,7 +87,7 @@ public class LevelScreen extends AbstractScreen {
 
     @Override
     public void show() {
-
+        Gdx.input.setInputProcessor(stage);
     }
 
     @Override

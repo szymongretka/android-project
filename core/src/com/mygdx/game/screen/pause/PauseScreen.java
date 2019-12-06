@@ -30,7 +30,6 @@ public class PauseScreen extends AbstractScreen {
             loadAssets();
         }
         stage = new Stage(new ScreenViewport());
-        Gdx.input.setInputProcessor(stage);
         table = new Table();
         table.setWidth(stage.getWidth());
         table.align(Align.center|Align.top);
@@ -44,7 +43,7 @@ public class PauseScreen extends AbstractScreen {
             @Override
             public void clicked (InputEvent event, float x, float y){
                 game.gameScreenManager.setActiveScreen(GameState.LEVEL1); //TODO //////////////////
-                game.gameScreenManager.setPlayScreen(GameState.LEVEL1, GameScreen.class);
+                game.gameScreenManager.setScreen(GameState.LEVEL1, GameScreen.class);
             }
         });
 
@@ -53,7 +52,7 @@ public class PauseScreen extends AbstractScreen {
             public void clicked (InputEvent event, float x, float y){
                 dispose();
                 game.gameScreenManager.setActiveScreen(GameState.MENU);
-                game.gameScreenManager.setStageScreen(GameState.MENU, MainMenuScreen.class);
+                game.gameScreenManager.setScreen(GameState.MENU, MainMenuScreen.class);
             }
         });
 
@@ -87,7 +86,7 @@ public class PauseScreen extends AbstractScreen {
 
     @Override
     public void show() {
-
+        Gdx.input.setInputProcessor(stage);
     }
 
     @Override

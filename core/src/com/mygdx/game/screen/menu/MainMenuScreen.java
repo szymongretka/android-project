@@ -53,7 +53,7 @@ public class MainMenuScreen extends AbstractScreen {
             @Override
             public void clicked (InputEvent event, float x, float y){
                 dispose();
-                game.gameScreenManager.setStageScreen(GameState.LEVELSCREEN, LevelScreen.class);
+                game.gameScreenManager.setScreen(GameState.LEVELSCREEN, LevelScreen.class);
             }
         });
 
@@ -93,7 +93,7 @@ public class MainMenuScreen extends AbstractScreen {
 
     @Override
     public void show() {
-
+        Gdx.input.setInputProcessor(stage);
     }
 
     @Override

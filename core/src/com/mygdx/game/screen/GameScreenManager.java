@@ -20,7 +20,7 @@ public class GameScreenManager<T extends AbstractScreen> {
     public GameScreenManager(final MyGdxGame game) {
         this.game = game;
         initScreens();
-        setStageScreen(GameState.LOADINGSCREEN, (Class<T>) LoadingScreen.class);
+        setScreen(GameState.LOADINGSCREEN, (Class<T>) LoadingScreen.class);
     }
 
     private void initScreens() {
@@ -28,16 +28,7 @@ public class GameScreenManager<T extends AbstractScreen> {
         gameScreens.put(GameState.LOADINGSCREEN, new LoadingScreen(game));
     }
 
-    public void setStageScreen(GameState gameStateScreen, Class<T> clazz) {
-        try {
-            gameScreens.put(gameStateScreen, clazz.getConstructor(game.getClass()).newInstance(game));
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            e.printStackTrace();
-        }
-        game.setScreen(gameScreens.get(gameStateScreen));
-    }
-
-    public void setPlayScreen(GameState gameStateScreen, Class<T> clazz) {
+    public void setScreen(GameState gameStateScreen, Class<T> clazz) {
         try {
             gameScreens.putIfAbsent(gameStateScreen, clazz.getConstructor(game.getClass()).newInstance(game));
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
@@ -45,6 +36,7 @@ public class GameScreenManager<T extends AbstractScreen> {
         }
         game.setScreen(gameScreens.get(gameStateScreen));
     }
+
 
 
     public void dispose() {

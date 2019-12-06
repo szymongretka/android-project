@@ -196,7 +196,7 @@ public class GameScreen extends AbstractScreen {
     @Override
     public void pause() {
         game.gameScreenManager.setActiveScreen(GameState.PAUSE);
-        game.gameScreenManager.setStageScreen(GameState.PAUSE, PauseScreen.class);
+        game.gameScreenManager.setScreen(GameState.PAUSE, PauseScreen.class);
 
     }
 
