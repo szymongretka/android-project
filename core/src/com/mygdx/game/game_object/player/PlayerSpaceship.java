@@ -1,5 +1,9 @@
 package com.mygdx.game.game_object.player;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.game.game_object.Box2DObject;
@@ -13,9 +17,8 @@ public class PlayerSpaceship extends Box2DObject {
 
     private float width = 32;
     private float height = 32;
-    private float velX = 0;
-    private float velY = 18000;
-
+    private float speed = 500;
+    private Vector2 direction = new Vector2();
 
     public PlayerSpaceship(World world) {
         super(world, 32, 32, 32, 32, 0, 0, 10, 0,
@@ -24,9 +27,14 @@ public class PlayerSpaceship extends Box2DObject {
 
     @Override
     public void update(float deltaTime) {
-        //this.body.setLinearVelocity(0, velY * deltaTime * 4);
+        //this.body.setLinearVelocity(100, 100);
     }
 
-
+    public void move(float x, float y) {
+        direction.set(x, y);
+        direction.sub(this.getBody().getPosition());
+        direction.nor();
+        this.getBody().setLinearVelocity(direction.scl(speed));
+    }
 
 }

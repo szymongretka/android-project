@@ -119,6 +119,7 @@ public class GameScreen extends AbstractScreen {
         }
 
         playerSpaceship = new PlayerSpaceship(world);
+        playerSpaceship.init(32, 32);
 
         flameEffect.getEmitters().first();
         flameEffect.start();
@@ -149,6 +150,7 @@ public class GameScreen extends AbstractScreen {
 
         game.batch.draw(spaceshipImage, playerSpaceship.getBody().getPosition().x - playerSpaceship.getWidth(),
                 playerSpaceship.getBody().getPosition().y - playerSpaceship.getHeight());
+        playerSpaceship.update(delta);
 
         updateAndDrawBullets(delta);
         updateAndDrawEnemies(delta);
@@ -156,11 +158,11 @@ public class GameScreen extends AbstractScreen {
 
         game.batch.end();
 
-        if (Gdx.input.isTouched()) {
+
+        if(Gdx.input.isTouched()) {
             touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
             camera.unproject(touchPos);
-            playerSpaceship.getBody().setTransform(touchPos.x - 32 / 2, touchPos.y - 32 / 2, 0);
-
+            playerSpaceship.move(touchPos.x, touchPos.y);
         }
 
         if (TimeUtils.nanoTime() - lastBulletTime > 800000000) {
@@ -300,7 +302,6 @@ public class GameScreen extends AbstractScreen {
         pauseButton.addListener(new ChangeListener(){
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                System.out.println("elo");
                 pause();
             }
         });
