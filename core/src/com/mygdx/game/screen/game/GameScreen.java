@@ -14,12 +14,10 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
@@ -33,14 +31,11 @@ import com.mygdx.game.game_object.bullet.Bullet;
 import com.mygdx.game.game_object.enemy.Enemy;
 import com.mygdx.game.game_object.player.PlayerSpaceship;
 import com.mygdx.game.game_object.bullet.basic_bullet.BasicBullet;
-import com.mygdx.game.game_object.enemy.basic_enemy.BasicEnemy;
 import com.mygdx.game.game_object.pool.GenericPool;
 import com.mygdx.game.handler.CollisionManager;
 import com.mygdx.game.screen.AbstractScreen;
 import com.mygdx.game.handler.spawn.SpawningSystem;
 import com.mygdx.game.screen.pause.PauseScreen;
-
-import java.lang.reflect.InvocationTargetException;
 
 public class GameScreen extends AbstractScreen {
 
@@ -129,11 +124,19 @@ public class GameScreen extends AbstractScreen {
 
         logger = new FPSLogger();
 
+
     }
 
     @Override
     public void update(float delta) {
         totalGameTime += delta;
+        if(Gdx.input.isTouched()) {
+            touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
+            camera.unproject(touchPos);
+            playerSpaceship.move(touchPos.x, touchPos.y);
+        } else {
+            playerSpaceship.stop();
+        }
     }
 
     @Override
@@ -157,13 +160,6 @@ public class GameScreen extends AbstractScreen {
         updateAndDrawEffects(delta);
 
         game.batch.end();
-
-
-        if(Gdx.input.isTouched()) {
-            touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
-            camera.unproject(touchPos);
-            playerSpaceship.move(touchPos.x, touchPos.y);
-        }
 
         if (TimeUtils.nanoTime() - lastBulletTime > 800000000) {
             spawnBasicBullets();
