@@ -36,5 +36,8 @@ public class PlayerSpaceship extends Box2DObject {
         direction.nor();
         this.getBody().setLinearVelocity(direction.scl(speed));
     }
+    public void stop() {
+        this.getBody().setLinearVelocity(0, 0);
+    }
 
 }
