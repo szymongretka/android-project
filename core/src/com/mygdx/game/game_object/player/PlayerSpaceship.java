@@ -1,15 +1,14 @@
 package com.mygdx.game.game_object.player;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.game.game_object.Box2DObject;
 
 import static com.mygdx.game.util.Constants.BIT_ENEMY;
 import static com.mygdx.game.util.Constants.BIT_PLAYER;
+import static com.mygdx.game.util.Constants.PLAYER_HEIGHT;
+import static com.mygdx.game.util.Constants.PLAYER_WIDTH;
 
 
 public class PlayerSpaceship extends Box2DObject {
@@ -21,7 +20,7 @@ public class PlayerSpaceship extends Box2DObject {
     private Vector2 direction = new Vector2();
 
     public PlayerSpaceship(World world) {
-        super(world, 32, 32, 32, 32, 0, 0, 10, 0,
+        super(world, 32, 32, PLAYER_WIDTH, PLAYER_HEIGHT, 0, 0, 10, 0,
                 BodyDef.BodyType.DynamicBody, BIT_PLAYER, BIT_ENEMY, (short) 0, false);
     }
 
