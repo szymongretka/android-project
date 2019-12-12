@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.ParticleEffectPool.PooledEffect;
 import com.badlogic.gdx.graphics.g2d.ParticleEffectPool;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
@@ -37,10 +38,18 @@ import com.mygdx.game.screen.AbstractScreen;
 import com.mygdx.game.handler.spawn.SpawningSystem;
 import com.mygdx.game.screen.pause.PauseScreen;
 
+import static com.mygdx.game.util.Constants.BASICBULLETHEIGHT;
+import static com.mygdx.game.util.Constants.BASICBULLETWIDTH;
+import static com.mygdx.game.util.Constants.BASICENEMYHEIGHT;
+import static com.mygdx.game.util.Constants.BASICENEMYWIDTH;
+import static com.mygdx.game.util.Constants.PLAYER_HEIGHT;
+import static com.mygdx.game.util.Constants.PLAYER_WIDTH;
+import static com.mygdx.game.util.Constants.PPM;
+
 public class GameScreen extends AbstractScreen {
 
-    public static final int HEIGHT = 800; //Gdx.graphics.getHeight();
-    public static final int WIDTH = 480; //Gdx.graphics.getWidth();
+    public static final int HEIGHT = Gdx.graphics.getHeight();
+    public static final int WIDTH = Gdx.graphics.getWidth();
     public static float totalGameTime = 0;
 
     private OrthographicCamera camera;
@@ -114,13 +123,14 @@ public class GameScreen extends AbstractScreen {
         }
 
         playerSpaceship = new PlayerSpaceship(world);
-        playerSpaceship.init(32, 32);
+        playerSpaceship.init(0, 0);
+
 
         flameEffect.getEmitters().first();
         flameEffect.start();
 
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, WIDTH, HEIGHT);
+        camera.setToOrtho(false, WIDTH / PPM, HEIGHT / PPM);
 
         logger = new FPSLogger();
 
@@ -130,10 +140,16 @@ public class GameScreen extends AbstractScreen {
     @Override
     public void update(float delta) {
         totalGameTime += delta;
-        if(Gdx.input.isTouched()) {
+        if(Gdx.input.isTouched()) { //TODO TO REFACTOR
             touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
-            camera.unproject(touchPos);
-            playerSpaceship.move(touchPos.x, touchPos.y);
+            float revertHeight = HEIGHT - touchPos.y;
+            if(Math.abs(touchPos.x - (playerSpaceship.getBody().getPosition().x * PPM)) > 8
+                    || Math.abs(revertHeight - (playerSpaceship.getBody().getPosition().y * PPM)) > 12 ) {
+                camera.unproject(touchPos);
+                playerSpaceship.move(touchPos.x, touchPos.y);
+            } else {
+                playerSpaceship.stop();
+            }
         } else {
             playerSpaceship.stop();
         }
@@ -148,11 +164,11 @@ public class GameScreen extends AbstractScreen {
         logger.log();
 
         game.batch.begin();
-        game.font.draw(game.batch, "Bullets shot: " + bulletsShot, 0, 800);
-        game.font.draw(game.batch, "Game Time: " + totalGameTime, 0, 780);
+        //game.font.draw(game.batch, "Bullets shot: " + bulletsShot, 0, HEIGHT/PPM);
+        //game.font.draw(game.batch, "Game Time: " + totalGameTime, 0, HEIGHT/PPM);
 
-        game.batch.draw(spaceshipImage, playerSpaceship.getBody().getPosition().x - playerSpaceship.getWidth(),
-                playerSpaceship.getBody().getPosition().y - playerSpaceship.getHeight());
+        game.batch.draw(spaceshipImage, playerSpaceship.getBody().getPosition().x - PLAYER_WIDTH/2,
+                playerSpaceship.getBody().getPosition().y - PLAYER_HEIGHT/2, PLAYER_WIDTH, PLAYER_HEIGHT);
         playerSpaceship.update(delta);
 
         updateAndDrawBullets(delta);
@@ -206,7 +222,7 @@ public class GameScreen extends AbstractScreen {
 
     @Override
     public void dispose() {
-        spaceshipImage.dispose();
+       // spaceshipImage.dispose();
         bulletImage.dispose();
         shootSound.dispose();
         //rainMusic.dispose();
@@ -229,12 +245,13 @@ public class GameScreen extends AbstractScreen {
          * {@link #free(Object) freed}). */
         // get a bullet from our pool
         BasicBullet basicBullet = (BasicBullet) bulletBox2DPool.obtain();
-        basicBullet.init(playerSpaceship.getX(), (playerSpaceship.getY() + 60));
+        basicBullet.init(playerSpaceship.getX(), playerSpaceship.getY() + PLAYER_HEIGHT);
         // add to our array of bullets so we can access them in our render method
         activeBullet2D.add(basicBullet);
         //System.out.println(bulletBox2DPool.getFree());
         lastBulletTime = TimeUtils.nanoTime();
     }
+
 
     private void spawnEffects(float x, float y) {
         PooledEffect effect = effectPool.obtain();
@@ -248,9 +265,9 @@ public class GameScreen extends AbstractScreen {
             bullet.update(delta);
 
             game.batch.draw(bulletImage, bullet.getBody().getPosition().x - bullet.getWidth(),
-                    bullet.getBody().getPosition().y - bullet.getHeight());
+                    bullet.getBody().getPosition().y - bullet.getHeight(), BASICBULLETWIDTH, BASICBULLETHEIGHT);
 
-            if (bullet.getBody().getPosition().y > HEIGHT - 60 || !bullet.getBody().isActive() || bullet.isToDestroy()) {
+            if (bullet.getBody().getPosition().y > HEIGHT - BASICBULLETHEIGHT || !bullet.getBody().isActive() || bullet.isToDestroy()) {
                 bulletBox2DPool.free(bullet); // reset and place back in pool
                 activeBullet2D.removeValue(bullet, true); // remove bullet from our array so we don't render it anymore
             }
@@ -261,8 +278,8 @@ public class GameScreen extends AbstractScreen {
     private void updateAndDrawEnemies(float delta) {
         for (Enemy enemy : activeEnemies) {
             enemy.update(delta);
-            game.batch.draw(spaceshipImage, enemy.getBody().getPosition().x - enemy.getWidth(),
-                    enemy.getBody().getPosition().y - enemy.getHeight());
+            game.batch.draw(spaceshipImage, enemy.getBody().getPosition().x - enemy.getWidth()/2,
+                    enemy.getBody().getPosition().y - enemy.getHeight()/2, BASICENEMYWIDTH, BASICENEMYHEIGHT);
 
             if (!enemy.getBody().isActive()) {
                 spawnEffects(enemy.getOnDestroyCoordX(), enemy.getOnDestroyCoordY());

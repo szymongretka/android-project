@@ -7,6 +7,8 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Pool;
 
+import static com.mygdx.game.util.Constants.PPM;
+
 public abstract class Box2DObject implements Pool.Poolable {
 
 
@@ -44,7 +46,7 @@ public abstract class Box2DObject implements Pool.Poolable {
         body = world.createBody(bodyDef);
 
         PolygonShape polygonShape = new PolygonShape();
-        polygonShape.setAsBox(width, height);
+        polygonShape.setAsBox(width / 2, height / 2);
 
         FixtureDef def = new FixtureDef();
         def.shape = polygonShape;
@@ -52,7 +54,7 @@ public abstract class Box2DObject implements Pool.Poolable {
         if(isBullet)
             def.density = 0.0f;
         else
-            def.density = 1.0f;
+            def.density = 8.0f;
 
         def.filter.categoryBits = categoryBits; //Is a
         def.filter.maskBits = maskBits; //Collides with

@@ -69,7 +69,7 @@ public class SpawningSystem implements Runnable{
             Thread.sleep(1000);
             for (int i = 0; i < wave1; i++) {
                 basicEnemy = (BasicEnemy) enemyPool.obtain();
-                basicEnemy.init(random.nextInt(Constants.WIDTH), Constants.HEIGHT + 32);
+                basicEnemy.init(random.nextInt(Constants.WIDTH / Constants.PPM), Constants.HEIGHT/Constants.PPM + 6);
                 activeEnemies.add(basicEnemy);
             }
         } catch (InterruptedException e) {
