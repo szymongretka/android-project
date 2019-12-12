@@ -140,9 +140,11 @@ public class GameScreen extends AbstractScreen {
     @Override
     public void update(float delta) {
         totalGameTime += delta;
-        if(Gdx.input.isTouched()) {
+        if(Gdx.input.isTouched()) { //TODO TO REFACTOR
             touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
-            if(Math.abs(touchPos.x - (playerSpaceship.getBody().getPosition().x * PPM)) > 8) {
+            float revertHeight = HEIGHT - touchPos.y;
+            if(Math.abs(touchPos.x - (playerSpaceship.getBody().getPosition().x * PPM)) > 8
+                    || Math.abs(revertHeight - (playerSpaceship.getBody().getPosition().y * PPM)) > 12 ) {
                 camera.unproject(touchPos);
                 playerSpaceship.move(touchPos.x, touchPos.y);
             } else {
