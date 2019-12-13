@@ -58,7 +58,7 @@ public class SpawningSystem implements Runnable{
 
     private void firstLevel(Pool enemyPool, Array<BasicEnemy> activeEnemies) {
 
-        wave1 = 3;
+        wave1 = 10;
         wave2 = 20;
         wave3 = 30;
 

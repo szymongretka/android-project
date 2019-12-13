@@ -20,7 +20,7 @@ public class PlayerSpaceship extends Box2DObject {
     private Vector2 direction = new Vector2();
 
     public PlayerSpaceship(World world) {
-        super(world, 32, 32, PLAYER_WIDTH, PLAYER_HEIGHT, 0, 0, 10, 0,
+        super(world, 32, 32, PLAYER_WIDTH, PLAYER_HEIGHT, 0, 0,
                 BodyDef.BodyType.DynamicBody, BIT_PLAYER, BIT_ENEMY, (short) 0, false);
     }
 

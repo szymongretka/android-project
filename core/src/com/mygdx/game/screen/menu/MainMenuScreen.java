@@ -34,9 +34,6 @@ public class MainMenuScreen extends AbstractScreen {
             loadAssets();
         }
 
-        //camera = new OrthographicCamera();
-        //camera.setToOrtho(false, 480, 800);
-
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
         table = new Table();

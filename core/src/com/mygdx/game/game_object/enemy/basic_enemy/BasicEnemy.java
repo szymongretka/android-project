@@ -4,8 +4,8 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.game.game_object.enemy.Enemy;
 import com.mygdx.game.util.Constants;
 
-import static com.mygdx.game.util.Constants.BASICENEMYWIDTH;
-import static com.mygdx.game.util.Constants.BASICENEMYHEIGHT;
+import static com.mygdx.game.util.Constants.BASIC_ENEMY_WIDTH;
+import static com.mygdx.game.util.Constants.BASIC_ENEMY_HEIGHT;
 
 
 public class BasicEnemy extends Enemy {
@@ -18,7 +18,7 @@ public class BasicEnemy extends Enemy {
 
 
     public BasicEnemy(World world) {
-        super(world, 0, 0, BASICENEMYWIDTH, BASICENEMYHEIGHT, 2500, 2500, 3, 1);
+        super(world, 0, 0, BASIC_ENEMY_WIDTH, BASIC_ENEMY_HEIGHT, 3, 1);
     }
 
     @Override

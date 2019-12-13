@@ -9,7 +9,6 @@ import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.ParticleEffectPool.PooledEffect;
 import com.badlogic.gdx.graphics.g2d.ParticleEffectPool;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
@@ -30,30 +29,39 @@ import com.mygdx.game.MyGdxGame;
 import com.mygdx.game.enums.GameState;
 import com.mygdx.game.game_object.bullet.Bullet;
 import com.mygdx.game.game_object.enemy.Enemy;
+import com.mygdx.game.game_object.item.Item;
+import com.mygdx.game.game_object.item.bonus.RevertMovement;
+import com.mygdx.game.game_object.item.coin.Coin;
+import com.mygdx.game.game_object.item.shield.BasicShield;
 import com.mygdx.game.game_object.player.PlayerSpaceship;
 import com.mygdx.game.game_object.bullet.basic_bullet.BasicBullet;
 import com.mygdx.game.game_object.pool.GenericPool;
 import com.mygdx.game.handler.CollisionManager;
+import com.mygdx.game.handler.spawn.RandomItemSpawnSystem;
 import com.mygdx.game.screen.AbstractScreen;
 import com.mygdx.game.handler.spawn.SpawningSystem;
 import com.mygdx.game.screen.pause.PauseScreen;
 
+import java.lang.reflect.InvocationTargetException;
+
 import static com.mygdx.game.util.Constants.BASICBULLETHEIGHT;
 import static com.mygdx.game.util.Constants.BASICBULLETWIDTH;
-import static com.mygdx.game.util.Constants.BASICENEMYHEIGHT;
-import static com.mygdx.game.util.Constants.BASICENEMYWIDTH;
+import static com.mygdx.game.util.Constants.BASIC_ENEMY_HEIGHT;
+import static com.mygdx.game.util.Constants.BASIC_ENEMY_WIDTH;
+import static com.mygdx.game.util.Constants.COIN_HEIGHT;
+import static com.mygdx.game.util.Constants.COIN_WIDTH;
 import static com.mygdx.game.util.Constants.PLAYER_HEIGHT;
 import static com.mygdx.game.util.Constants.PLAYER_WIDTH;
 import static com.mygdx.game.util.Constants.PPM;
+import static com.mygdx.game.util.Constants.WIDTH;
+import static com.mygdx.game.util.Constants.HEIGHT;
 
 public class GameScreen extends AbstractScreen {
 
-    public static final int HEIGHT = Gdx.graphics.getHeight();
-    public static final int WIDTH = Gdx.graphics.getWidth();
-    public static float totalGameTime = 0;
-
     private OrthographicCamera camera;
     private Box2DDebugRenderer box2DDebugRenderer;
+
+    private Vector3 touchPos = new Vector3();
     private World world;
     private Stage stage;
     private Table table;
@@ -62,12 +70,14 @@ public class GameScreen extends AbstractScreen {
     private Texture spaceshipImage;
     private Texture bulletImage;
     private Texture pauseTexture;
+    private Texture coinImage;
 
     private ImageButton pauseButton;
 
     //effects
     private ParticleEffect flameEffect;
 
+    //Sound
     private Sound shootSound;
     //private Music rainMusic;
 
@@ -81,14 +91,18 @@ public class GameScreen extends AbstractScreen {
     private final Array<Enemy> activeEnemies = new Array<>();
     private final Array<Bullet> activeBullet2D = new Array<>();
     private Array<PooledEffect> activeEffects = new Array<>();
+    private Array<Item> items = new Array<>();
 
+    private RandomItemSpawnSystem itemChanceList = new RandomItemSpawnSystem<>();
 
-    private Vector3 touchPos = new Vector3();
     private long lastBulletTime;
     private int bulletsShot = 0;
 
     private PlayerSpaceship playerSpaceship;
+
     private FPSLogger logger;
+    public static float totalGameTime = 0;
+
 
 
     public GameScreen(final MyGdxGame game) {
@@ -134,6 +148,13 @@ public class GameScreen extends AbstractScreen {
 
         logger = new FPSLogger();
 
+        itemChanceList.addEntry(Coin.class, 50f);
+        itemChanceList.addEntry(RevertMovement.class, 50f);
+        //itemChanceList.addEntry(RevertMovement.class, 30f);
+        //itemChanceList.addEntry(BasicShield.class, 10f);
+
+
+
 
     }
 
@@ -175,9 +196,11 @@ public class GameScreen extends AbstractScreen {
         updateAndDrawEnemies(delta);
         updateAndDrawEffects(delta);
 
+        updateAndDrawItems(delta);
+
         game.batch.end();
 
-        if (TimeUtils.nanoTime() - lastBulletTime > 800000000) {
+        if (TimeUtils.nanoTime() - lastBulletTime > 400000000) {
             spawnBasicBullets();
             bulletsShot++;
             shootSound.play();
@@ -237,6 +260,7 @@ public class GameScreen extends AbstractScreen {
         shootSound = game.assets.manager.get("sfx-laser.wav", Sound.class);
         flameEffect = game.assets.manager.get("effects/Particle.flame", ParticleEffect.class);
         pauseTexture = game.assets.manager.get("menu/pause.png", Texture.class);
+        coinImage = game.assets.manager.get("coin.png", Texture.class);
     }
 
 
@@ -275,13 +299,26 @@ public class GameScreen extends AbstractScreen {
         }
     }
 
+    private void updateAndDrawItems(float delta) {
+        for (Item item : items) {
+            item.update(delta);
+            game.batch.draw(coinImage, item.getBody().getPosition().x - item.getWidth()/2,
+                    item.getBody().getPosition().y - item.getHeight()/2, COIN_WIDTH, COIN_HEIGHT);
+        }
+    }
+
     private void updateAndDrawEnemies(float delta) {
         for (Enemy enemy : activeEnemies) {
             enemy.update(delta);
             game.batch.draw(spaceshipImage, enemy.getBody().getPosition().x - enemy.getWidth()/2,
-                    enemy.getBody().getPosition().y - enemy.getHeight()/2, BASICENEMYWIDTH, BASICENEMYHEIGHT);
+                    enemy.getBody().getPosition().y - enemy.getHeight()/2, BASIC_ENEMY_WIDTH, BASIC_ENEMY_HEIGHT);
 
             if (!enemy.getBody().isActive()) {
+                Item item = (Item) itemChanceList.getRandomItem(world);
+                if(item != null) {
+                    item.init(enemy.getOnDestroyCoordX(), enemy.getOnDestroyCoordY());
+                    items.add(item);
+                }
                 spawnEffects(enemy.getOnDestroyCoordX(), enemy.getOnDestroyCoordY());
                 enemyPool.free(enemy); // place back in pool
                 activeEnemies.removeValue(enemy, true); // remove bullet from our array so we don't render it anymore
@@ -291,6 +328,7 @@ public class GameScreen extends AbstractScreen {
 
     private void updateAndDrawEffects(float delta) {
         for(PooledEffect effect : activeEffects) {
+            effect.scaleEffect(0.2f);
             effect.update(delta);
             effect.draw(game.batch);
             if(effect.isComplete()) {

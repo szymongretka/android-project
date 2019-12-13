@@ -16,7 +16,7 @@ public class BasicBullet extends Bullet {
 
 
     public BasicBullet(World world) {
-        super(world, 0, 0, BASICBULLETWIDTH, BASICBULLETHEIGHT, 200000, 0, 1, 1);
+        super(world, 0, 0, BASICBULLETWIDTH, BASICBULLETHEIGHT, 1, 1);
     }
 
     @Override

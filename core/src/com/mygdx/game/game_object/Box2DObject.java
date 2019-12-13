@@ -17,12 +17,10 @@ public abstract class Box2DObject implements Pool.Poolable {
     protected int hp, damage;
 
     public Box2DObject(World world, float x, float y, float width, float height,
-                       float velY, float velX, int hp, int damage, BodyDef.BodyType bodyType,
+                       int hp, int damage, BodyDef.BodyType bodyType,
                        short categoryBits, short maskBits, short gIndex, boolean isBullet) {
         this.width = width;
         this.height = height;
-        this.velY = velY;
-        this.velX = velX;
         this.hp = hp;
         this.damage = damage;
         this.body = this.createBox(world, x, y, this.width, this.height, bodyType, categoryBits,
@@ -77,7 +75,7 @@ public abstract class Box2DObject implements Pool.Poolable {
     @Override
     public void reset() {
         this.body.setActive(false);
-        this.body.setTransform(32, 32, 0);
+        this.body.setTransform(0, 0, 0);
         this.body.setLinearVelocity(0, 0);
     }
 

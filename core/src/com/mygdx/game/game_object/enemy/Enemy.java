@@ -13,8 +13,8 @@ public abstract class Enemy extends Box2DObject {
     protected float onDestroyCoordX;
     protected float onDestroyCoordY;
 
-    public Enemy(World world, float x, float y, float width, float height, float velY, float velX, int hp, int damage) {
-        super(world, x, y, width, height, velY, velX, hp, damage, BodyDef.BodyType.DynamicBody,
+    public Enemy(World world, float x, float y, float width, float height, int hp, int damage) {
+        super(world, x, y, width, height, hp, damage, BodyDef.BodyType.DynamicBody,
                 BIT_ENEMY, (short) (BIT_BULLET | BIT_PLAYER), (short) 0, false);
     }
 
