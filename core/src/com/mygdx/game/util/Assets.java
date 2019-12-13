@@ -15,8 +15,10 @@ public class Assets implements Disposable {
         manager.load("menu/pause.png", Texture.class);
         manager.load("spaceship.png", Texture.class);
         manager.load("droplet.png", Texture.class);
+        manager.load("revert.png", Texture.class);
         manager.load("coin.png", Texture.class);
-        manager.load("sfx-laser.wav", Sound.class);
+        manager.load("music/sfx-laser.wav", Sound.class);
+        manager.load("music/score.wav", Sound.class);
         manager.load("data/uiskin.json", Skin.class);
         manager.load("effects/Particle.flame", ParticleEffect.class);
 

@@ -28,7 +28,7 @@ public class Constants {
     public static final short BIT_PLAYER = 1;
     public static final short BIT_ENEMY = 2;
     public static final short BIT_BULLET = 4;
-    public static final short BIT_OBSTACLE = 8;
-    public static final short BIT_ITEM = 16;
+    public static final short BIT_ITEM = 8;
+    public static final short BIT_OBSTACLE = 16;
 
 }

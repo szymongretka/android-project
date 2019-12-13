@@ -31,12 +31,20 @@ public class CollisionManager implements ContactListener {
             }
         }
 
-        if (isPlayerEnemyContact(fixtureA, fixtureB)) {
-
+        if (isPlayerItemContact(fixtureA, fixtureB)) {
+            if (fixtureA.getUserData() instanceof PlayerSpaceship) {
+                ((PlayerSpaceship) fixtureA.getUserData()).pickItem((Item) fixtureB.getUserData());
+            } else {
+                ((PlayerSpaceship) fixtureB.getUserData()).pickItem((Item) fixtureA.getUserData());
+            }
         }
 
-        if (isPlayerItemContact(fixtureA, fixtureB)) {
+        if (isPlayerEnemyContact(fixtureA, fixtureB)) {
+            if (fixtureA.getUserData() instanceof Enemy) {
 
+            } else {
+
+            }
         }
 
     }
@@ -67,8 +75,8 @@ public class CollisionManager implements ContactListener {
     }
 
     private boolean isPlayerEnemyContact(Fixture a, Fixture b) {
-        if (a.getUserData() instanceof PlayerSpaceship || b.getUserData() instanceof Enemy) {
-            if (a.getUserData() instanceof Enemy || b.getUserData() instanceof PlayerSpaceship) {
+        if (a.getUserData() instanceof PlayerSpaceship || b.getUserData() instanceof PlayerSpaceship) {
+            if (a.getUserData() instanceof Enemy || b.getUserData() instanceof Enemy) {
                 return true;
             }
         }
@@ -76,8 +84,8 @@ public class CollisionManager implements ContactListener {
     }
 
     private boolean isPlayerItemContact(Fixture a, Fixture b) {
-        if (a.getUserData() instanceof PlayerSpaceship || b.getUserData() instanceof Item) {
-            if (a.getUserData() instanceof Item || b.getUserData() instanceof PlayerSpaceship) {
+        if (a.getUserData() instanceof PlayerSpaceship || b.getUserData() instanceof PlayerSpaceship) {
+            if (a.getUserData() instanceof Item || b.getUserData() instanceof Item) {
                 return true;
             }
         }

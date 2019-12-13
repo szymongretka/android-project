@@ -1,5 +1,6 @@
 package com.mygdx.game.game_object.item.shield;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.game.game_object.item.Item;
 
@@ -17,4 +18,5 @@ public class BasicShield extends Item {
     public void update(float deltaTime) {
 
     }
+
 }
