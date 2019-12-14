@@ -1,6 +1,7 @@
 package com.mygdx.game.screen.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -78,7 +79,7 @@ public class GameScreen extends AbstractScreen {
     //Sound
     private Sound shootSound;
     private Sound scoreSound;
-    //private Music rainMusic;
+    private Music level1Music;
 
     //Pools
     private final GenericPool genericPool;
@@ -146,8 +147,8 @@ public class GameScreen extends AbstractScreen {
 
         logger = new FPSLogger();
 
-        itemChanceList.addEntry(Coin.class, 90f);
-        itemChanceList.addEntry(RevertMovement.class, 10f);
+        itemChanceList.addEntry(Coin.class, 60f);
+        itemChanceList.addEntry(RevertMovement.class, 40f);
         //itemChanceList.addEntry(RevertMovement.class, 30f);
         //itemChanceList.addEntry(BasicShield.class, 10f);
 
@@ -212,9 +213,7 @@ public class GameScreen extends AbstractScreen {
 
     @Override
     public void show() {
-        // start the playback of the background music
-        // when the screen is shown
-        //rainMusic.play();
+        level1Music.play();
         Gdx.input.setInputProcessor(stage);
     }
 
@@ -226,7 +225,7 @@ public class GameScreen extends AbstractScreen {
     public void pause() {
         game.gameScreenManager.setActiveScreen(GameState.PAUSE);
         game.gameScreenManager.setScreen(GameState.PAUSE, PauseScreen.class);
-
+        level1Music.pause();
     }
 
     @Override
@@ -237,10 +236,12 @@ public class GameScreen extends AbstractScreen {
 
     @Override
     public void dispose() {
-        // spaceshipImage.dispose();
+        spaceshipImage.dispose();
+        coinImage.dispose();
+        revertImage.dispose();
         bulletImage.dispose();
         shootSound.dispose();
-        //rainMusic.dispose();
+        level1Music.dispose();
         box2DDebugRenderer.dispose();
         world.dispose();
         flameEffect.dispose();
@@ -251,6 +252,7 @@ public class GameScreen extends AbstractScreen {
         bulletImage = game.assets.manager.get("droplet.png", Texture.class);
         shootSound = game.assets.manager.get("music/sfx-laser.wav", Sound.class);
         scoreSound = game.assets.manager.get("music/score.wav", Sound.class);
+        level1Music = game.assets.manager.get("music/level1Music.wav", Music.class);
         flameEffect = game.assets.manager.get("effects/Particle.flame", ParticleEffect.class);
         pauseTexture = game.assets.manager.get("menu/pause.png", Texture.class);
         coinImage = game.assets.manager.get("coin.png", Texture.class);

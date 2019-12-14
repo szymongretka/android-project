@@ -42,9 +42,11 @@ public class PlayerSpaceship extends Box2DObject {
         this.getBody().setLinearVelocity(0, 0);
     }
 
-    public void pickItem(Item item) {
-        GameScreen.POINTS++;
-        item.setToDestroy(true);
+    public float getSpeed() {
+        return speed;
     }
 
+    public void setSpeed(float speed) {
+        this.speed = speed;
+    }
 }

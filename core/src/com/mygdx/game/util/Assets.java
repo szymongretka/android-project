@@ -1,6 +1,7 @@
 package com.mygdx.game.util;
 
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
@@ -19,6 +20,7 @@ public class Assets implements Disposable {
         manager.load("coin.png", Texture.class);
         manager.load("music/sfx-laser.wav", Sound.class);
         manager.load("music/score.wav", Sound.class);
+        manager.load("music/level1Music.wav", Music.class);
         manager.load("data/uiskin.json", Skin.class);
         manager.load("effects/Particle.flame", ParticleEffect.class);
 
