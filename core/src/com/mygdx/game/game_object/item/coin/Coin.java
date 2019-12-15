@@ -13,7 +13,7 @@ public class Coin extends Item {
     private float velY = 500;
 
     public Coin(World world) {
-        super(world, 0, 0, COIN_WIDTH, COIN_HEIGHT);
+        super(world, 0, 0, COIN_WIDTH, COIN_HEIGHT, 0, 0);
         this.texture = GameScreen.coinImage;
     }
 

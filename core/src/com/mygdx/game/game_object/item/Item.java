@@ -14,8 +14,8 @@ public abstract class Item extends Box2DObject {
     protected Texture texture;
     protected boolean toDestroy;
 
-    public Item(World world, float x, float y, float width, float height) {
-        super(world, x, y, width, height, 0, 0, BodyDef.BodyType.DynamicBody,
+    public Item(World world, float x, float y, float width, float height, int hp, int damage) {
+        super(world, x, y, width, height, hp, damage, BodyDef.BodyType.DynamicBody,
                 BIT_ITEM, BIT_PLAYER, (short) 0, false);
     }
 

@@ -24,6 +24,9 @@ public class Constants {
     public static final int ITEM_WIDTH = 4;
     public static final int ITEM_HEIGHT = 5;
 
+    public static final int BASIC_SHIELD_WIDTH = 10;
+    public static final int BASIC_SHIELD_HEIGHT = 10;
+
     //mask & category bits
     public static final short BIT_PLAYER = 1;
     public static final short BIT_ENEMY = 2;

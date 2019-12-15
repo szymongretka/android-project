@@ -32,6 +32,7 @@ import com.mygdx.game.game_object.bullet.Bullet;
 import com.mygdx.game.game_object.bullet.basic_bullet.BasicBullet;
 import com.mygdx.game.game_object.enemy.Enemy;
 import com.mygdx.game.game_object.item.Item;
+import com.mygdx.game.game_object.item.bonus.BasicShield;
 import com.mygdx.game.game_object.item.bonus.RevertMovement;
 import com.mygdx.game.game_object.item.coin.Coin;
 import com.mygdx.game.game_object.player.PlayerSpaceship;
@@ -70,6 +71,7 @@ public class GameScreen extends AbstractScreen {
     private Texture pauseTexture;
     public static Texture coinImage;
     public static Texture revertImage;
+    public static Texture shieldImage;
 
     private ImageButton pauseButton;
 
@@ -147,10 +149,10 @@ public class GameScreen extends AbstractScreen {
 
         logger = new FPSLogger();
 
-        itemChanceList.addEntry(Coin.class, 60f);
-        itemChanceList.addEntry(RevertMovement.class, 40f);
+        itemChanceList.addEntry(Coin.class, 30f);
+        itemChanceList.addEntry(RevertMovement.class, 10f);
         //itemChanceList.addEntry(RevertMovement.class, 30f);
-        //itemChanceList.addEntry(BasicShield.class, 10f);
+        itemChanceList.addEntry(BasicShield.class, 60f);
 
 
     }
@@ -257,6 +259,7 @@ public class GameScreen extends AbstractScreen {
         pauseTexture = game.assets.manager.get("menu/pause.png", Texture.class);
         coinImage = game.assets.manager.get("coin.png", Texture.class);
         revertImage = game.assets.manager.get("revert.png", Texture.class);
+        shieldImage = game.assets.manager.get("shield.png", Texture.class);
     }
 
     private void spawnBasicBullets() {
