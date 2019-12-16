@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.ParticleEffectPool;
 import com.badlogic.gdx.graphics.g2d.ParticleEffectPool.PooledEffect;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -61,22 +62,27 @@ public class GameScreen extends AbstractScreen {
     private Box2DDebugRenderer box2DDebugRenderer;
 
     private Vector3 touchPos = new Vector3();
-    private World world;
+    public World world;
     private Stage stage;
     private Table table;
 
     //textures
-    private Texture spaceshipImage;
+    public TextureAtlas.AtlasRegion spaceshipAtlasRegion;
+    public static TextureRegion basicEnemyTexture;
     private Texture bulletImage;
     private Texture pauseTexture;
     public static Texture coinImage;
     public static Texture revertImage;
     public static Texture shieldImage;
+    private TextureAtlas textureAtlas;
+    private Texture lvl1background;
+
 
     private ImageButton pauseButton;
 
     //effects
     private ParticleEffect flameEffect;
+    private ParticleEffect engineEffect;
 
     //Sound
     private Sound shootSound;
@@ -98,6 +104,7 @@ public class GameScreen extends AbstractScreen {
     private RandomItemSpawnSystem itemChanceList = new RandomItemSpawnSystem<>();
 
     private long lastBulletTime;
+    private float backgroundY = 0f;
 
     private PlayerSpaceship playerSpaceship;
 
@@ -116,6 +123,7 @@ public class GameScreen extends AbstractScreen {
         box2DDebugRenderer = new Box2DDebugRenderer();
 
         flameEffect = new ParticleEffect();
+        engineEffect = new ParticleEffect();
 
         if (game.assets.manager.isFinished()) {
             loadAssets();
@@ -137,12 +145,15 @@ public class GameScreen extends AbstractScreen {
                 break;
         }
 
-        playerSpaceship = new PlayerSpaceship(world);
+        playerSpaceship = new PlayerSpaceship(this);
         playerSpaceship.init(0, 0);
 
 
         flameEffect.getEmitters().first();
         flameEffect.start();
+        engineEffect.start();
+        engineEffect.flipY();
+        engineEffect.scaleEffect(1f/PPM);
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, WIDTH / PPM, HEIGHT / PPM);
@@ -182,10 +193,13 @@ public class GameScreen extends AbstractScreen {
         game.batch.setProjectionMatrix(camera.combined);
 
         logger.log();
+        backgroundY -= 5 * delta;
 
         game.batch.begin();
 
-        game.batch.draw(spaceshipImage, playerSpaceship.getBody().getPosition().x - PLAYER_WIDTH / 2,
+        game.batch.draw(lvl1background, 0, backgroundY, WIDTH / PPM, HEIGHT / PPM * 6f);
+
+        game.batch.draw(playerSpaceship.getFrame(delta), playerSpaceship.getBody().getPosition().x - PLAYER_WIDTH / 2,
                 playerSpaceship.getBody().getPosition().y - PLAYER_HEIGHT / 2, PLAYER_WIDTH, PLAYER_HEIGHT);
         playerSpaceship.update(delta);
 
@@ -193,6 +207,11 @@ public class GameScreen extends AbstractScreen {
         updateAndDrawEnemies(delta);
         updateAndDrawEffects(delta);
         updateAndDrawItems(delta);
+
+        engineEffect.setPosition(playerSpaceship.getBody().getPosition().x,
+                playerSpaceship.getBody().getPosition().y - (PLAYER_HEIGHT/2));
+        engineEffect.update(delta);
+        engineEffect.draw(game.batch);
 
         game.batch.end();
 
@@ -238,7 +257,6 @@ public class GameScreen extends AbstractScreen {
 
     @Override
     public void dispose() {
-        spaceshipImage.dispose();
         coinImage.dispose();
         revertImage.dispose();
         bulletImage.dispose();
@@ -247,15 +265,21 @@ public class GameScreen extends AbstractScreen {
         box2DDebugRenderer.dispose();
         world.dispose();
         flameEffect.dispose();
+        engineEffect.dispose();
     }
 
     private void loadAssets() {
-        spaceshipImage = game.assets.manager.get("spaceship.png", Texture.class);
+
+        textureAtlas = game.assets.manager.get("packedImages/playerAndEnemies.atlas", TextureAtlas.class);
+        spaceshipAtlasRegion = textureAtlas.findRegion("basicPlayerSpaceship");
+        basicEnemyTexture = new TextureRegion(textureAtlas.findRegion("fraction1/orangeship"));
+        lvl1background = game.assets.manager.get("background/lvl1.jpg", Texture.class);
         bulletImage = game.assets.manager.get("droplet.png", Texture.class);
         shootSound = game.assets.manager.get("music/sfx-laser.wav", Sound.class);
         scoreSound = game.assets.manager.get("music/score.wav", Sound.class);
         level1Music = game.assets.manager.get("music/level1Music.wav", Music.class);
         flameEffect = game.assets.manager.get("effects/Particle.flame", ParticleEffect.class);
+        engineEffect = game.assets.manager.get("effects/engine2.flame", ParticleEffect.class);
         pauseTexture = game.assets.manager.get("menu/pause.png", Texture.class);
         coinImage = game.assets.manager.get("coin.png", Texture.class);
         revertImage = game.assets.manager.get("revert.png", Texture.class);
@@ -315,7 +339,7 @@ public class GameScreen extends AbstractScreen {
     private void updateAndDrawEnemies(float delta) {
         for (Enemy enemy : activeEnemies) {
             enemy.update(delta);
-            game.batch.draw(spaceshipImage, enemy.getBody().getPosition().x - enemy.getWidth() / 2,
+            game.batch.draw(enemy.getTexture(), enemy.getBody().getPosition().x - enemy.getWidth() / 2,
                     enemy.getBody().getPosition().y - enemy.getHeight() / 2, BASIC_ENEMY_WIDTH, BASIC_ENEMY_HEIGHT);
 
             if (!enemy.getBody().isActive()) {

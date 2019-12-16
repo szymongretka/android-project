@@ -15,8 +15,8 @@ public class Constants {
     public static final int BASICBULLETHEIGHT = 4;
     public static final int BASIC_BULLET_RoF = 2000;
 
-    public static final int PLAYER_WIDTH = 8;
-    public static final int PLAYER_HEIGHT = 8;
+    public static final int PLAYER_WIDTH = 10;
+    public static final int PLAYER_HEIGHT = 14;
 
     public static final int COIN_WIDTH = 4;
     public static final int COIN_HEIGHT = 6;

@@ -5,6 +5,7 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Disposable;
 
@@ -24,6 +25,11 @@ public class Assets implements Disposable {
         manager.load("music/level1Music.wav", Music.class);
         manager.load("data/uiskin.json", Skin.class);
         manager.load("effects/Particle.flame", ParticleEffect.class);
+        manager.load("effects/engine2.flame", ParticleEffect.class);
+        manager.load("background/lvl1.jpg", Texture.class);
+
+
+        manager.load("packedImages/playerAndEnemies.atlas", TextureAtlas.class);
 
     }
 
