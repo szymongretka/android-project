@@ -4,16 +4,16 @@ import com.badlogic.gdx.Gdx;
 
 public class Constants {
 
-    public static final int HEIGHT = Gdx.graphics.getHeight();
-    public static final int WIDTH = Gdx.graphics.getWidth();
-    public static final int PPM = 12; //Pixels per meter
+    public static final float HEIGHT = Gdx.graphics.getHeight();
+    public static final float WIDTH = Gdx.graphics.getWidth();
+    public static final float PPM = 12f; //Pixels per meter
 
     public static final int BASIC_ENEMY_WIDTH = 6;
     public static final int BASIC_ENEMY_HEIGHT = 6;
 
-    public static final int BASICBULLETWIDTH = 4;
-    public static final int BASICBULLETHEIGHT = 4;
-    public static final int BASIC_BULLET_RoF = 2000;
+    public static final float BASICBULLETWIDTH = 4f;
+    public static final float BASICBULLETHEIGHT = 4f;
+    public static final float BASIC_BULLET_RoF = 2000f;
 
     public static final int PLAYER_WIDTH = 10;
     public static final int PLAYER_HEIGHT = 14;

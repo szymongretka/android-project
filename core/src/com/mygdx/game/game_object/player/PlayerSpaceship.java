@@ -10,6 +10,9 @@ import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.game_object.Box2DObject;
 import com.mygdx.game.screen.game.GameScreen;
 
+import static com.mygdx.game.util.Constants.HEIGHT;
+import static com.mygdx.game.util.Constants.PPM;
+import static com.mygdx.game.util.Constants.WIDTH;
 import static com.mygdx.game.util.Constants.BIT_ENEMY;
 import static com.mygdx.game.util.Constants.BIT_ITEM;
 import static com.mygdx.game.util.Constants.BIT_PLAYER;
@@ -75,7 +78,11 @@ public class PlayerSpaceship extends Box2DObject {
         direction.set(x, y);
         direction.sub(this.getBody().getPosition());
         direction.nor();
-        this.getBody().setLinearVelocity(direction.scl(speed));
+        if (this.getBody().getPosition().x > 0 && this.getBody().getPosition().x < (WIDTH / PPM)) {
+            this.getBody().setLinearVelocity(direction.scl(speed));
+        } else {
+            this.getBody().setLinearVelocity(1, 1);
+        }
     }
     public void stop() {
         this.getBody().setLinearVelocity(0, 0);

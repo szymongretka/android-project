@@ -1,5 +1,6 @@
 package com.mygdx.game.game_object.enemy.basic_enemy;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.game.game_object.enemy.Enemy;
 import com.mygdx.game.screen.game.GameScreen;
@@ -7,34 +8,58 @@ import com.mygdx.game.util.Constants;
 
 import static com.mygdx.game.util.Constants.BASIC_ENEMY_WIDTH;
 import static com.mygdx.game.util.Constants.BASIC_ENEMY_HEIGHT;
+import static com.mygdx.game.util.Constants.PPM;
+import static com.mygdx.game.util.Constants.WIDTH;
 
 
 public class BasicEnemy extends Enemy {
 
+    private float velX = 1500f;
+    private float velY = 1500f;
 
-    private float width = 32;
-    private float height = 32;
-    private float velX = 500;
-    private float velY = 500;
+    private boolean isMovingLeft;
+    private boolean isMovingRight;
 
 
     public BasicEnemy(World world) {
         super(world, 0, 0, BASIC_ENEMY_WIDTH, BASIC_ENEMY_HEIGHT, 3, 1);
         this.texture = GameScreen.basicEnemyTexture;
+        isMovingLeft = true;
+        isMovingRight = false;
+        this.body.setLinearVelocity(-velX * Gdx.graphics.getDeltaTime(), -velY * Gdx.graphics.getDeltaTime());
     }
 
     @Override
     public void update(float deltaTime) {
-        this.body.setLinearVelocity(-velX * deltaTime, -velY * deltaTime);
         if(this.getHp() <= 0 && this.getBody().isActive()) {
             this.onDestroyCoordX = this.getX();
             this.onDestroyCoordY = this.getY();
             reset();
         }
-        if(this.getBody().getPosition().x <= this.getWidth() ||
-                this.getBody().getPosition().x >= Constants.WIDTH - this.getWidth())
-            velX = -velX;
-
+        if(!isInLeftBound() && isMovingLeft)
+            moveRight(deltaTime);
+        else if(!isInRightBound() && isMovingRight)
+            moveLeft(deltaTime);
     }
+
+    private boolean isInLeftBound() {
+        return this.body.getPosition().x > 0;
+    }
+
+    private boolean isInRightBound() {
+        return this.body.getPosition().x < WIDTH/PPM;
+    }
+
+    private void moveLeft(float deltaTime) {
+        this.body.setLinearVelocity(-velX * deltaTime, -velY * deltaTime);
+        isMovingLeft = true;
+        isMovingRight = false;
+    }
+    private void moveRight(float deltaTime) {
+        this.body.setLinearVelocity(velX * deltaTime, -velY * deltaTime);
+        isMovingLeft = false;
+        isMovingRight = true;
+    }
+
 
 }

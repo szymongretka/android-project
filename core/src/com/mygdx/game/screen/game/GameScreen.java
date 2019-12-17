@@ -74,6 +74,7 @@ public class GameScreen extends AbstractScreen {
     public static Texture coinImage;
     public static Texture revertImage;
     public static Texture shieldImage;
+    public static Texture wave1;
     private TextureAtlas textureAtlas;
     private Texture lvl1background;
 
@@ -146,7 +147,7 @@ public class GameScreen extends AbstractScreen {
         }
 
         playerSpaceship = new PlayerSpaceship(this);
-        playerSpaceship.init(0, 0);
+        playerSpaceship.init(50, 50);
 
 
         flameEffect.getEmitters().first();
@@ -209,7 +210,7 @@ public class GameScreen extends AbstractScreen {
         updateAndDrawItems(delta);
 
         engineEffect.setPosition(playerSpaceship.getBody().getPosition().x,
-                playerSpaceship.getBody().getPosition().y - (PLAYER_HEIGHT/2));
+                playerSpaceship.getBody().getPosition().y - (PLAYER_HEIGHT/2f));
         engineEffect.update(delta);
         engineEffect.draw(game.batch);
 
@@ -221,7 +222,7 @@ public class GameScreen extends AbstractScreen {
         }
 
 
-        box2DDebugRenderer.render(this.world, camera.combined);
+        //box2DDebugRenderer.render(this.world, camera.combined);
         world.step(1 / 60f, 6, 2);
 
         stage.draw();
@@ -274,7 +275,8 @@ public class GameScreen extends AbstractScreen {
         spaceshipAtlasRegion = textureAtlas.findRegion("basicPlayerSpaceship");
         basicEnemyTexture = new TextureRegion(textureAtlas.findRegion("fraction1/orangeship"));
         lvl1background = game.assets.manager.get("background/lvl1.jpg", Texture.class);
-        bulletImage = game.assets.manager.get("droplet.png", Texture.class);
+        bulletImage = game.assets.manager.get("bullet.png", Texture.class);
+        wave1 = game.assets.manager.get("rawImages/waves/wave1.png", Texture.class);
         shootSound = game.assets.manager.get("music/sfx-laser.wav", Sound.class);
         scoreSound = game.assets.manager.get("music/score.wav", Sound.class);
         level1Music = game.assets.manager.get("music/level1Music.wav", Music.class);
@@ -291,7 +293,7 @@ public class GameScreen extends AbstractScreen {
          * {@link #free(Object) freed}). */
         // get a bullet from our pool
         BasicBullet basicBullet = (BasicBullet) bulletBox2DPool.obtain();
-        basicBullet.init(playerSpaceship.getX(), playerSpaceship.getY() + PLAYER_HEIGHT);
+        basicBullet.init(playerSpaceship.getX(), playerSpaceship.getY() + PLAYER_HEIGHT/2f);
         // add to our array of bullets so we can access them in our render method
         activeBullet2D.add(basicBullet);
         //System.out.println(bulletBox2DPool.getFree());
@@ -310,8 +312,8 @@ public class GameScreen extends AbstractScreen {
         for (Bullet bullet : activeBullet2D) {
             bullet.update(delta);
 
-            game.batch.draw(bulletImage, bullet.getBody().getPosition().x - bullet.getWidth(),
-                    bullet.getBody().getPosition().y - bullet.getHeight(), BASICBULLETWIDTH, BASICBULLETHEIGHT);
+            game.batch.draw(bulletImage, bullet.getBody().getPosition().x - (bullet.getWidth()/2),
+                    bullet.getBody().getPosition().y - (bullet.getHeight()/2), BASICBULLETWIDTH, BASICBULLETHEIGHT);
 
             if (bullet.getBody().getPosition().y > HEIGHT - BASICBULLETHEIGHT || !bullet.getBody().isActive() || bullet.isToDestroy()) {
                 bulletBox2DPool.free(bullet); // reset and place back in pool

@@ -12,7 +12,7 @@ public class BasicBullet extends Bullet {
     private float width = 32;
     private float height = 32;
     private float velX = 0;
-    private float velY = 180000;
+    private float velY = 18000;
 
 
     public BasicBullet(World world) {
