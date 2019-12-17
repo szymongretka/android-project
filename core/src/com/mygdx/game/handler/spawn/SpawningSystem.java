@@ -4,6 +4,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import com.mygdx.game.MyGdxGame;
 import com.mygdx.game.game_object.enemy.basic_enemy.BasicEnemy;
+import com.mygdx.game.screen.game.GameScreen;
 import com.mygdx.game.util.Constants;
 
 import java.util.Random;
@@ -65,11 +66,16 @@ public class SpawningSystem implements Runnable{
         random = new Random();
         BasicEnemy basicEnemy;
 
+
+
         try {
             Thread.sleep(1000);
+            /*while() {
+                game.batch.draw(GameScreen.wave1, 0, 0, 20, 12);
+            }*/
             for (int i = 0; i < wave1; i++) {
                 basicEnemy = (BasicEnemy) enemyPool.obtain();
-                basicEnemy.init(random.nextInt(Constants.WIDTH / Constants.PPM), Constants.HEIGHT/Constants.PPM + 6);
+                basicEnemy.init(random.nextInt((int) ((int)Constants.WIDTH/Constants.PPM)), Constants.HEIGHT/Constants.PPM);
                 activeEnemies.add(basicEnemy);
             }
         } catch (InterruptedException e) {

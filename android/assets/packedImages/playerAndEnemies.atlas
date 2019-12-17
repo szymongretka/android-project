@@ -1,0 +1,142 @@
+
+playerAndEnemies.png
+size: 1024,256
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+basicPlayerSpaceship
+  rotate: false
+  xy: 2, 2
+  size: 880, 127
+  orig: 880, 127
+  offset: 0, 0
+  index: -1
+
+playerAndEnemies2.png
+size: 1024,512
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+fraction1/orangeship
+  rotate: false
+  xy: 2, 192
+  size: 172, 302
+  orig: 172, 302
+  offset: 0, 0
+  index: -1
+fraction1/orangeship2
+  rotate: false
+  xy: 176, 192
+  size: 172, 302
+  orig: 172, 302
+  offset: 0, 0
+  index: -1
+fraction1/orangeship3
+  rotate: false
+  xy: 350, 243
+  size: 164, 251
+  orig: 164, 251
+  offset: 0, 0
+  index: -1
+fraction1/orangeship4
+  rotate: false
+  xy: 2, 2
+  size: 113, 188
+  orig: 113, 188
+  offset: 0, 0
+  index: -1
+
+playerAndEnemies3.png
+size: 256,512
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+fraction2/blueship1
+  rotate: false
+  xy: 2, 214
+  size: 151, 287
+  orig: 151, 287
+  offset: 0, 0
+  index: -1
+fraction2/blueship2
+  rotate: false
+  xy: 2, 2
+  size: 111, 210
+  orig: 111, 210
+  offset: 0, 0
+  index: -1
+fraction2/blueship3
+  rotate: false
+  xy: 115, 2
+  size: 111, 210
+  orig: 111, 210
+  offset: 0, 0
+  index: -1
+
+playerAndEnemies4.png
+size: 512,512
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+fraction3/alien1
+  rotate: false
+  xy: 2, 127
+  size: 166, 315
+  orig: 166, 315
+  offset: 0, 0
+  index: -1
+fraction3/alien2
+  rotate: false
+  xy: 170, 204
+  size: 125, 238
+  orig: 125, 238
+  offset: 0, 0
+  index: -1
+fraction3/alien3
+  rotate: false
+  xy: 297, 204
+  size: 125, 238
+  orig: 125, 238
+  offset: 0, 0
+  index: -1
+fraction3/alien4
+  rotate: false
+  xy: 170, 2
+  size: 114, 200
+  orig: 114, 200
+  offset: 0, 0
+  index: -1
+
+playerAndEnemies5.png
+size: 512,512
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+fraction4/greenship1
+  rotate: false
+  xy: 2, 205
+  size: 162, 286
+  orig: 162, 286
+  offset: 0, 0
+  index: -1
+fraction4/greenship2
+  rotate: false
+  xy: 166, 244
+  size: 140, 247
+  orig: 140, 247
+  offset: 0, 0
+  index: -1
+fraction4/greenship3
+  rotate: false
+  xy: 2, 2
+  size: 114, 201
+  orig: 114, 201
+  offset: 0, 0
+  index: -1
+fraction4/greenship4
+  rotate: false
+  xy: 308, 299
+  size: 92, 192
+  orig: 92, 192
+  offset: 0, 0
+  index: -1
