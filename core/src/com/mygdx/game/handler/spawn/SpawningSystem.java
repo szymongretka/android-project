@@ -4,6 +4,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import com.mygdx.game.MyGdxGame;
 import com.mygdx.game.game_object.enemy.basic_enemy.BasicEnemy;
+import com.mygdx.game.handler.WaveImageHandler;
 import com.mygdx.game.screen.game.GameScreen;
 import com.mygdx.game.util.Constants;
 
@@ -15,6 +16,7 @@ public class SpawningSystem implements Runnable{
     private Pool pool;
     private Array array;
     private Thread thread;
+
 
     private int wave1;
     private int wave2;
@@ -67,17 +69,18 @@ public class SpawningSystem implements Runnable{
         BasicEnemy basicEnemy;
 
 
-
         try {
             Thread.sleep(1000);
-            /*while() {
-                game.batch.draw(GameScreen.wave1, 0, 0, 20, 12);
-            }*/
+            WaveImageHandler waveImageHandler = GameScreen.waveImageHandler;
+            waveImageHandler.initWaveImage(GameScreen.wave1);
             for (int i = 0; i < wave1; i++) {
                 basicEnemy = (BasicEnemy) enemyPool.obtain();
-                basicEnemy.init(random.nextInt((int) ((int)Constants.WIDTH/Constants.PPM)), Constants.HEIGHT/Constants.PPM);
+                basicEnemy.init(random.nextInt((int) ((int)Constants.WIDTH/Constants.PPM)), Constants.HEIGHT/Constants.PPM, basicEnemy.getVelX(), basicEnemy.getVelY());
                 activeEnemies.add(basicEnemy);
             }
+
+
+
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

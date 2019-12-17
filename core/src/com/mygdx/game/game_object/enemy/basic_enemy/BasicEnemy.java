@@ -14,19 +14,18 @@ import static com.mygdx.game.util.Constants.WIDTH;
 
 public class BasicEnemy extends Enemy {
 
-    private float velX = 1500f;
-    private float velY = 1500f;
-
     private boolean isMovingLeft;
     private boolean isMovingRight;
 
 
     public BasicEnemy(World world) {
-        super(world, 0, 0, BASIC_ENEMY_WIDTH, BASIC_ENEMY_HEIGHT, 3, 1);
+        super(world, 0, 0, BASIC_ENEMY_WIDTH, BASIC_ENEMY_HEIGHT, 1, 1);
         this.texture = GameScreen.basicEnemyTexture;
         isMovingLeft = true;
         isMovingRight = false;
         this.body.setLinearVelocity(-velX * Gdx.graphics.getDeltaTime(), -velY * Gdx.graphics.getDeltaTime());
+        this.velX = 1500f;
+        this.velY = 1500f;
     }
 
     @Override

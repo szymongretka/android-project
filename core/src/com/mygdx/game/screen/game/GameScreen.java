@@ -39,6 +39,7 @@ import com.mygdx.game.game_object.item.coin.Coin;
 import com.mygdx.game.game_object.player.PlayerSpaceship;
 import com.mygdx.game.game_object.pool.GenericPool;
 import com.mygdx.game.handler.CollisionManager;
+import com.mygdx.game.handler.WaveImageHandler;
 import com.mygdx.game.handler.spawn.RandomItemSpawnSystem;
 import com.mygdx.game.handler.spawn.SpawningSystem;
 import com.mygdx.game.screen.AbstractScreen;
@@ -106,6 +107,7 @@ public class GameScreen extends AbstractScreen {
 
     private long lastBulletTime;
     private float backgroundY = 0f;
+    public static WaveImageHandler waveImageHandler = new WaveImageHandler();
 
     private PlayerSpaceship playerSpaceship;
 
@@ -123,6 +125,7 @@ public class GameScreen extends AbstractScreen {
         //for testing only
         box2DDebugRenderer = new Box2DDebugRenderer();
 
+
         flameEffect = new ParticleEffect();
         engineEffect = new ParticleEffect();
 
@@ -138,6 +141,8 @@ public class GameScreen extends AbstractScreen {
         bulletBox2DPool = genericPool.getBulletPool();
         effectPool = new ParticleEffectPool(flameEffect, 0, 70);
 
+        SpawningSystem spawningSystem;
+
         switch (game.gameScreenManager.getActiveScreen()) {
             case LEVEL1:
                 new SpawningSystem(game, enemyPool, activeEnemies);
@@ -147,11 +152,11 @@ public class GameScreen extends AbstractScreen {
         }
 
         playerSpaceship = new PlayerSpaceship(this);
-        playerSpaceship.init(50, 50);
+        playerSpaceship.init(50, 50, 0, 0);
 
 
-        flameEffect.getEmitters().first();
         flameEffect.start();
+        flameEffect.scaleEffect(2f);
         engineEffect.start();
         engineEffect.flipY();
         engineEffect.scaleEffect(1f/PPM);
@@ -161,10 +166,9 @@ public class GameScreen extends AbstractScreen {
 
         logger = new FPSLogger();
 
-        itemChanceList.addEntry(Coin.class, 30f);
+        itemChanceList.addEntry(Coin.class, 80f);
         itemChanceList.addEntry(RevertMovement.class, 10f);
-        //itemChanceList.addEntry(RevertMovement.class, 30f);
-        itemChanceList.addEntry(BasicShield.class, 60f);
+        itemChanceList.addEntry(BasicShield.class, 10f);
 
 
     }
@@ -185,6 +189,7 @@ public class GameScreen extends AbstractScreen {
         } else {
             playerSpaceship.stop();
         }
+        waveImageHandler.update();
     }
 
     @Override
@@ -214,15 +219,19 @@ public class GameScreen extends AbstractScreen {
         engineEffect.update(delta);
         engineEffect.draw(game.batch);
 
+        if(!waveImageHandler.isCompleted())
+            game.batch.draw(wave1, waveImageHandler.getPositionX(), waveImageHandler.getPositionY(),
+                    waveImageHandler.getWidth(), waveImageHandler.getHeight());
+
         game.batch.end();
 
-        if (TimeUtils.nanoTime() - lastBulletTime > 400000000) {
+        if (TimeUtils.nanoTime() - lastBulletTime > 150000000) {
             spawnBasicBullets();
             shootSound.play();
         }
 
 
-        //box2DDebugRenderer.render(this.world, camera.combined);
+        box2DDebugRenderer.render(this.world, camera.combined);
         world.step(1 / 60f, 6, 2);
 
         stage.draw();
@@ -241,6 +250,7 @@ public class GameScreen extends AbstractScreen {
 
     @Override
     public void hide() {
+        engineEffect.reset();
     }
 
     @Override
@@ -280,7 +290,7 @@ public class GameScreen extends AbstractScreen {
         shootSound = game.assets.manager.get("music/sfx-laser.wav", Sound.class);
         scoreSound = game.assets.manager.get("music/score.wav", Sound.class);
         level1Music = game.assets.manager.get("music/level1Music.wav", Music.class);
-        flameEffect = game.assets.manager.get("effects/Particle.flame", ParticleEffect.class);
+        flameEffect = game.assets.manager.get("effects/explosion.flame", ParticleEffect.class);
         engineEffect = game.assets.manager.get("effects/engine2.flame", ParticleEffect.class);
         pauseTexture = game.assets.manager.get("menu/pause.png", Texture.class);
         coinImage = game.assets.manager.get("coin.png", Texture.class);
@@ -293,7 +303,7 @@ public class GameScreen extends AbstractScreen {
          * {@link #free(Object) freed}). */
         // get a bullet from our pool
         BasicBullet basicBullet = (BasicBullet) bulletBox2DPool.obtain();
-        basicBullet.init(playerSpaceship.getX(), playerSpaceship.getY() + PLAYER_HEIGHT/2f);
+        basicBullet.init(playerSpaceship.getX(), playerSpaceship.getY() + PLAYER_HEIGHT/2f, basicBullet.getVelX(), basicBullet.getVelY());
         // add to our array of bullets so we can access them in our render method
         activeBullet2D.add(basicBullet);
         //System.out.println(bulletBox2DPool.getFree());
@@ -303,7 +313,7 @@ public class GameScreen extends AbstractScreen {
 
     private void spawnEffects(float x, float y) {
         PooledEffect effect = effectPool.obtain();
-        effect.getEmitters().first().setPosition(x, y);
+        effect.setPosition(x, y);
         activeEffects.add(effect);
         effect.start();
     }
@@ -347,7 +357,7 @@ public class GameScreen extends AbstractScreen {
             if (!enemy.getBody().isActive()) {
                 Item item = (Item) itemChanceList.getRandomItem(world);
                 if (item != null) {
-                    item.init(enemy.getOnDestroyCoordX(), enemy.getOnDestroyCoordY());
+                    item.init(enemy.getOnDestroyCoordX(), enemy.getOnDestroyCoordY(), enemy.getVelX(), enemy.getVelY());
                     items.add(item);
                 }
                 spawnEffects(enemy.getOnDestroyCoordX(), enemy.getOnDestroyCoordY());

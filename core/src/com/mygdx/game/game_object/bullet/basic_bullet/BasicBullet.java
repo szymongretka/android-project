@@ -1,5 +1,6 @@
 package com.mygdx.game.game_object.bullet.basic_bullet;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.game.game_object.bullet.Bullet;
 import com.mygdx.game.game_object.enemy.Enemy;
@@ -9,19 +10,17 @@ import static com.mygdx.game.util.Constants.BASICBULLETWIDTH;
 
 public class BasicBullet extends Bullet {
 
-    private float width = 32;
-    private float height = 32;
-    private float velX = 0;
-    private float velY = 18000;
-
 
     public BasicBullet(World world) {
         super(world, 0, 0, BASICBULLETWIDTH, BASICBULLETHEIGHT, 1, 1);
+        this.velX = 0f;
+        this.velY = 500f;
+        //this.body.setLinearVelocity(0, velY);
     }
 
     @Override
     public void update(float deltaTime) {
-        this.body.setLinearVelocity(0, velY * deltaTime);
+
     }
 
     @Override
