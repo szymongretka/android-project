@@ -76,6 +76,7 @@ public class GameScreen extends AbstractScreen {
     public static Texture revertImage;
     public static Texture shieldImage;
     public static Texture wave1;
+    public static Texture wave2;
     private TextureAtlas textureAtlas;
     private Texture lvl1background;
 
@@ -225,13 +226,13 @@ public class GameScreen extends AbstractScreen {
 
         game.batch.end();
 
-        if (TimeUtils.nanoTime() - lastBulletTime > 150000000) {
+        if (TimeUtils.nanoTime() - lastBulletTime > 250000000) {
             spawnBasicBullets();
             shootSound.play();
         }
 
 
-        box2DDebugRenderer.render(this.world, camera.combined);
+        //box2DDebugRenderer.render(this.world, camera.combined);
         world.step(1 / 60f, 6, 2);
 
         stage.draw();
@@ -287,6 +288,7 @@ public class GameScreen extends AbstractScreen {
         lvl1background = game.assets.manager.get("background/lvl1.jpg", Texture.class);
         bulletImage = game.assets.manager.get("bullet.png", Texture.class);
         wave1 = game.assets.manager.get("rawImages/waves/wave1.png", Texture.class);
+        wave2 = game.assets.manager.get("rawImages/waves/wave2.png", Texture.class);
         shootSound = game.assets.manager.get("music/sfx-laser.wav", Sound.class);
         scoreSound = game.assets.manager.get("music/score.wav", Sound.class);
         level1Music = game.assets.manager.get("music/level1Music.wav", Music.class);
@@ -357,7 +359,7 @@ public class GameScreen extends AbstractScreen {
             if (!enemy.getBody().isActive()) {
                 Item item = (Item) itemChanceList.getRandomItem(world);
                 if (item != null) {
-                    item.init(enemy.getOnDestroyCoordX(), enemy.getOnDestroyCoordY(), enemy.getVelX(), enemy.getVelY());
+                    item.init(enemy.getOnDestroyCoordX(), enemy.getOnDestroyCoordY(), item.getVelX(), item.getVelY());
                     items.add(item);
                 }
                 spawnEffects(enemy.getOnDestroyCoordX(), enemy.getOnDestroyCoordY());

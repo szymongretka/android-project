@@ -61,8 +61,8 @@ public class SpawningSystem implements Runnable{
 
     private void firstLevel(Pool enemyPool, Array<BasicEnemy> activeEnemies) {
 
-        wave1 = 10;
-        wave2 = 20;
+        wave1 = 6;
+        wave2 = 10;
         wave3 = 30;
 
         random = new Random();
@@ -73,12 +73,13 @@ public class SpawningSystem implements Runnable{
             Thread.sleep(1000);
             WaveImageHandler waveImageHandler = GameScreen.waveImageHandler;
             waveImageHandler.initWaveImage(GameScreen.wave1);
+            Thread.sleep(3500);
             for (int i = 0; i < wave1; i++) {
                 basicEnemy = (BasicEnemy) enemyPool.obtain();
-                basicEnemy.init(random.nextInt((int) ((int)Constants.WIDTH/Constants.PPM)), Constants.HEIGHT/Constants.PPM, basicEnemy.getVelX(), basicEnemy.getVelY());
+                basicEnemy.init(random.nextInt((int) ((int)Constants.WIDTH/Constants.PPM)),
+                        Constants.HEIGHT/Constants.PPM, basicEnemy.getVelX(), basicEnemy.getVelY());
                 activeEnemies.add(basicEnemy);
-            }
-
+            } //TODO TIMERS
 
 
         } catch (InterruptedException e) {

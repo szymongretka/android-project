@@ -10,16 +10,17 @@ import static com.mygdx.game.util.Constants.COIN_WIDTH;
 
 public class Coin extends Item {
 
-    private float velY = 500;
 
     public Coin(World world) {
         super(world, 0, 0, COIN_WIDTH, COIN_HEIGHT, 0, 0);
         this.texture = GameScreen.coinImage;
+        this.velY = (-1500f);
+        this.body.setLinearVelocity(0, velY);
     }
 
     @Override
     public void update(float deltaTime) {
-        this.body.setLinearVelocity(0, -velY * deltaTime);
+
     }
 
     @Override

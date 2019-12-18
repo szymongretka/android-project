@@ -68,7 +68,7 @@ public abstract class Box2DObject implements Pool.Poolable {
     public void init(float x, float y, float vX, float vY) {
         this.body.setTransform(x, y, 0);
         this.body.setActive(true);
-        this.body.setLinearVelocity(vX, vY);
+        this.body.setLinearVelocity(vX / 100f, vY / 100f);
     }
 
     public abstract void update(float deltaTime);

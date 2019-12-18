@@ -14,7 +14,7 @@ public class BasicBullet extends Bullet {
     public BasicBullet(World world) {
         super(world, 0, 0, BASICBULLETWIDTH, BASICBULLETHEIGHT, 1, 1);
         this.velX = 0f;
-        this.velY = 500f;
+        this.velY = 15000f;
         //this.body.setLinearVelocity(0, velY);
     }
 

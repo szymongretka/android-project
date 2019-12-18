@@ -19,13 +19,13 @@ public class BasicEnemy extends Enemy {
 
 
     public BasicEnemy(World world) {
-        super(world, 0, 0, BASIC_ENEMY_WIDTH, BASIC_ENEMY_HEIGHT, 1, 1);
+        super(world, 0, 0, BASIC_ENEMY_WIDTH, BASIC_ENEMY_HEIGHT, 3, 1);
         this.texture = GameScreen.basicEnemyTexture;
-        isMovingLeft = true;
-        isMovingRight = false;
-        this.body.setLinearVelocity(-velX * Gdx.graphics.getDeltaTime(), -velY * Gdx.graphics.getDeltaTime());
+        isMovingLeft = false;
+        isMovingRight = true;
         this.velX = 1500f;
-        this.velY = 1500f;
+        this.velY = (-1500f);
+        //this.body.setLinearVelocity(-velX * Gdx.graphics.getDeltaTime(), velY * Gdx.graphics.getDeltaTime());
     }
 
     @Override
@@ -50,12 +50,12 @@ public class BasicEnemy extends Enemy {
     }
 
     private void moveLeft(float deltaTime) {
-        this.body.setLinearVelocity(-velX * deltaTime, -velY * deltaTime);
+        this.body.setLinearVelocity(-velX * deltaTime, velY * deltaTime);
         isMovingLeft = true;
         isMovingRight = false;
     }
     private void moveRight(float deltaTime) {
-        this.body.setLinearVelocity(velX * deltaTime, -velY * deltaTime);
+        this.body.setLinearVelocity(velX * deltaTime, velY * deltaTime);
         isMovingLeft = false;
         isMovingRight = true;
     }
