@@ -37,6 +37,10 @@ public class WaveImageHandler {
         this.texture = texture;
     }
 
+    public Texture getTexture() {
+        return this.texture;
+    }
+
     public float getVelX() {
         return velX;
     }

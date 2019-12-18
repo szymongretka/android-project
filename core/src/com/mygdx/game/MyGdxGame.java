@@ -20,7 +20,6 @@ public class MyGdxGame extends Game {
         batch = new SpriteBatch();
         assets = new Assets();
         gameScreenManager = new GameScreenManager(this);
-        //this.setScreen(new MainMenuScreen(this));
     }
 
 	public void render() {

@@ -58,4 +58,9 @@ public class GameScreenManager<T extends AbstractScreen> {
     public void setActiveScreen(GameState gameState) {
         this.activeScreen = gameState;
     }
+
+    public void clearGameStateMap() {
+        this.gameScreens.clear();
+    }
+
 }

@@ -8,8 +8,18 @@ public class Constants {
     public static final float WIDTH = Gdx.graphics.getWidth();
     public static final float PPM = 12f; //Pixels per meter
 
-    public static final int BASIC_ENEMY_WIDTH = 8;
-    public static final int BASIC_ENEMY_HEIGHT = 8;
+    public static final int ORANGE_SPACESHIP1_WIDTH = 8;
+    public static final int ORANGE_SPACESHIP1_HEIGHT = 8;
+
+    public static final int ORANGE_SPACESHIP2_WIDTH = 8;
+    public static final int ORANGE_SPACESHIP2_HEIGHT = 12;
+
+    public static final int ORANGE_SPACESHIP3_WIDTH = 8;
+    public static final int ORANGE_SPACESHIP3_HEIGHT = 12;
+
+    public static final int ORANGE_SPACESHIP4_WIDTH = 10;
+    public static final int ORANGE_SPACESHIP4_HEIGHT = 10;
+
 
     public static final float BASICBULLETWIDTH = 4f;
     public static final float BASICBULLETHEIGHT = 5f;

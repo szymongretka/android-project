@@ -1,31 +1,28 @@
-package com.mygdx.game.game_object.enemy.basic_enemy;
+package com.mygdx.game.game_object.enemy.enemies.fraction1;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.game.game_object.enemy.Enemy;
 import com.mygdx.game.screen.game.GameScreen;
-import com.mygdx.game.util.Constants;
 
-import static com.mygdx.game.util.Constants.BASIC_ENEMY_WIDTH;
-import static com.mygdx.game.util.Constants.BASIC_ENEMY_HEIGHT;
+import static com.mygdx.game.util.Constants.ORANGE_SPACESHIP1_WIDTH;
+import static com.mygdx.game.util.Constants.ORANGE_SPACESHIP1_HEIGHT;
 import static com.mygdx.game.util.Constants.PPM;
 import static com.mygdx.game.util.Constants.WIDTH;
 
 
-public class BasicEnemy extends Enemy {
+public class OrangeSpaceship1 extends Enemy {
 
     private boolean isMovingLeft;
     private boolean isMovingRight;
 
 
-    public BasicEnemy(World world) {
-        super(world, 0, 0, BASIC_ENEMY_WIDTH, BASIC_ENEMY_HEIGHT, 3, 1);
-        this.texture = GameScreen.basicEnemyTexture;
+    public OrangeSpaceship1(World world) {
+        super(world, 0, 0, ORANGE_SPACESHIP1_WIDTH, ORANGE_SPACESHIP1_HEIGHT, 1, 1);
+        this.texture = GameScreen.fraction1OrangeShipTexture;
         isMovingLeft = false;
         isMovingRight = true;
         this.velX = 1500f;
         this.velY = (-1500f);
-        //this.body.setLinearVelocity(-velX * Gdx.graphics.getDeltaTime(), velY * Gdx.graphics.getDeltaTime());
     }
 
     @Override

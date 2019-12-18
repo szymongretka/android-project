@@ -14,25 +14,46 @@ public class Assets implements Disposable {
     public final AssetManager manager = new AssetManager();
 
     public void load() {
+
+        //TODO pack all textures into atlas
+
+        //music & sounds
+        manager.load("music/level1Music.wav", Music.class);
+        manager.load("music/sfx-laser.wav", Sound.class);
+        manager.load("music/score.wav", Sound.class);
+
+        //menu
         manager.load("menu/pause.png", Texture.class);
-        manager.load("spaceship.png", Texture.class);
-        manager.load("bullet.png", Texture.class);
+
+        //waves
+        manager.load("rawImages/waves/wave1.png", Texture.class);
+        manager.load("rawImages/waves/wave2.png", Texture.class);
+        manager.load("rawImages/waves/wave3.png", Texture.class);
+        manager.load("rawImages/waves/wave4.png", Texture.class);
+        manager.load("rawImages/waves/wave5.png", Texture.class);
+        manager.load("rawImages/waves/wave6.png", Texture.class);
+
+        //items
         manager.load("revert.png", Texture.class);
         manager.load("coin.png", Texture.class);
         manager.load("shield.png", Texture.class);
-        manager.load("music/sfx-laser.wav", Sound.class);
-        manager.load("music/score.wav", Sound.class);
-        manager.load("music/level1Music.wav", Music.class);
+
+        //skins
         manager.load("data/uiskin.json", Skin.class);
 
-        manager.load("rawImages/waves/wave1.png", Texture.class);
-        manager.load("rawImages/waves/wave2.png", Texture.class);
-
+        //Particle effects
         manager.load("effects/explosion.flame", ParticleEffect.class);
         manager.load("effects/engine2.flame", ParticleEffect.class);
+
+        //backgrounds
         manager.load("background/lvl1.jpg", Texture.class);
 
+        //atlas
         manager.load("packedImages/playerAndEnemies.atlas", TextureAtlas.class);
+
+        //bullets
+        manager.load("bullet.png", Texture.class);
+
 
     }
 

@@ -49,8 +49,6 @@ import java.util.Iterator;
 
 import static com.mygdx.game.util.Constants.BASICBULLETHEIGHT;
 import static com.mygdx.game.util.Constants.BASICBULLETWIDTH;
-import static com.mygdx.game.util.Constants.BASIC_ENEMY_HEIGHT;
-import static com.mygdx.game.util.Constants.BASIC_ENEMY_WIDTH;
 import static com.mygdx.game.util.Constants.HEIGHT;
 import static com.mygdx.game.util.Constants.PLAYER_HEIGHT;
 import static com.mygdx.game.util.Constants.PLAYER_WIDTH;
@@ -69,7 +67,10 @@ public class GameScreen extends AbstractScreen {
 
     //textures
     public TextureAtlas.AtlasRegion spaceshipAtlasRegion;
-    public static TextureRegion basicEnemyTexture;
+    public static TextureRegion fraction1OrangeShipTexture;
+    public static TextureRegion fraction1OrangeShip2Texture;
+    public static TextureRegion fraction1OrangeShip3Texture;
+    public static TextureRegion fraction1OrangeShip4Texture;
     private Texture bulletImage;
     private Texture pauseTexture;
     public static Texture coinImage;
@@ -77,6 +78,7 @@ public class GameScreen extends AbstractScreen {
     public static Texture shieldImage;
     public static Texture wave1;
     public static Texture wave2;
+    public static Texture wave3;
     private TextureAtlas textureAtlas;
     private Texture lvl1background;
 
@@ -138,15 +140,15 @@ public class GameScreen extends AbstractScreen {
 
         //pools
         genericPool = new GenericPool(world);
-        enemyPool = genericPool.getEnemyPool();
+        enemyPool = genericPool.getOrangeSpaceship1Pool();
         bulletBox2DPool = genericPool.getBulletPool();
         effectPool = new ParticleEffectPool(flameEffect, 0, 70);
 
-        SpawningSystem spawningSystem;
+        SpawningSystem spawningSystem = new SpawningSystem(game, genericPool, activeEnemies);
 
         switch (game.gameScreenManager.getActiveScreen()) {
             case LEVEL1:
-                new SpawningSystem(game, enemyPool, activeEnemies);
+                spawningSystem.spawn();
                 break;
             case LEVEL2:
                 break;
@@ -221,7 +223,7 @@ public class GameScreen extends AbstractScreen {
         engineEffect.draw(game.batch);
 
         if(!waveImageHandler.isCompleted())
-            game.batch.draw(wave1, waveImageHandler.getPositionX(), waveImageHandler.getPositionY(),
+            game.batch.draw(waveImageHandler.getTexture(), waveImageHandler.getPositionX(), waveImageHandler.getPositionY(),
                     waveImageHandler.getWidth(), waveImageHandler.getHeight());
 
         game.batch.end();
@@ -252,6 +254,7 @@ public class GameScreen extends AbstractScreen {
     @Override
     public void hide() {
         engineEffect.reset();
+        flameEffect.reset();
     }
 
     @Override
@@ -284,11 +287,15 @@ public class GameScreen extends AbstractScreen {
 
         textureAtlas = game.assets.manager.get("packedImages/playerAndEnemies.atlas", TextureAtlas.class);
         spaceshipAtlasRegion = textureAtlas.findRegion("basicPlayerSpaceship");
-        basicEnemyTexture = new TextureRegion(textureAtlas.findRegion("fraction1/orangeship"));
+        fraction1OrangeShipTexture = new TextureRegion(textureAtlas.findRegion("fraction1/orangeship"));
+        fraction1OrangeShip2Texture = new TextureRegion(textureAtlas.findRegion("fraction1/orangeship2"));
+        fraction1OrangeShip3Texture = new TextureRegion(textureAtlas.findRegion("fraction1/orangeship3"));
+        fraction1OrangeShip4Texture = new TextureRegion(textureAtlas.findRegion("fraction1/orangeship4"));
         lvl1background = game.assets.manager.get("background/lvl1.jpg", Texture.class);
         bulletImage = game.assets.manager.get("bullet.png", Texture.class);
         wave1 = game.assets.manager.get("rawImages/waves/wave1.png", Texture.class);
         wave2 = game.assets.manager.get("rawImages/waves/wave2.png", Texture.class);
+        wave3 = game.assets.manager.get("rawImages/waves/wave3.png", Texture.class);
         shootSound = game.assets.manager.get("music/sfx-laser.wav", Sound.class);
         scoreSound = game.assets.manager.get("music/score.wav", Sound.class);
         level1Music = game.assets.manager.get("music/level1Music.wav", Music.class);
@@ -354,7 +361,7 @@ public class GameScreen extends AbstractScreen {
         for (Enemy enemy : activeEnemies) {
             enemy.update(delta);
             game.batch.draw(enemy.getTexture(), enemy.getBody().getPosition().x - enemy.getWidth() / 2,
-                    enemy.getBody().getPosition().y - enemy.getHeight() / 2, BASIC_ENEMY_WIDTH, BASIC_ENEMY_HEIGHT);
+                    enemy.getBody().getPosition().y - enemy.getHeight() / 2, enemy.getWidth(), enemy.getHeight());
 
             if (!enemy.getBody().isActive()) {
                 Item item = (Item) itemChanceList.getRandomItem(world);
