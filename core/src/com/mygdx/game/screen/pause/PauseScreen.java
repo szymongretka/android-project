@@ -42,7 +42,7 @@ public class PauseScreen extends AbstractScreen {
         resumeButton.addListener(new ClickListener(){
             @Override
             public void clicked (InputEvent event, float x, float y){
-                game.gameScreenManager.setActiveScreen(GameState.LEVEL1); //TODO //////////////////
+                //game.gameScreenManager.setActiveScreen(GameState.LEVEL1); //TODO //////////////////
                 game.gameScreenManager.setScreen(GameState.LEVEL1, GameScreen.class);
             }
         });
@@ -51,8 +51,10 @@ public class PauseScreen extends AbstractScreen {
             @Override
             public void clicked (InputEvent event, float x, float y){
                 dispose();
-                game.gameScreenManager.setActiveScreen(GameState.MENU);
+                //game.gameScreenManager.setActiveScreen(GameState.MENU);
+                game.gameScreenManager.clearGameStateMap();
                 game.gameScreenManager.setScreen(GameState.MENU, MainMenuScreen.class);
+
             }
         });
 
