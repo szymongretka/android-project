@@ -217,15 +217,6 @@ public class GameScreen extends AbstractScreen {
         updateAndDrawEffects(delta);
         updateAndDrawItems(delta);
 
-        engineEffect.setPosition(playerSpaceship.getBody().getPosition().x,
-                playerSpaceship.getBody().getPosition().y - (PLAYER_HEIGHT/2f));
-        engineEffect.update(delta);
-        engineEffect.draw(game.batch);
-
-        if(!waveImageHandler.isCompleted())
-            game.batch.draw(waveImageHandler.getTexture(), waveImageHandler.getPositionX(), waveImageHandler.getPositionY(),
-                    waveImageHandler.getWidth(), waveImageHandler.getHeight());
-
         game.batch.end();
 
         if (TimeUtils.nanoTime() - lastBulletTime > 250000000) {
@@ -234,7 +225,7 @@ public class GameScreen extends AbstractScreen {
         }
 
 
-        //box2DDebugRenderer.render(this.world, camera.combined);
+        box2DDebugRenderer.render(this.world, camera.combined);
         world.step(1 / 60f, 6, 2);
 
         stage.draw();
@@ -292,7 +283,7 @@ public class GameScreen extends AbstractScreen {
         fraction1OrangeShip3Texture = new TextureRegion(textureAtlas.findRegion("fraction1/orangeship3"));
         fraction1OrangeShip4Texture = new TextureRegion(textureAtlas.findRegion("fraction1/orangeship4"));
         lvl1background = game.assets.manager.get("background/lvl1.jpg", Texture.class);
-        bulletImage = game.assets.manager.get("bullet.png", Texture.class);
+        bulletImage = game.assets.manager.get("bullet3.png", Texture.class);
         wave1 = game.assets.manager.get("rawImages/waves/wave1.png", Texture.class);
         wave2 = game.assets.manager.get("rawImages/waves/wave2.png", Texture.class);
         wave3 = game.assets.manager.get("rawImages/waves/wave3.png", Texture.class);
@@ -377,6 +368,16 @@ public class GameScreen extends AbstractScreen {
     }
 
     private void updateAndDrawEffects(float delta) {
+
+        if(!waveImageHandler.isCompleted())
+            game.batch.draw(waveImageHandler.getTexture(), waveImageHandler.getPositionX(), waveImageHandler.getPositionY(),
+                    waveImageHandler.getWidth(), waveImageHandler.getHeight());
+
+        engineEffect.setPosition(playerSpaceship.getBody().getPosition().x,
+                playerSpaceship.getBody().getPosition().y - (PLAYER_HEIGHT/2f));
+        engineEffect.update(delta);
+        engineEffect.draw(game.batch);
+
         for (PooledEffect effect : activeEffects) {
             effect.scaleEffect(0.2f);
             effect.update(delta);

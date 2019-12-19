@@ -148,7 +148,6 @@ public class SpawningSystem {
                                             Constants.HEIGHT / Constants.PPM, orangeSpaceship3.getVelX(), orangeSpaceship3.getVelY());
                                     activeEnemies.add(orangeSpaceship3);
                                 }
-
                             }
                         }, 29);
                     }

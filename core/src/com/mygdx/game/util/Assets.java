@@ -53,7 +53,8 @@ public class Assets implements Disposable {
 
         //bullets
         manager.load("bullet.png", Texture.class);
-
+        manager.load("bullet2.png", Texture.class);
+        manager.load("bullet3.png", Texture.class);
 
     }
 

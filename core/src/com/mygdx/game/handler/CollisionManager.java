@@ -34,10 +34,8 @@ public class CollisionManager implements ContactListener {
         if (isPlayerItemContact(fixtureA, fixtureB)) {
             if (fixtureA.getUserData() instanceof PlayerSpaceship) {
                 ((Item) fixtureB.getUserData()).takenByPlayer((PlayerSpaceship) fixtureA.getUserData());
-                //((PlayerSpaceship) fixtureA.getUserData()).pickItem((Item) fixtureB.getUserData());
             } else {
                 ((Item) fixtureA.getUserData()).takenByPlayer((PlayerSpaceship) fixtureB.getUserData());
-                //((PlayerSpaceship) fixtureB.getUserData()).pickItem((Item) fixtureA.getUserData());
             }
         }
 
