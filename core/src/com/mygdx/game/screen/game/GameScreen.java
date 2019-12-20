@@ -98,7 +98,6 @@ public class GameScreen extends AbstractScreen {
 
     //Pools
     private final GenericPool genericPool;
-    private final Pool enemyPool;
     private final Pool bulletBox2DPool;
     private ParticleEffectPool effectPool;
 
@@ -122,7 +121,7 @@ public class GameScreen extends AbstractScreen {
     private FPSLogger logger;
     public static float totalGameTime = 0;
     public static int POINTS = 0;
-    boolean wasTouched = false;
+    private boolean wasTouched = false;
 
     public GameScreen(final MyGdxGame game) {
         super(game);
@@ -145,7 +144,6 @@ public class GameScreen extends AbstractScreen {
 
         //pools
         genericPool = new GenericPool(world);
-        enemyPool = genericPool.getOrangeSpaceship1Pool();
         bulletBox2DPool = genericPool.getBulletPool();
         effectPool = new ParticleEffectPool(flameEffect, 0, 70);
 
@@ -203,8 +201,8 @@ public class GameScreen extends AbstractScreen {
 
         game.batch.draw(lvl1background, 0, backgroundY, WIDTH / PPM, HEIGHT / PPM * 6f);
 
-        game.batch.draw(playerSpaceship.getFrame(delta), playerSpaceship.getBody().getPosition().x - PLAYER_WIDTH / 2,
-                playerSpaceship.getBody().getPosition().y - PLAYER_HEIGHT / 2, PLAYER_WIDTH, PLAYER_HEIGHT);
+        game.batch.draw(playerSpaceship.getFrame(delta), playerSpaceship.getBody().getPosition().x - PLAYER_WIDTH / 2f,
+                playerSpaceship.getBody().getPosition().y - PLAYER_HEIGHT / 2f, PLAYER_WIDTH, PLAYER_HEIGHT);
         playerSpaceship.update(delta);
 
         updateAndDrawBullets(delta);
@@ -362,7 +360,7 @@ public class GameScreen extends AbstractScreen {
                     items.add(item);
                 }
                 spawnEffects(enemy.getOnDestroyCoordX(), enemy.getOnDestroyCoordY());
-                enemyPool.free(enemy); // place back in pool
+                genericPool.freeObjectFromSpecifiedPool(enemy); // place back in pool
                 activeEnemies.removeValue(enemy, true); // remove bullet from our array so we don't render it anymore
             }
         }
