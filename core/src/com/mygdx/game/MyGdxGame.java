@@ -1,6 +1,7 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.ai.msg.MessageManager;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.mygdx.game.screen.GameScreenManager;
@@ -14,6 +15,7 @@ public class MyGdxGame extends Game {
 	//Managers
     public Assets assets;
     public GameScreenManager gameScreenManager;
+    public MessageManager messageManager = MessageManager.getInstance();
 
     public void create() {
         font = new BitmapFont();

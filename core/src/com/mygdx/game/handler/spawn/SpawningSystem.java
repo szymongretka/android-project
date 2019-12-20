@@ -1,6 +1,7 @@
 package com.mygdx.game.handler.spawn;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.ai.msg.MessageManager;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.Timer;
@@ -14,6 +15,7 @@ import com.mygdx.game.game_object.pool.GenericPool;
 import com.mygdx.game.handler.WaveImageHandler;
 import com.mygdx.game.screen.game.GameScreen;
 import com.mygdx.game.util.Constants;
+import com.mygdx.game.util.MessageType;
 
 import java.util.Random;
 
@@ -34,6 +36,7 @@ public class SpawningSystem {
 
     private Random random;
 
+    private MessageManager messageManager;
 
     public SpawningSystem(final MyGdxGame game, GenericPool genericPool, Array array) {
         this.game = game;
@@ -43,6 +46,9 @@ public class SpawningSystem {
         this.orangeSpaceship2Pool = genericPool.getOrangeSpaceship2Pool();
         this.orangeSpaceship3Pool = genericPool.getOrangeSpaceship3Pool();
         this.orangeSpaceship4Pool = genericPool.getOrangeSpaceship4Pool();
+
+        this.messageManager = game.messageManager;
+        messageManager.addListeners(game.gameScreenManager, MessageType.YOU_WIN_SCREEN, MessageType.YOU_DIED_SCREEN);
     }
 
     public void spawn() {
@@ -150,6 +156,12 @@ public class SpawningSystem {
                                 }
                             }
                         }, 29);
+                        Timer.schedule(new Timer.Task() {
+                            @Override
+                            public void run() {
+                                messageManager.dispatchMessage(MessageType.YOU_WIN_SCREEN);
+                            }
+                        }, 39);
                     }
                 });
             }

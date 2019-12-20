@@ -1,6 +1,7 @@
 package com.mygdx.game.screen.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.ai.msg.MessageManager;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.FPSLogger;
@@ -44,6 +45,7 @@ import com.mygdx.game.handler.spawn.RandomItemSpawnSystem;
 import com.mygdx.game.handler.spawn.SpawningSystem;
 import com.mygdx.game.screen.AbstractScreen;
 import com.mygdx.game.screen.pause.PauseScreen;
+import com.mygdx.game.util.MessageType;
 
 import java.util.Iterator;
 
@@ -65,6 +67,7 @@ public class GameScreen extends AbstractScreen {
     private Stage stage;
     private Table table;
 
+
     //textures
     public TextureAtlas.AtlasRegion spaceshipAtlasRegion;
     public static TextureRegion fraction1OrangeShipTexture;
@@ -81,7 +84,6 @@ public class GameScreen extends AbstractScreen {
     public static Texture wave3;
     private TextureAtlas textureAtlas;
     private Texture lvl1background;
-
 
     private ImageButton pauseButton;
 
@@ -106,18 +108,21 @@ public class GameScreen extends AbstractScreen {
     private Array<PooledEffect> activeEffects = new Array<>();
     private Array<Item> items = new Array<>();
 
+    //handlers
     private RandomItemSpawnSystem itemChanceList = new RandomItemSpawnSystem<>();
+    public static WaveImageHandler waveImageHandler = new WaveImageHandler();
+    private MessageManager messageManager;
 
     private long lastBulletTime;
     private float backgroundY = 0f;
-    public static WaveImageHandler waveImageHandler = new WaveImageHandler();
 
     private PlayerSpaceship playerSpaceship;
+
 
     private FPSLogger logger;
     public static float totalGameTime = 0;
     public static int POINTS = 0;
-
+    boolean wasTouched = false;
 
     public GameScreen(final MyGdxGame game) {
         super(game);
@@ -179,21 +184,11 @@ public class GameScreen extends AbstractScreen {
     @Override
     public void update(float delta) {
         totalGameTime += delta;
-        if (Gdx.input.isTouched()) { //TODO TO REFACTOR
-            touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
-            float revertHeight = HEIGHT - touchPos.y;
-            if (Math.abs(touchPos.x - (playerSpaceship.getBody().getPosition().x * PPM)) > 8
-                    || Math.abs(revertHeight - (playerSpaceship.getBody().getPosition().y * PPM)) > 12) {
-                camera.unproject(touchPos);
-                playerSpaceship.move(touchPos.x, touchPos.y);
-            } else {
-                playerSpaceship.stop();
-            }
-        } else {
-            playerSpaceship.stop();
-        }
+        messageManager.update();
+        updatePlayerMovement();
         waveImageHandler.update();
     }
+
 
     @Override
     public void render(float delta) {
@@ -240,6 +235,7 @@ public class GameScreen extends AbstractScreen {
     public void show() {
         level1Music.play();
         Gdx.input.setInputProcessor(stage);
+        initMessages();
     }
 
     @Override
@@ -296,6 +292,11 @@ public class GameScreen extends AbstractScreen {
         coinImage = game.assets.manager.get("coin.png", Texture.class);
         revertImage = game.assets.manager.get("revert.png", Texture.class);
         shieldImage = game.assets.manager.get("shield.png", Texture.class);
+    }
+
+    private void initMessages() {
+        messageManager = game.messageManager;
+        messageManager.addListeners(playerSpaceship, MessageType.PLAYER_MOVE, MessageType.PLAYER_STOP);
     }
 
     private void spawnBasicBullets() {
@@ -364,6 +365,24 @@ public class GameScreen extends AbstractScreen {
                 enemyPool.free(enemy); // place back in pool
                 activeEnemies.removeValue(enemy, true); // remove bullet from our array so we don't render it anymore
             }
+        }
+    }
+
+    private void updatePlayerMovement() {
+        if (Gdx.input.isTouched()) {
+            wasTouched = true;
+            touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
+            float revertHeight = HEIGHT - touchPos.y;
+            if (Math.abs(touchPos.x - (playerSpaceship.getBody().getPosition().x * PPM)) > 8
+                    || Math.abs(revertHeight - (playerSpaceship.getBody().getPosition().y * PPM)) > 12) {
+                camera.unproject(touchPos);
+                messageManager.dispatchMessage(MessageType.PLAYER_MOVE, touchPos);
+            } else {
+                playerSpaceship.stop();
+            }
+        } else if(wasTouched) {
+            messageManager.dispatchMessage(MessageType.PLAYER_STOP);
+            wasTouched = false;
         }
     }
 
