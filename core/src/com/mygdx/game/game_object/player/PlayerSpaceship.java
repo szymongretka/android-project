@@ -12,7 +12,9 @@ import com.mygdx.game.game_object.Box2DObject;
 import com.mygdx.game.screen.game.GameScreen;
 import com.mygdx.game.util.MessageType;
 
+import static com.mygdx.game.util.Constants.BASIC_SHIP_HP;
 import static com.mygdx.game.util.Constants.BIT_ENEMY;
+import static com.mygdx.game.util.Constants.BIT_ENEMY_BULLET;
 import static com.mygdx.game.util.Constants.BIT_ITEM;
 import static com.mygdx.game.util.Constants.BIT_PLAYER;
 import static com.mygdx.game.util.Constants.PLAYER_HEIGHT;
@@ -42,8 +44,8 @@ public class PlayerSpaceship extends Box2DObject implements Telegraph {
 
 
     public PlayerSpaceship(GameScreen screen) {
-        super(screen.world, 32, 32, PLAYER_WIDTH, PLAYER_HEIGHT, 0, 0,
-                BodyDef.BodyType.DynamicBody, BIT_PLAYER, (short) (BIT_ENEMY | BIT_ITEM), (short) 0, false);
+        super(screen.world, 32, 32, PLAYER_WIDTH, PLAYER_HEIGHT, BASIC_SHIP_HP, 0,
+                BodyDef.BodyType.DynamicBody, BIT_PLAYER, (short) (BIT_ENEMY | BIT_ITEM | BIT_ENEMY_BULLET), (short) 0, false);
 
         currentState = State.STRAIGHT;
         previousState = State.STRAIGHT;

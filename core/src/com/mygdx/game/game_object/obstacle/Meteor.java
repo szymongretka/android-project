@@ -1,4 +1,34 @@
 package com.mygdx.game.game_object.obstacle;
 
-public class Meteor {
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.World;
+import com.mygdx.game.game_object.Box2DObject;
+import com.mygdx.game.game_object.player.PlayerSpaceship;
+
+import static com.mygdx.game.util.Constants.BIT_OBSTACLE;
+import static com.mygdx.game.util.Constants.BIT_PLAYER;
+
+public class Meteor extends Box2DObject {
+
+    private TextureRegion texture;
+
+    public Meteor(World world, float x, float y, float width, float height, int hp, int damage) {
+        super(world, x, y, width, height, hp, damage, BodyDef.BodyType.DynamicBody,
+                BIT_OBSTACLE, (short) (BIT_OBSTACLE | BIT_PLAYER), (short) 0, false);
+    }
+
+    @Override
+    public void update(float deltaTime) {
+
+    }
+
+    public void hitPlayer(PlayerSpaceship playerSpaceship) {
+
+    }
+
+    public TextureRegion getTexture() {
+        return texture;
+    }
+
 }

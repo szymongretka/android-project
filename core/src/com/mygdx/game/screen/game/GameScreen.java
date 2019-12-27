@@ -1,6 +1,7 @@
 package com.mygdx.game.screen.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.ai.GdxAI;
 import com.badlogic.gdx.ai.msg.MessageManager;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
@@ -30,8 +31,9 @@ import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.MyGdxGame;
 import com.mygdx.game.enums.GameState;
+import com.mygdx.game.game_object.boss.Boss1;
 import com.mygdx.game.game_object.bullet.Bullet;
-import com.mygdx.game.game_object.bullet.basic_bullet.BasicBullet;
+import com.mygdx.game.game_object.bullet.EnemyBullet;
 import com.mygdx.game.game_object.enemy.Enemy;
 import com.mygdx.game.game_object.item.Item;
 import com.mygdx.game.game_object.item.bonus.BasicShield;
@@ -39,6 +41,7 @@ import com.mygdx.game.game_object.item.bonus.RevertMovement;
 import com.mygdx.game.game_object.item.coin.Coin;
 import com.mygdx.game.game_object.player.PlayerSpaceship;
 import com.mygdx.game.game_object.pool.GenericPool;
+import com.mygdx.game.handler.BulletHandler;
 import com.mygdx.game.handler.CollisionManager;
 import com.mygdx.game.handler.WaveImageHandler;
 import com.mygdx.game.handler.spawn.RandomItemSpawnSystem;
@@ -49,8 +52,6 @@ import com.mygdx.game.util.MessageType;
 
 import java.util.Iterator;
 
-import static com.mygdx.game.util.Constants.BASICBULLETHEIGHT;
-import static com.mygdx.game.util.Constants.BASICBULLETWIDTH;
 import static com.mygdx.game.util.Constants.HEIGHT;
 import static com.mygdx.game.util.Constants.PLAYER_HEIGHT;
 import static com.mygdx.game.util.Constants.PLAYER_WIDTH;
@@ -82,6 +83,7 @@ public class GameScreen extends AbstractScreen {
     public static Texture wave1;
     public static Texture wave2;
     public static Texture wave3;
+    public static Texture boss1Image;
     private TextureAtlas textureAtlas;
     private Texture lvl1background;
 
@@ -104,6 +106,7 @@ public class GameScreen extends AbstractScreen {
     //Arrays
     private final Array<Enemy> activeEnemies = new Array<>();
     private final Array<Bullet> activeBullet2D = new Array<>();
+    private final Array<EnemyBullet> activeEnemyBullets = new Array<>();
     private Array<PooledEffect> activeEffects = new Array<>();
     private Array<Item> items = new Array<>();
 
@@ -111,12 +114,13 @@ public class GameScreen extends AbstractScreen {
     private RandomItemSpawnSystem itemChanceList = new RandomItemSpawnSystem<>();
     public static WaveImageHandler waveImageHandler = new WaveImageHandler();
     private MessageManager messageManager;
+    private BulletHandler bulletHandler;
 
-    private long lastBulletTime;
+    public static long lastBulletTime;
     private float backgroundY = 0f;
 
     private PlayerSpaceship playerSpaceship;
-
+    private Boss1 boss1;
 
     private FPSLogger logger;
     public static float totalGameTime = 0;
@@ -144,21 +148,17 @@ public class GameScreen extends AbstractScreen {
 
         //pools
         genericPool = new GenericPool(world);
-        bulletBox2DPool = genericPool.getBulletPool();
-        effectPool = new ParticleEffectPool(flameEffect, 0, 70);
-
-        SpawningSystem spawningSystem = new SpawningSystem(game, genericPool, activeEnemies);
-
-        switch (game.gameScreenManager.getActiveScreen()) {
-            case LEVEL1:
-                spawningSystem.spawn();
-                break;
-            case LEVEL2:
-                break;
-        }
+        bulletBox2DPool = genericPool.getBasicBulletPool();
+        effectPool = new ParticleEffectPool(flameEffect, 0, 40);
 
         playerSpaceship = new PlayerSpaceship(this);
         playerSpaceship.init(50, 50, 0, 0);
+
+        bulletHandler = new BulletHandler(genericPool, activeBullet2D, activeEnemyBullets);
+        SpawningSystem spawningSystem = new SpawningSystem(game, genericPool, activeEnemies, this);
+        spawningSystem.spawn();
+        boss1 = spawningSystem.boss1;
+
 
 
         flameEffect.start();
@@ -179,12 +179,24 @@ public class GameScreen extends AbstractScreen {
 
     }
 
+    private float elapsedTime = 0;
+
     @Override
     public void update(float delta) {
-        totalGameTime += delta;
-        messageManager.update();
+        elapsedTime =+ delta;
+        //messageManager.update();
         updatePlayerMovement();
         waveImageHandler.update();
+
+        GdxAI.getTimepiece().update(delta);
+
+        if(elapsedTime > 0.8f) {
+            boss1.update(elapsedTime); //TODO to refactor
+            // Dispatch any delayed messages
+            MessageManager.getInstance().update();
+
+            elapsedTime = 0;
+        }
     }
 
 
@@ -208,12 +220,14 @@ public class GameScreen extends AbstractScreen {
         updateAndDrawBullets(delta);
         updateAndDrawEnemies(delta);
         updateAndDrawEffects(delta);
+        updateAndDrawEnemyBullets(delta);
         updateAndDrawItems(delta);
 
         game.batch.end();
 
         if (TimeUtils.nanoTime() - lastBulletTime > 250000000) {
-            spawnBasicBullets();
+            bulletHandler.spawnBasicBullets(playerSpaceship.getBody().getPosition().x,
+                    playerSpaceship.getBody().getPosition().y);
             shootSound.play();
         }
 
@@ -281,6 +295,7 @@ public class GameScreen extends AbstractScreen {
         wave1 = game.assets.manager.get("rawImages/waves/wave1.png", Texture.class);
         wave2 = game.assets.manager.get("rawImages/waves/wave2.png", Texture.class);
         wave3 = game.assets.manager.get("rawImages/waves/wave3.png", Texture.class);
+        boss1Image = game.assets.manager.get("rawImages/boss/spacestation.png", Texture.class);
         shootSound = game.assets.manager.get("music/sfx-laser.wav", Sound.class);
         scoreSound = game.assets.manager.get("music/score.wav", Sound.class);
         level1Music = game.assets.manager.get("music/level1Music.wav", Music.class);
@@ -295,18 +310,7 @@ public class GameScreen extends AbstractScreen {
     private void initMessages() {
         messageManager = game.messageManager;
         messageManager.addListeners(playerSpaceship, MessageType.PLAYER_MOVE, MessageType.PLAYER_STOP);
-    }
-
-    private void spawnBasicBullets() {
-        /** Returns an object from this pool. The object may be new (from {@link #newObject()}) or reused (previously
-         * {@link #free(Object) freed}). */
-        // get a bullet from our pool
-        BasicBullet basicBullet = (BasicBullet) bulletBox2DPool.obtain();
-        basicBullet.init(playerSpaceship.getX(), playerSpaceship.getY() + PLAYER_HEIGHT/2f, basicBullet.getVelX(), basicBullet.getVelY());
-        // add to our array of bullets so we can access them in our render method
-        activeBullet2D.add(basicBullet);
-        //System.out.println(bulletBox2DPool.getFree());
-        lastBulletTime = TimeUtils.nanoTime();
+        messageManager.addListeners(bulletHandler, MessageType.BOSS_SHOOT_BULLET);
     }
 
 
@@ -322,11 +326,26 @@ public class GameScreen extends AbstractScreen {
             bullet.update(delta);
 
             game.batch.draw(bulletImage, bullet.getBody().getPosition().x - (bullet.getWidth()/2),
-                    bullet.getBody().getPosition().y - (bullet.getHeight()/2), BASICBULLETWIDTH, BASICBULLETHEIGHT);
+                    bullet.getBody().getPosition().y - (bullet.getHeight()/2), bullet.getWidth(), bullet.getHeight());
 
-            if (bullet.getBody().getPosition().y > HEIGHT - BASICBULLETHEIGHT || !bullet.getBody().isActive() || bullet.isToDestroy()) {
-                bulletBox2DPool.free(bullet); // reset and place back in pool
+            if (bullet.getBody().getPosition().y > HEIGHT - bullet.getHeight() || !bullet.getBody().isActive() || bullet.isToDestroy()) {
+                genericPool.freeBulletFromSpecifiedPool(bullet); // reset and place back in pool
                 activeBullet2D.removeValue(bullet, true); // remove bullet from our array so we don't render it anymore
+            }
+
+        }
+    }
+
+    private void updateAndDrawEnemyBullets(float delta) {
+        for (EnemyBullet enemyBullet : activeEnemyBullets) {
+            enemyBullet.update(delta);
+
+            game.batch.draw(bulletImage, enemyBullet.getBody().getPosition().x - (enemyBullet.getWidth()/2),
+                    enemyBullet.getBody().getPosition().y - (enemyBullet.getHeight()/2), enemyBullet.getWidth(), enemyBullet.getHeight());
+
+            if (enemyBullet.getBody().getPosition().y < 0 || !enemyBullet.getBody().isActive() || enemyBullet.isToDestroy()) {
+                genericPool.freeEnemyBulletFromSpecifiedPool(enemyBullet);
+                activeEnemyBullets.removeValue(enemyBullet, true);
             }
 
         }
@@ -360,7 +379,7 @@ public class GameScreen extends AbstractScreen {
                     items.add(item);
                 }
                 spawnEffects(enemy.getOnDestroyCoordX(), enemy.getOnDestroyCoordY());
-                genericPool.freeObjectFromSpecifiedPool(enemy); // place back in pool
+                genericPool.freeEnemyFromSpecifiedPool(enemy); // place back in pool
                 activeEnemies.removeValue(enemy, true); // remove bullet from our array so we don't render it anymore
             }
         }
@@ -428,5 +447,10 @@ public class GameScreen extends AbstractScreen {
         table.add(pauseButton).size(50f, 50f);
         stage.addActor(table);
     }
+
+    public PlayerSpaceship getPlayerSpaceship() {
+        return playerSpaceship;
+    }
+
 
 }

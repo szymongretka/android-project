@@ -3,18 +3,18 @@ package com.mygdx.game.game_object.bullet;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.game.game_object.Box2DObject;
-import com.mygdx.game.game_object.enemy.Enemy;
+import com.mygdx.game.game_object.player.PlayerSpaceship;
 
-import static com.mygdx.game.util.Constants.BIT_BULLET;
-import static com.mygdx.game.util.Constants.BIT_ENEMY;
+import static com.mygdx.game.util.Constants.BIT_ENEMY_BULLET;
+import static com.mygdx.game.util.Constants.BIT_PLAYER;
 
-public abstract class Bullet extends Box2DObject {
+public abstract class EnemyBullet extends Box2DObject {
 
     protected boolean toDestroy;
 
-    public Bullet(World world, float x, float y, float width, float height, int hp, int damage) {
+    public EnemyBullet(World world, float x, float y, float width, float height, int hp, int damage) {
         super(world, x, y, width, height, hp, damage, BodyDef.BodyType.DynamicBody,
-                BIT_BULLET, BIT_ENEMY, (short) 0, true);
+                BIT_ENEMY_BULLET, BIT_PLAYER, (short) 0, true);
     }
 
     @Override
@@ -23,7 +23,7 @@ public abstract class Bullet extends Box2DObject {
         this.toDestroy = false;
     }
 
-    public abstract void hitEnemy(Enemy enemy);
+    public abstract void hitPlayer(PlayerSpaceship playerSpaceship);
 
     public boolean isToDestroy() {
         return toDestroy;
@@ -32,5 +32,4 @@ public abstract class Bullet extends Box2DObject {
     public void setToDestroy(boolean toDestroy) {
         this.toDestroy = toDestroy;
     }
-
 }

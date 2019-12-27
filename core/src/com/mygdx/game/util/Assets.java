@@ -33,6 +33,9 @@ public class Assets implements Disposable {
         manager.load("rawImages/waves/wave5.png", Texture.class);
         manager.load("rawImages/waves/wave6.png", Texture.class);
 
+        //boss
+        manager.load("rawImages/boss/spacestation.png", Texture.class);
+
         //items
         manager.load("revert.png", Texture.class);
         manager.load("coin.png", Texture.class);

@@ -2,7 +2,11 @@ package com.mygdx.game.game_object.pool;
 
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Pool;
-import com.mygdx.game.game_object.bullet.basic_bullet.BasicBullet;
+import com.mygdx.game.game_object.bullet.Bullet;
+import com.mygdx.game.game_object.bullet.EnemyBullet;
+import com.mygdx.game.game_object.bullet.enemy_bullet.EnemyBasicBullet;
+import com.mygdx.game.game_object.bullet.player_bullet.BasicBullet;
+import com.mygdx.game.game_object.bullet.player_bullet.RedBullet;
 import com.mygdx.game.game_object.enemy.Enemy;
 import com.mygdx.game.game_object.enemy.enemies.fraction1.OrangeSpaceship1;
 import com.mygdx.game.game_object.enemy.enemies.fraction1.OrangeSpaceship2;
@@ -46,15 +50,30 @@ public class GenericPool {
     };
 
 
-    private final Pool<BasicBullet> bulletPool = new Pool<BasicBullet>() {
+    private final Pool<BasicBullet> basicBulletPool = new Pool<BasicBullet>() {
         @Override
         protected BasicBullet newObject() {
             return new BasicBullet(world);
         }
     };
 
-    public Pool<BasicBullet> getBulletPool() {
-        return bulletPool;
+    private final Pool<EnemyBasicBullet> enemyBulletPool = new Pool<EnemyBasicBullet>() {
+        @Override
+        protected EnemyBasicBullet newObject() {
+            return new EnemyBasicBullet(world);
+        }
+    };
+
+    private final Pool<RedBullet> redBulletPool = new Pool<RedBullet>() {
+        @Override
+        protected RedBullet newObject() {
+            return new RedBullet(world);
+        }
+    };
+
+
+    public Pool<BasicBullet> getBasicBulletPool() {
+        return basicBulletPool;
     }
 
     public Pool<OrangeSpaceship1> getOrangeSpaceship1Pool() {
@@ -73,17 +92,41 @@ public class GenericPool {
         return orangeSpaceship4Pool;
     }
 
+    public Pool<RedBullet> getRedBulletPool() {
+        return redBulletPool;
+    }
 
-    public void freeObjectFromSpecifiedPool(Enemy enemy) {
+    public Pool<EnemyBasicBullet> getEnemyBulletPool() {
+        return enemyBulletPool;
+    }
+
+    public void freeEnemyFromSpecifiedPool(Enemy enemy) {
         if (enemy instanceof OrangeSpaceship1)
             this.orangeSpaceship1Pool.free((OrangeSpaceship1) enemy);
-        if (enemy instanceof OrangeSpaceship2)
+        else if (enemy instanceof OrangeSpaceship2)
             this.orangeSpaceship2Pool.free((OrangeSpaceship2) enemy);
-        if (enemy instanceof OrangeSpaceship3)
+        else if (enemy instanceof OrangeSpaceship3)
             this.orangeSpaceship3Pool.free((OrangeSpaceship3) enemy);
-        if (enemy instanceof OrangeSpaceship4)
+        else if (enemy instanceof OrangeSpaceship4)
             this.orangeSpaceship4Pool.free((OrangeSpaceship4) enemy);
 
     }
+
+    public void freeBulletFromSpecifiedPool(Bullet bullet) {
+        if (bullet instanceof BasicBullet)
+            this.basicBulletPool.free((BasicBullet) bullet);
+        else if (bullet instanceof RedBullet)
+            this.redBulletPool.free((RedBullet) bullet);
+    }
+
+    public void freeEnemyBulletFromSpecifiedPool(EnemyBullet enemyBullet) {
+        if (enemyBullet instanceof EnemyBasicBullet)
+            this.enemyBulletPool.free((EnemyBasicBullet) enemyBullet);
+
+    }
+
+
+
+
 
 }

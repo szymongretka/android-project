@@ -2,6 +2,7 @@ package com.mygdx.game.game_object.enemy.enemies.fraction1;
 
 import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.game.game_object.enemy.Enemy;
+import com.mygdx.game.game_object.player.PlayerSpaceship;
 import com.mygdx.game.screen.game.GameScreen;
 
 import static com.mygdx.game.util.Constants.ORANGE_SPACESHIP4_HEIGHT;
@@ -55,6 +56,7 @@ public class OrangeSpaceship4 extends Enemy {
         isMovingRight = true;
     }
 
+    public void hitPlayer(PlayerSpaceship playerSpaceship) {}
 
 
 }

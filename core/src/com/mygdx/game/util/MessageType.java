@@ -9,4 +9,11 @@ public final class MessageType {
     public final static int YOU_WIN_SCREEN = 2;
     public final static int YOU_DIED_SCREEN = 3;
 
+    public final static int BOSS_MOVE_LEFT = 4;
+    public final static int BOSS_MOVE_RIGHT = 5;
+    public final static int BOSS_RAM_PLAYER = 6;
+    public final static int BOSS_SHOOT_BULLET = 7;
+    public final static int BOSS_SHOOT_BOMB = 8;
+    public final static int BOSS_SPIN = 9;
+
 }
