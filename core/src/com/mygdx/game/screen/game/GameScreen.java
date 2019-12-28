@@ -206,7 +206,7 @@ public class GameScreen extends AbstractScreen {
         camera.update();
         game.batch.setProjectionMatrix(camera.combined);
 
-        logger.log();
+        //logger.log();
         backgroundY -= 5 * delta;
 
         game.batch.begin();

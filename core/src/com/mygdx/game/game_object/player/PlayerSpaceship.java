@@ -27,7 +27,7 @@ public class PlayerSpaceship extends Box2DObject implements Telegraph {
     private int tileHeight = 127;
     private boolean isDead;
 
-    public enum State {STRAIGHT, TURNING_RIGHT, TURNING_LEFT, DEAD}
+    public enum State {STRAIGHT, TURNING_RIGHT, TURNING_LEFT, DEAD, GOT_HIT}
 
     public State currentState;
     public State previousState;
@@ -36,6 +36,7 @@ public class PlayerSpaceship extends Box2DObject implements Telegraph {
     private TextureRegion playerDead;
     private Animation playerMoveRightAnimation; //player turning right
     private Animation playerMoveLeftAnimation;
+    private Animation playerGotHitAnimation;
     private Animation playerExplodeAnimation;
     private float stateTimer;
 
@@ -65,6 +66,8 @@ public class PlayerSpaceship extends Box2DObject implements Telegraph {
         playerMoveRightAnimation = new Animation(0.1f, frames);
 
         frames.clear();
+
+
 
         playerStraight = new TextureRegion(screen.spaceshipAtlasRegion, 5 * tileWidth, 0, tileWidth, tileHeight);
 
@@ -129,6 +132,9 @@ public class PlayerSpaceship extends Box2DObject implements Telegraph {
             case TURNING_RIGHT:
                 region = (TextureRegion) playerMoveRightAnimation.getKeyFrame(stateTimer, true);
                 break;
+            case GOT_HIT:
+                region = (TextureRegion) playerMoveRightAnimation.getKeyFrame(stateTimer, true);
+                break;
             case STRAIGHT:
             default:
                 region = playerStraight;
@@ -153,6 +159,8 @@ public class PlayerSpaceship extends Box2DObject implements Telegraph {
             return State.TURNING_RIGHT;
         else if (this.getBody().getLinearVelocity().x < 0)
             return State.TURNING_LEFT;
+        else if (!this.getBody().isActive())
+            return State.GOT_HIT;
             //if none of these return then he must be standing
         else
             return State.STRAIGHT;

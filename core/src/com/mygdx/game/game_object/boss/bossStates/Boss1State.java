@@ -14,38 +14,12 @@ import static com.mygdx.game.util.Constants.BASIC_SHIP_HP;
 public enum Boss1State implements State<Boss1> {
 
 
-    MOVE() {
-        @Override
-        public void enter(Boss1 boss1) {
-            talk(boss1, "ENTERING MOVE STATE");
-        }
-
-        @Override
-        public void update(Boss1 boss1) {
-            if (!boss1.isInLeftBound() && boss1.isMovingLeft()) {
-                boss1.moveRight(Gdx.graphics.getDeltaTime());
-            } else if (!boss1.isInRightBound() && boss1.isMovingRight()) {
-                boss1.moveLeft(Gdx.graphics.getDeltaTime());
-            }
-            boss1.getStateMachine().revertToPreviousState();
-        }
-
-        @Override
-        public void exit(Boss1 boss1) {
-            talk(boss1, "exit MOVE STATE");
-        }
-
-    },
-
-
     GLOBAL_STATE() {
         @Override
         public void update(Boss1 boss1) {
-            if (!boss1.isInBounds())
-                boss1.getStateMachine().changeState(MOVE);
-            else if (MathUtils.randomBoolean(0.5f) && boss1.mana >= 250)
+            if (MathUtils.randomBoolean(0.5f) && boss1.mana >= 250)
                 boss1.getStateMachine().changeState(ATTACK);
-            else if (MathUtils.randomBoolean(0.8f) && boss1.getPlayer().getHp() < BASIC_SHIP_HP / 2 && boss1.mana >= 250)
+            if (MathUtils.randomBoolean(0.8f) && boss1.getPlayer().getHp() < BASIC_SHIP_HP / 2 && boss1.mana >= 250)
                 boss1.getStateMachine().changeState(RAM_PLAYER);
 
         }
@@ -55,10 +29,8 @@ public enum Boss1State implements State<Boss1> {
     ATTACK() {
         @Override
         public void update(Boss1 boss1) {
-            //shoot bullet
-            talk(boss1, "SHOOYINH");
             MessageManager.getInstance().dispatchMessage(MessageType.BOSS_SHOOT_BULLET, boss1.getBody().getPosition());
-            boss1.getStateMachine().revertToPreviousState();
+            boss1.getStateMachine().changeState(GLOBAL_STATE);
         }
 
         @Override
@@ -69,16 +41,39 @@ public enum Boss1State implements State<Boss1> {
     },
 
     RAM_PLAYER() {
+
+        float playerPosX;
+        float playerPosY;
+        float tempBossPosX;
+        float tempBossPosY;
+
         @Override
         public void enter(Boss1 boss1) {
+
+            playerPosX = boss1.getPlayer().getBody().getPosition().x;
+            playerPosY = boss1.getPlayer().getBody().getPosition().y;
+
+            tempBossPosX = boss1.getBody().getPosition().x;
+            tempBossPosY = boss1.getBody().getPosition().y;
+
+            boss1.ramPlayer(playerPosX, playerPosY);
 
         }
 
         @Override
         public void update(Boss1 boss1) {
-            talk(boss1, "ramming player");
-            boss1.getStateMachine().revertToPreviousState();
-            //boss1Image.getStateMachine().changeState();
+
+
+            if (boss1.rammed && Math.abs(boss1.getBody().getPosition().y - playerPosY) < 4) {
+                boss1.moveToDirection(tempBossPosX, tempBossPosY);
+                boss1.rammed = false;
+            }
+            if (Math.abs(boss1.getBody().getPosition().y - tempBossPosY) < 4 && !boss1.rammed) {
+                boss1.stop();
+                boss1.getBody().setLinearVelocity(boss1.getVelX() * Gdx.graphics.getDeltaTime(), 0);
+                boss1.getStateMachine().changeState(GLOBAL_STATE);
+            }
+            boss1.mana = 0;
         }
 
         @Override
@@ -86,10 +81,6 @@ public enum Boss1State implements State<Boss1> {
             boss1.mana = 0;
         }
 
-        @Override
-        public boolean onMessage(Boss1 entity, Telegram telegram) {
-            return false;
-        }
     },
 
     SPIN() {

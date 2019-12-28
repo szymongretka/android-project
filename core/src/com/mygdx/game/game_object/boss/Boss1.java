@@ -1,15 +1,19 @@
 package com.mygdx.game.game_object.boss;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ai.fsm.DefaultStateMachine;
 import com.badlogic.gdx.ai.fsm.StateMachine;
 import com.badlogic.gdx.ai.msg.Telegram;
 import com.badlogic.gdx.ai.msg.Telegraph;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Timer;
 import com.mygdx.game.game_object.boss.bossStates.Boss1State;
 import com.mygdx.game.game_object.enemy.Enemy;
 import com.mygdx.game.game_object.player.PlayerSpaceship;
 import com.mygdx.game.screen.game.GameScreen;
+import com.mygdx.game.util.Constants;
 
 import static com.mygdx.game.util.Constants.BOSS1_HEIGHT;
 import static com.mygdx.game.util.Constants.BOSS1_WIDTH;
@@ -20,7 +24,11 @@ public class Boss1 extends Enemy implements Telegraph {
 
     private boolean moveLeft;
     private boolean moveRight;
+    private float ramSpeed = 1500f;
+    private Vector2 direction = new Vector2();
+
     public int mana = 0;
+    public boolean rammed = false;
 
     private StateMachine<Boss1, Boss1State> stateMachine;
     private PlayerSpaceship player;
@@ -38,6 +46,12 @@ public class Boss1 extends Enemy implements Telegraph {
 
     @Override
     public void update(float deltaTime) {
+
+        if (!isInLeftBound() && isMovingLeft()) {
+            moveRight(deltaTime);
+        } else if (!isInRightBound() && isMovingRight()) {
+            moveLeft(deltaTime);
+        }
 
         stateMachine.update();
         mana += 1;
@@ -62,11 +76,13 @@ public class Boss1 extends Enemy implements Telegraph {
     }
 
     public void moveLeft(float deltaTime) {
-        this.body.setLinearVelocity(-velX * deltaTime, velY * deltaTime);
+        this.velX = -velX;
+        this.body.setLinearVelocity(velX * deltaTime, velY * deltaTime);
         moveLeft = true;
         moveRight = false;
     }
     public void moveRight(float deltaTime) {
+        this.velX = Math.abs(velX);
         this.body.setLinearVelocity(velX * deltaTime, velY * deltaTime);
         moveLeft = false;
         moveRight = true;
@@ -92,14 +108,44 @@ public class Boss1 extends Enemy implements Telegraph {
         return moveRight;
     }
 
-    public void spawnBullets() {
+    public void setMoveLeft(boolean moveLeft) {
+        this.moveLeft = moveLeft;
+    }
 
+    public void setMoveRight(boolean moveRight) {
+        this.moveRight = moveRight;
+    }
+
+    public void ramPlayer(float playerPosX, float playerPosY) {
+        stop();
+        moveToDirection(playerPosX, playerPosY);
+        rammed = true;
+    }
+
+    public void stop() {
+        this.getBody().setLinearVelocity(0 , 0);
+    }
+
+    public void moveToDirection(float posX, float posY) {
+        direction.set(posX, posY);
+        direction.sub(this.getBody().getPosition());
+        direction.nor();
+        direction = direction.scl(ramSpeed);
+        this.getBody().setLinearVelocity(direction.x, direction.y);
     }
 
     @Override
     public void hitPlayer(PlayerSpaceship playerSpaceship) {
         playerSpaceship.setHp(playerSpaceship.getHp() - 6);
-        System.out.println("hp: " + playerSpaceship.getHp());
+        playerSpaceship.getBody().setActive(false);
+
+        Timer.schedule(new Timer.Task() {
+            @Override
+            public void run() {
+                playerSpaceship.getBody().setActive(true);
+            }
+        }, 1);
+
     }
 
 
