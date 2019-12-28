@@ -59,6 +59,16 @@ public class LevelScreen extends AbstractScreen {
             }
         });
 
+        level2Button.addListener(new ClickListener(){
+            @Override
+            public void clicked (InputEvent event, float x, float y){
+                dispose();
+                game.gameScreenManager.setActiveScreen(GameState.LEVEL2);
+                game.gameScreenManager.setScreen(GameState.LEVEL2, GameScreen.class);
+            }
+        });
+
+
         table.padTop(30);
         table.add(level1Button).height(200f).width(500f).padBottom(60);
         table.row();

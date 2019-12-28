@@ -6,8 +6,10 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.mygdx.game.game_object.bullet.Bullet;
+import com.mygdx.game.game_object.bullet.EnemyBullet;
 import com.mygdx.game.game_object.enemy.Enemy;
 import com.mygdx.game.game_object.item.Item;
+import com.mygdx.game.game_object.obstacle.Meteor;
 import com.mygdx.game.game_object.player.PlayerSpaceship;
 
 
@@ -39,11 +41,27 @@ public class CollisionManager implements ContactListener {
             }
         }
 
-        if (isPlayerEnemyContact(fixtureA, fixtureB)) {
-            if (fixtureA.getUserData() instanceof Enemy) {
-
+        if (isPlayerEnemyBulletContact(fixtureA, fixtureB)) {
+            if (fixtureA.getUserData() instanceof PlayerSpaceship) {
+                ((EnemyBullet) fixtureB.getUserData()).hitPlayer((PlayerSpaceship) fixtureA.getUserData());
             } else {
+                ((EnemyBullet) fixtureA.getUserData()).hitPlayer((PlayerSpaceship) fixtureB.getUserData());
+            }
+        }
 
+        if (isPlayerEnemyContact(fixtureA, fixtureB)) {
+            if (fixtureA.getUserData() instanceof PlayerSpaceship) {
+                ((Enemy) fixtureB.getUserData()).hitPlayer((PlayerSpaceship) fixtureA.getUserData());
+            } else {
+                ((Enemy) fixtureA.getUserData()).hitPlayer((PlayerSpaceship) fixtureB.getUserData());
+            }
+        }
+
+        if (isPlayerMeteorContact(fixtureA, fixtureB)) {
+            if (fixtureA.getUserData() instanceof PlayerSpaceship) {
+                ((Meteor) fixtureB.getUserData()).hitPlayer((PlayerSpaceship) fixtureA.getUserData());
+            } else {
+                ((Meteor) fixtureA.getUserData()).hitPlayer((PlayerSpaceship) fixtureB.getUserData());
             }
         }
 
@@ -65,9 +83,27 @@ public class CollisionManager implements ContactListener {
 
     }
 
+    private boolean isPlayerMeteorContact(Fixture a, Fixture b) {
+        if (a.getUserData() instanceof PlayerSpaceship || b.getUserData() instanceof PlayerSpaceship) {
+            if (a.getUserData() instanceof Meteor || b.getUserData() instanceof Meteor) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private boolean isBulletEnemyContact(Fixture a, Fixture b) {
         if (a.getUserData() instanceof Bullet || b.getUserData() instanceof Bullet) {
             if (a.getUserData() instanceof Enemy || b.getUserData() instanceof Enemy) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isPlayerEnemyBulletContact(Fixture a, Fixture b) {
+        if (a.getUserData() instanceof PlayerSpaceship || b.getUserData() instanceof PlayerSpaceship) {
+            if (a.getUserData() instanceof EnemyBullet || b.getUserData() instanceof EnemyBullet) {
                 return true;
             }
         }

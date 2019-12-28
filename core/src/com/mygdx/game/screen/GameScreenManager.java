@@ -1,16 +1,22 @@
 package com.mygdx.game.screen;
 
+import com.badlogic.gdx.ai.msg.Telegram;
+import com.badlogic.gdx.ai.msg.Telegraph;
+import com.badlogic.gdx.utils.Timer;
 import com.mygdx.game.MyGdxGame;
 import com.mygdx.game.enums.GameState;
+import com.mygdx.game.screen.event.YouWinScreen;
+import com.mygdx.game.screen.menu.LevelScreen;
 import com.mygdx.game.screen.menu.LoadingScreen;
 import com.mygdx.game.screen.menu.MainMenuScreen;
 import com.mygdx.game.screen.pause.PauseScreen;
+import com.mygdx.game.util.MessageType;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class GameScreenManager<T extends AbstractScreen> {
+public class GameScreenManager<T extends AbstractScreen> implements Telegraph {
 
     public final MyGdxGame game;
     private Map<GameState, AbstractScreen> gameScreens;
@@ -63,4 +69,28 @@ public class GameScreenManager<T extends AbstractScreen> {
         this.gameScreens.clear();
     }
 
+    @Override
+    public boolean handleMessage(Telegram msg) {
+
+        switch (msg.message) {
+            case MessageType.YOU_WIN_SCREEN:
+                clearGameStateMap();
+                setActiveScreen(GameState.YOU_WIN_SCREEN);
+                setScreen(GameState.YOU_WIN_SCREEN, (Class<T>) YouWinScreen.class);
+                Timer.schedule(new Timer.Task() {
+                    @Override
+                    public void run() {
+                        setActiveScreen(GameState.LEVELSCREEN);
+                        setScreen(GameState.LEVELSCREEN, (Class<T>) LevelScreen.class);
+                    }
+                }, 2);
+
+                return true;
+            case MessageType.YOU_DIED_SCREEN:
+
+                return true;
+        }
+
+        return false;
+    }
 }

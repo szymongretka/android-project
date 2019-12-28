@@ -20,6 +20,9 @@ public class Constants {
     public static final int ORANGE_SPACESHIP4_WIDTH = 10;
     public static final int ORANGE_SPACESHIP4_HEIGHT = 10;
 
+    public static final int BOSS1_WIDTH = 20;
+    public static final int BOSS1_HEIGHT = 20;
+
 
     public static final float BASICBULLETWIDTH = 4f;
     public static final float BASICBULLETHEIGHT = 5f;
@@ -27,6 +30,7 @@ public class Constants {
 
     public static final int PLAYER_WIDTH = 12;
     public static final int PLAYER_HEIGHT = 16;
+    public static final int BASIC_SHIP_HP = 10;
 
     public static final int COIN_WIDTH = 4;
     public static final int COIN_HEIGHT = 6;
@@ -43,5 +47,6 @@ public class Constants {
     public static final short BIT_BULLET = 4;
     public static final short BIT_ITEM = 8;
     public static final short BIT_OBSTACLE = 16;
+    public static final short BIT_ENEMY_BULLET = 2;
 
 }

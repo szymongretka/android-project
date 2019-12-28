@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.game.game_object.Box2DObject;
+import com.mygdx.game.game_object.player.PlayerSpaceship;
 
 import static com.mygdx.game.util.Constants.BIT_BULLET;
 import static com.mygdx.game.util.Constants.BIT_ENEMY;
@@ -20,6 +21,8 @@ public abstract class Enemy extends Box2DObject {
         super(world, x, y, width, height, hp, damage, BodyDef.BodyType.DynamicBody,
                 BIT_ENEMY, (short) (BIT_BULLET | BIT_PLAYER), (short) 0, false);
     }
+
+    public abstract void hitPlayer(PlayerSpaceship playerSpaceship);
 
     public float getOnDestroyCoordX() {
         return onDestroyCoordX;

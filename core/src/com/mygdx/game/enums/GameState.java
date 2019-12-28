@@ -4,6 +4,7 @@ public enum GameState {
     PLAYSCREEN,
     LEVELSCREEN,
     LOADINGSCREEN,
+    YOU_WIN_SCREEN,
     LEVEL1,
     LEVEL2,
     LEVEL3,

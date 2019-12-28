@@ -1,6 +1,8 @@
 package com.mygdx.game.screen.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.ai.GdxAI;
+import com.badlogic.gdx.ai.msg.MessageManager;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.FPSLogger;
@@ -29,8 +31,9 @@ import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.MyGdxGame;
 import com.mygdx.game.enums.GameState;
+import com.mygdx.game.game_object.boss.Boss1;
 import com.mygdx.game.game_object.bullet.Bullet;
-import com.mygdx.game.game_object.bullet.basic_bullet.BasicBullet;
+import com.mygdx.game.game_object.bullet.EnemyBullet;
 import com.mygdx.game.game_object.enemy.Enemy;
 import com.mygdx.game.game_object.item.Item;
 import com.mygdx.game.game_object.item.bonus.BasicShield;
@@ -38,17 +41,17 @@ import com.mygdx.game.game_object.item.bonus.RevertMovement;
 import com.mygdx.game.game_object.item.coin.Coin;
 import com.mygdx.game.game_object.player.PlayerSpaceship;
 import com.mygdx.game.game_object.pool.GenericPool;
+import com.mygdx.game.handler.BulletHandler;
 import com.mygdx.game.handler.CollisionManager;
 import com.mygdx.game.handler.WaveImageHandler;
 import com.mygdx.game.handler.spawn.RandomItemSpawnSystem;
 import com.mygdx.game.handler.spawn.SpawningSystem;
 import com.mygdx.game.screen.AbstractScreen;
 import com.mygdx.game.screen.pause.PauseScreen;
+import com.mygdx.game.util.MessageType;
 
 import java.util.Iterator;
 
-import static com.mygdx.game.util.Constants.BASICBULLETHEIGHT;
-import static com.mygdx.game.util.Constants.BASICBULLETWIDTH;
 import static com.mygdx.game.util.Constants.HEIGHT;
 import static com.mygdx.game.util.Constants.PLAYER_HEIGHT;
 import static com.mygdx.game.util.Constants.PLAYER_WIDTH;
@@ -65,6 +68,7 @@ public class GameScreen extends AbstractScreen {
     private Stage stage;
     private Table table;
 
+
     //textures
     public TextureAtlas.AtlasRegion spaceshipAtlasRegion;
     public static TextureRegion fraction1OrangeShipTexture;
@@ -76,12 +80,12 @@ public class GameScreen extends AbstractScreen {
     public static Texture coinImage;
     public static Texture revertImage;
     public static Texture shieldImage;
-    public static Texture wave1;
-    public static Texture wave2;
-    public static Texture wave3;
+    public static TextureRegion wave1;
+    public static TextureRegion wave2;
+    public static TextureRegion wave3;
+    public static TextureRegion boss1Image;
     private TextureAtlas textureAtlas;
     private Texture lvl1background;
-
 
     private ImageButton pauseButton;
 
@@ -96,28 +100,32 @@ public class GameScreen extends AbstractScreen {
 
     //Pools
     private final GenericPool genericPool;
-    private final Pool enemyPool;
     private final Pool bulletBox2DPool;
     private ParticleEffectPool effectPool;
 
     //Arrays
     private final Array<Enemy> activeEnemies = new Array<>();
     private final Array<Bullet> activeBullet2D = new Array<>();
+    private final Array<EnemyBullet> activeEnemyBullets = new Array<>();
     private Array<PooledEffect> activeEffects = new Array<>();
     private Array<Item> items = new Array<>();
 
+    //handlers
     private RandomItemSpawnSystem itemChanceList = new RandomItemSpawnSystem<>();
-
-    private long lastBulletTime;
-    private float backgroundY = 0f;
     public static WaveImageHandler waveImageHandler = new WaveImageHandler();
+    private MessageManager messageManager;
+    private BulletHandler bulletHandler;
+
+    public static long lastBulletTime;
+    private float backgroundY = 0f;
 
     private PlayerSpaceship playerSpaceship;
+    private Boss1 boss1;
 
     private FPSLogger logger;
     public static float totalGameTime = 0;
     public static int POINTS = 0;
-
+    private boolean wasTouched = false;
 
     public GameScreen(final MyGdxGame game) {
         super(game);
@@ -140,22 +148,17 @@ public class GameScreen extends AbstractScreen {
 
         //pools
         genericPool = new GenericPool(world);
-        enemyPool = genericPool.getOrangeSpaceship1Pool();
-        bulletBox2DPool = genericPool.getBulletPool();
-        effectPool = new ParticleEffectPool(flameEffect, 0, 70);
-
-        SpawningSystem spawningSystem = new SpawningSystem(game, genericPool, activeEnemies);
-
-        switch (game.gameScreenManager.getActiveScreen()) {
-            case LEVEL1:
-                spawningSystem.spawn();
-                break;
-            case LEVEL2:
-                break;
-        }
+        bulletBox2DPool = genericPool.getBasicBulletPool();
+        effectPool = new ParticleEffectPool(flameEffect, 0, 40);
 
         playerSpaceship = new PlayerSpaceship(this);
         playerSpaceship.init(50, 50, 0, 0);
+
+        bulletHandler = new BulletHandler(genericPool, activeBullet2D, activeEnemyBullets);
+        SpawningSystem spawningSystem = new SpawningSystem(game, genericPool, activeEnemies, this);
+        spawningSystem.spawn();
+        boss1 = spawningSystem.boss1;
+
 
 
         flameEffect.start();
@@ -176,24 +179,26 @@ public class GameScreen extends AbstractScreen {
 
     }
 
+    private float elapsedTime = 0;
+
     @Override
     public void update(float delta) {
-        totalGameTime += delta;
-        if (Gdx.input.isTouched()) { //TODO TO REFACTOR
-            touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
-            float revertHeight = HEIGHT - touchPos.y;
-            if (Math.abs(touchPos.x - (playerSpaceship.getBody().getPosition().x * PPM)) > 8
-                    || Math.abs(revertHeight - (playerSpaceship.getBody().getPosition().y * PPM)) > 12) {
-                camera.unproject(touchPos);
-                playerSpaceship.move(touchPos.x, touchPos.y);
-            } else {
-                playerSpaceship.stop();
-            }
-        } else {
-            playerSpaceship.stop();
-        }
+        elapsedTime =+ delta;
+        //messageManager.update();
+        updatePlayerMovement();
         waveImageHandler.update();
+
+        GdxAI.getTimepiece().update(delta);
+
+        if(elapsedTime > 0.8f) {
+            boss1.update(elapsedTime); //TODO to refactor
+            // Dispatch any delayed messages
+            MessageManager.getInstance().update();
+
+            elapsedTime = 0;
+        }
     }
+
 
     @Override
     public void render(float delta) {
@@ -201,26 +206,28 @@ public class GameScreen extends AbstractScreen {
         camera.update();
         game.batch.setProjectionMatrix(camera.combined);
 
-        logger.log();
+        //logger.log();
         backgroundY -= 5 * delta;
 
         game.batch.begin();
 
         game.batch.draw(lvl1background, 0, backgroundY, WIDTH / PPM, HEIGHT / PPM * 6f);
 
-        game.batch.draw(playerSpaceship.getFrame(delta), playerSpaceship.getBody().getPosition().x - PLAYER_WIDTH / 2,
-                playerSpaceship.getBody().getPosition().y - PLAYER_HEIGHT / 2, PLAYER_WIDTH, PLAYER_HEIGHT);
+        game.batch.draw(playerSpaceship.getFrame(delta), playerSpaceship.getBody().getPosition().x - PLAYER_WIDTH / 2f,
+                playerSpaceship.getBody().getPosition().y - PLAYER_HEIGHT / 2f, PLAYER_WIDTH, PLAYER_HEIGHT);
         playerSpaceship.update(delta);
 
         updateAndDrawBullets(delta);
         updateAndDrawEnemies(delta);
         updateAndDrawEffects(delta);
+        updateAndDrawEnemyBullets(delta);
         updateAndDrawItems(delta);
 
         game.batch.end();
 
         if (TimeUtils.nanoTime() - lastBulletTime > 250000000) {
-            spawnBasicBullets();
+            bulletHandler.spawnBasicBullets(playerSpaceship.getBody().getPosition().x,
+                    playerSpaceship.getBody().getPosition().y);
             shootSound.play();
         }
 
@@ -240,6 +247,7 @@ public class GameScreen extends AbstractScreen {
     public void show() {
         level1Music.play();
         Gdx.input.setInputProcessor(stage);
+        initMessages();
     }
 
     @Override
@@ -265,7 +273,6 @@ public class GameScreen extends AbstractScreen {
     public void dispose() {
         coinImage.dispose();
         revertImage.dispose();
-        bulletImage.dispose();
         shootSound.dispose();
         level1Music.dispose();
         box2DDebugRenderer.dispose();
@@ -282,11 +289,12 @@ public class GameScreen extends AbstractScreen {
         fraction1OrangeShip2Texture = new TextureRegion(textureAtlas.findRegion("fraction1/orangeship2"));
         fraction1OrangeShip3Texture = new TextureRegion(textureAtlas.findRegion("fraction1/orangeship3"));
         fraction1OrangeShip4Texture = new TextureRegion(textureAtlas.findRegion("fraction1/orangeship4"));
-        lvl1background = game.assets.manager.get("background/lvl1.jpg", Texture.class);
-        bulletImage = game.assets.manager.get("bullet3.png", Texture.class);
-        wave1 = game.assets.manager.get("rawImages/waves/wave1.png", Texture.class);
-        wave2 = game.assets.manager.get("rawImages/waves/wave2.png", Texture.class);
-        wave3 = game.assets.manager.get("rawImages/waves/wave3.png", Texture.class);
+        lvl1background = game.assets.manager.get("background/lvl1.jpg");
+        bulletImage = game.assets.manager.get("bullet2.png", Texture.class);
+        wave1 = new TextureRegion(textureAtlas.findRegion("waves/wave1"));
+        wave2 = new TextureRegion(textureAtlas.findRegion("waves/wave2"));
+        wave3 = new TextureRegion(textureAtlas.findRegion("waves/wave3"));
+        boss1Image = new TextureRegion(textureAtlas.findRegion("boss/boss1/spacestation"));
         shootSound = game.assets.manager.get("music/sfx-laser.wav", Sound.class);
         scoreSound = game.assets.manager.get("music/score.wav", Sound.class);
         level1Music = game.assets.manager.get("music/level1Music.wav", Music.class);
@@ -298,16 +306,10 @@ public class GameScreen extends AbstractScreen {
         shieldImage = game.assets.manager.get("shield.png", Texture.class);
     }
 
-    private void spawnBasicBullets() {
-        /** Returns an object from this pool. The object may be new (from {@link #newObject()}) or reused (previously
-         * {@link #free(Object) freed}). */
-        // get a bullet from our pool
-        BasicBullet basicBullet = (BasicBullet) bulletBox2DPool.obtain();
-        basicBullet.init(playerSpaceship.getX(), playerSpaceship.getY() + PLAYER_HEIGHT/2f, basicBullet.getVelX(), basicBullet.getVelY());
-        // add to our array of bullets so we can access them in our render method
-        activeBullet2D.add(basicBullet);
-        //System.out.println(bulletBox2DPool.getFree());
-        lastBulletTime = TimeUtils.nanoTime();
+    private void initMessages() {
+        messageManager = game.messageManager;
+        messageManager.addListeners(playerSpaceship, MessageType.PLAYER_MOVE, MessageType.PLAYER_STOP);
+        messageManager.addListeners(bulletHandler, MessageType.BOSS_SHOOT_BULLET);
     }
 
 
@@ -323,11 +325,26 @@ public class GameScreen extends AbstractScreen {
             bullet.update(delta);
 
             game.batch.draw(bulletImage, bullet.getBody().getPosition().x - (bullet.getWidth()/2),
-                    bullet.getBody().getPosition().y - (bullet.getHeight()/2), BASICBULLETWIDTH, BASICBULLETHEIGHT);
+                    bullet.getBody().getPosition().y - (bullet.getHeight()/2), bullet.getWidth(), bullet.getHeight());
 
-            if (bullet.getBody().getPosition().y > HEIGHT - BASICBULLETHEIGHT || !bullet.getBody().isActive() || bullet.isToDestroy()) {
-                bulletBox2DPool.free(bullet); // reset and place back in pool
+            if (bullet.getBody().getPosition().y > HEIGHT - bullet.getHeight() || !bullet.getBody().isActive() || bullet.isToDestroy()) {
+                genericPool.freeBulletFromSpecifiedPool(bullet); // reset and place back in pool
                 activeBullet2D.removeValue(bullet, true); // remove bullet from our array so we don't render it anymore
+            }
+
+        }
+    }
+
+    private void updateAndDrawEnemyBullets(float delta) {
+        for (EnemyBullet enemyBullet : activeEnemyBullets) {
+            enemyBullet.update(delta);
+
+            game.batch.draw(bulletImage, enemyBullet.getBody().getPosition().x - (enemyBullet.getWidth()/2),
+                    enemyBullet.getBody().getPosition().y - (enemyBullet.getHeight()/2), enemyBullet.getWidth(), enemyBullet.getHeight());
+
+            if (enemyBullet.getBody().getPosition().y < 0 || !enemyBullet.getBody().isActive() || enemyBullet.isToDestroy()) {
+                genericPool.freeEnemyBulletFromSpecifiedPool(enemyBullet);
+                activeEnemyBullets.removeValue(enemyBullet, true);
             }
 
         }
@@ -361,9 +378,27 @@ public class GameScreen extends AbstractScreen {
                     items.add(item);
                 }
                 spawnEffects(enemy.getOnDestroyCoordX(), enemy.getOnDestroyCoordY());
-                enemyPool.free(enemy); // place back in pool
+                genericPool.freeEnemyFromSpecifiedPool(enemy); // place back in pool
                 activeEnemies.removeValue(enemy, true); // remove bullet from our array so we don't render it anymore
             }
+        }
+    }
+
+    private void updatePlayerMovement() {
+        if (Gdx.input.isTouched()) {
+            wasTouched = true;
+            touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
+            float revertHeight = HEIGHT - touchPos.y;
+            if (Math.abs(touchPos.x - (playerSpaceship.getBody().getPosition().x * PPM)) > 8
+                    || Math.abs(revertHeight - (playerSpaceship.getBody().getPosition().y * PPM)) > 12) {
+                camera.unproject(touchPos);
+                messageManager.dispatchMessage(MessageType.PLAYER_MOVE, touchPos);
+            } else {
+                playerSpaceship.stop();
+            }
+        } else if(wasTouched) {
+            messageManager.dispatchMessage(MessageType.PLAYER_STOP);
+            wasTouched = false;
         }
     }
 
@@ -411,5 +446,10 @@ public class GameScreen extends AbstractScreen {
         table.add(pauseButton).size(50f, 50f);
         stage.addActor(table);
     }
+
+    public PlayerSpaceship getPlayerSpaceship() {
+        return playerSpaceship;
+    }
+
 
 }

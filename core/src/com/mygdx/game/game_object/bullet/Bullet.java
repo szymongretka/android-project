@@ -32,4 +32,5 @@ public abstract class Bullet extends Box2DObject {
     public void setToDestroy(boolean toDestroy) {
         this.toDestroy = toDestroy;
     }
+
 }

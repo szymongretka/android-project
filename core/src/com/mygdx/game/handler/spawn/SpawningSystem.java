@@ -1,19 +1,24 @@
 package com.mygdx.game.handler.spawn;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.ai.msg.MessageManager;
+import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.Timer;
 import com.mygdx.game.MyGdxGame;
+import com.mygdx.game.game_object.boss.Boss1;
 import com.mygdx.game.game_object.enemy.Enemy;
 import com.mygdx.game.game_object.enemy.enemies.fraction1.OrangeSpaceship1;
 import com.mygdx.game.game_object.enemy.enemies.fraction1.OrangeSpaceship2;
 import com.mygdx.game.game_object.enemy.enemies.fraction1.OrangeSpaceship3;
 import com.mygdx.game.game_object.enemy.enemies.fraction1.OrangeSpaceship4;
+import com.mygdx.game.game_object.player.PlayerSpaceship;
 import com.mygdx.game.game_object.pool.GenericPool;
 import com.mygdx.game.handler.WaveImageHandler;
 import com.mygdx.game.screen.game.GameScreen;
 import com.mygdx.game.util.Constants;
+import com.mygdx.game.util.MessageType;
 
 import java.util.Random;
 
@@ -22,11 +27,10 @@ public class SpawningSystem {
     private final MyGdxGame game;
     private GenericPool genericPool;
     private Array array;
-
-    private Pool<OrangeSpaceship1> orangeSpaceship1Pool;
-    private Pool<OrangeSpaceship2> orangeSpaceship2Pool;
-    private Pool<OrangeSpaceship3> orangeSpaceship3Pool;
-    private Pool<OrangeSpaceship4> orangeSpaceship4Pool;
+    private WaveImageHandler waveImageHandler;
+    private World world;
+    private PlayerSpaceship playerSpaceship;
+    public Boss1 boss1;
 
     private int wave1;
     private int wave2;
@@ -34,15 +38,17 @@ public class SpawningSystem {
 
     private Random random;
 
+    private MessageManager messageManager;
 
-    public SpawningSystem(final MyGdxGame game, GenericPool genericPool, Array array) {
+    public SpawningSystem(final MyGdxGame game, GenericPool genericPool, Array array, GameScreen gameScreen) {
         this.game = game;
         this.genericPool = genericPool;
         this.array = array;
-        this.orangeSpaceship1Pool = genericPool.getOrangeSpaceship1Pool();
-        this.orangeSpaceship2Pool = genericPool.getOrangeSpaceship2Pool();
-        this.orangeSpaceship3Pool = genericPool.getOrangeSpaceship3Pool();
-        this.orangeSpaceship4Pool = genericPool.getOrangeSpaceship4Pool();
+        this.messageManager = game.messageManager;
+        messageManager.addListeners(game.gameScreenManager, MessageType.YOU_WIN_SCREEN, MessageType.YOU_DIED_SCREEN);
+        waveImageHandler = GameScreen.waveImageHandler;
+        this.world = gameScreen.world;
+        this.playerSpaceship = gameScreen.getPlayerSpaceship();
     }
 
     public void spawn() {
@@ -50,11 +56,11 @@ public class SpawningSystem {
         switch (game.gameScreenManager.getActiveScreen()) {
 
             case LEVEL1:
-                firstLevel(orangeSpaceship1Pool, orangeSpaceship2Pool, orangeSpaceship3Pool,
-                        orangeSpaceship4Pool, array);
+                firstLevel(array);
                 break;
             case LEVEL2:
-
+                boss1 = new Boss1(world, playerSpaceship);
+                secondLevel(boss1, array);
                 break;
             case LEVEL3:
 
@@ -68,17 +74,18 @@ public class SpawningSystem {
     }
 
 
-    private void firstLevel(Pool<OrangeSpaceship1> orangeSpaceship1Pool,
-                            Pool<OrangeSpaceship2> orangeSpaceship2Pool, Pool<OrangeSpaceship3> orangeSpaceship3Pool,
-                            Pool<OrangeSpaceship4> orangeSpaceship4Pool , Array<Enemy> activeEnemies) {
+    private void firstLevel(Array<Enemy> activeEnemies) {
 
         wave1 = 6;
         wave2 = 10;
         wave3 = 20;
 
-        random = new Random();
+        Pool<OrangeSpaceship1> orangeSpaceship1Pool = genericPool.getOrangeSpaceship1Pool();
+        Pool<OrangeSpaceship2> orangeSpaceship2Pool = genericPool.getOrangeSpaceship2Pool();
+        Pool<OrangeSpaceship3> orangeSpaceship3Pool = genericPool.getOrangeSpaceship3Pool();
+        Pool<OrangeSpaceship4> orangeSpaceship4Pool = genericPool.getOrangeSpaceship4Pool();
 
-        WaveImageHandler waveImageHandler = GameScreen.waveImageHandler;
+        random = new Random();
 
         new Thread(new Runnable() {
             @Override
@@ -150,16 +157,49 @@ public class SpawningSystem {
                                 }
                             }
                         }, 29);
+                        Timer.schedule(new Timer.Task() {
+                            @Override
+                            public void run() {
+                                messageManager.dispatchMessage(MessageType.YOU_WIN_SCREEN);
+                            }
+                        }, 39);
                     }
                 });
             }
         }).start();
 
+    }
 
 
+    private void secondLevel(Boss1 boss1, Array<Enemy> activeEnemies) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                // do something important here, asynchronously to the rendering thread
+                // post a Runnable to the rendering thread that processes the result
+                Gdx.app.postRunnable(new Runnable() {
+                    @Override
+                    public void run() {
+                        // process the result, e.g. add it to an Array<Result> field of the ApplicationListener.
+                        Timer.schedule(new Timer.Task() {
+                            @Override
+                            public void run() {
+                                waveImageHandler.initWaveImage(GameScreen.wave1);
+                            }
+                        }, 1);
+                        Timer.schedule(new Timer.Task() {
+                            @Override
+                            public void run() {
 
-
-
+                                boss1.init(Constants.WIDTH / Constants.PPM / 2,
+                                        (Constants.HEIGHT / Constants.PPM - boss1.getHeight()), boss1.getVelX(), boss1.getVelY());
+                                activeEnemies.add(boss1);
+                            }
+                        }, 6);
+                    }
+                });
+            }
+        }).start();
 
     }
 

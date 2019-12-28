@@ -2,6 +2,7 @@ package com.mygdx.game.handler;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import static com.mygdx.game.util.Constants.HEIGHT;
 import static com.mygdx.game.util.Constants.PPM;
@@ -9,7 +10,7 @@ import static com.mygdx.game.util.Constants.WIDTH;
 
 public class WaveImageHandler {
 
-    private Texture texture;
+    private TextureRegion texture;
     private float velX;
     private float width = 80f;
     private float height = 20f;
@@ -31,13 +32,13 @@ public class WaveImageHandler {
             setCompleted(true);
     }
 
-    public void initWaveImage(Texture texture) {
+    public void initWaveImage(TextureRegion texture) {
         isCompleted = false;
         positionX = (WIDTH / PPM) + 3f * width;
         this.texture = texture;
     }
 
-    public Texture getTexture() {
+    public TextureRegion getTexture() {
         return this.texture;
     }
 
