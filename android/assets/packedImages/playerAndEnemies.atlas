@@ -1,18 +1,90 @@
 
 playerAndEnemies.png
-size: 1024,256
+size: 1024,512
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-basicPlayerSpaceship
+basicPlayerShipHIT
   rotate: false
   xy: 2, 2
+  size: 320, 127
+  orig: 320, 127
+  offset: 0, 0
+  index: -1
+basicPlayerSpaceship
+  rotate: false
+  xy: 2, 131
   size: 880, 127
   orig: 880, 127
   offset: 0, 0
   index: -1
 
 playerAndEnemies2.png
+size: 1024,1024
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+boss/boss1/spacestation
+  rotate: false
+  xy: 2, 2
+  size: 512, 512
+  orig: 512, 512
+  offset: 0, 0
+  index: -1
+
+playerAndEnemies3.png
+size: 1024,1024
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+boss/boss1/spacestation2
+  rotate: false
+  xy: 2, 2
+  size: 512, 512
+  orig: 512, 512
+  offset: 0, 0
+  index: -1
+
+playerAndEnemies4.png
+size: 1024,1024
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+boss/boss1/spacestation3
+  rotate: false
+  xy: 2, 2
+  size: 512, 512
+  orig: 512, 512
+  offset: 0, 0
+  index: -1
+
+playerAndEnemies5.png
+size: 512,512
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+boss/boss2/blue1
+  rotate: false
+  xy: 2, 2
+  size: 261, 378
+  orig: 261, 378
+  offset: 0, 0
+  index: -1
+
+playerAndEnemies6.png
+size: 1024,1024
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+boss/boss3/tribase-u1-d0
+  rotate: false
+  xy: 2, 2
+  size: 600, 600
+  orig: 600, 600
+  offset: 0, 0
+  index: -1
+
+playerAndEnemies7.png
 size: 1024,512
 format: RGBA8888
 filter: Nearest,Nearest
@@ -46,7 +118,7 @@ fraction1/orangeship4
   offset: 0, 0
   index: -1
 
-playerAndEnemies3.png
+playerAndEnemies8.png
 size: 256,512
 format: RGBA8888
 filter: Nearest,Nearest
@@ -73,7 +145,7 @@ fraction2/blueship3
   offset: 0, 0
   index: -1
 
-playerAndEnemies4.png
+playerAndEnemies9.png
 size: 512,512
 format: RGBA8888
 filter: Nearest,Nearest
@@ -107,7 +179,7 @@ fraction3/alien4
   offset: 0, 0
   index: -1
 
-playerAndEnemies5.png
+playerAndEnemies10.png
 size: 512,512
 format: RGBA8888
 filter: Nearest,Nearest
@@ -138,5 +210,53 @@ fraction4/greenship4
   xy: 308, 299
   size: 92, 192
   orig: 92, 192
+  offset: 0, 0
+  index: -1
+
+playerAndEnemies11.png
+size: 512,256
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+waves/wave1
+  rotate: false
+  xy: 2, 132
+  size: 250, 63
+  orig: 250, 63
+  offset: 0, 0
+  index: -1
+waves/wave2
+  rotate: false
+  xy: 2, 67
+  size: 250, 63
+  orig: 250, 63
+  offset: 0, 0
+  index: -1
+waves/wave3
+  rotate: false
+  xy: 254, 132
+  size: 250, 63
+  orig: 250, 63
+  offset: 0, 0
+  index: -1
+waves/wave4
+  rotate: false
+  xy: 2, 2
+  size: 250, 63
+  orig: 250, 63
+  offset: 0, 0
+  index: -1
+waves/wave5
+  rotate: false
+  xy: 254, 67
+  size: 250, 63
+  orig: 250, 63
+  offset: 0, 0
+  index: -1
+waves/wave6
+  rotate: false
+  xy: 254, 2
+  size: 250, 63
+  orig: 250, 63
   offset: 0, 0
   index: -1

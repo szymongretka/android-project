@@ -80,10 +80,10 @@ public class GameScreen extends AbstractScreen {
     public static Texture coinImage;
     public static Texture revertImage;
     public static Texture shieldImage;
-    public static Texture wave1;
-    public static Texture wave2;
-    public static Texture wave3;
-    public static Texture boss1Image;
+    public static TextureRegion wave1;
+    public static TextureRegion wave2;
+    public static TextureRegion wave3;
+    public static TextureRegion boss1Image;
     private TextureAtlas textureAtlas;
     private Texture lvl1background;
 
@@ -273,7 +273,6 @@ public class GameScreen extends AbstractScreen {
     public void dispose() {
         coinImage.dispose();
         revertImage.dispose();
-        bulletImage.dispose();
         shootSound.dispose();
         level1Music.dispose();
         box2DDebugRenderer.dispose();
@@ -290,12 +289,12 @@ public class GameScreen extends AbstractScreen {
         fraction1OrangeShip2Texture = new TextureRegion(textureAtlas.findRegion("fraction1/orangeship2"));
         fraction1OrangeShip3Texture = new TextureRegion(textureAtlas.findRegion("fraction1/orangeship3"));
         fraction1OrangeShip4Texture = new TextureRegion(textureAtlas.findRegion("fraction1/orangeship4"));
-        lvl1background = game.assets.manager.get("background/lvl1.jpg", Texture.class);
-        bulletImage = game.assets.manager.get("bullet3.png", Texture.class);
-        wave1 = game.assets.manager.get("rawImages/waves/wave1.png", Texture.class);
-        wave2 = game.assets.manager.get("rawImages/waves/wave2.png", Texture.class);
-        wave3 = game.assets.manager.get("rawImages/waves/wave3.png", Texture.class);
-        boss1Image = game.assets.manager.get("rawImages/boss/spacestation.png", Texture.class);
+        lvl1background = game.assets.manager.get("background/lvl1.jpg");
+        bulletImage = game.assets.manager.get("bullet2.png", Texture.class);
+        wave1 = new TextureRegion(textureAtlas.findRegion("waves/wave1"));
+        wave2 = new TextureRegion(textureAtlas.findRegion("waves/wave2"));
+        wave3 = new TextureRegion(textureAtlas.findRegion("waves/wave3"));
+        boss1Image = new TextureRegion(textureAtlas.findRegion("boss/boss1/spacestation"));
         shootSound = game.assets.manager.get("music/sfx-laser.wav", Sound.class);
         scoreSound = game.assets.manager.get("music/score.wav", Sound.class);
         level1Music = game.assets.manager.get("music/level1Music.wav", Music.class);
