@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.mygdx.game.screen.GameScreenManager;
 import com.mygdx.game.util.Assets;
 
-public class MyGdxGame extends Game {
+public class SpaceInvaderApp extends Game {
 
 	public SpriteBatch batch;
 	public BitmapFont font;
@@ -30,7 +30,7 @@ public class MyGdxGame extends Game {
 
 	public void dispose() {
         gameScreenManager.dispose();
-        batch.dispose();
+        //batch.dispose();
         font.dispose();
         assets.dispose();
 

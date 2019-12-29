@@ -23,9 +23,8 @@ public class EnemyBasicBullet extends EnemyBullet {
 
     @Override
     public void hitPlayer(PlayerSpaceship playerSpaceship) {
-        this.reset();
+        super.hitPlayer(playerSpaceship);
         playerSpaceship.setHp(playerSpaceship.getHp() - this.damage);
-        //reset();
     }
 
 }

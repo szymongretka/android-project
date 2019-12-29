@@ -26,10 +26,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.mygdx.game.MyGdxGame;
+import com.mygdx.game.SpaceInvaderApp;
 import com.mygdx.game.enums.GameState;
 import com.mygdx.game.game_object.boss.Boss1;
 import com.mygdx.game.game_object.bullet.Bullet;
@@ -68,9 +67,9 @@ public class GameScreen extends AbstractScreen {
     private Stage stage;
     private Table table;
 
-
     //textures
     public TextureAtlas.AtlasRegion spaceshipAtlasRegion;
+    public TextureAtlas.AtlasRegion spaceshipHitAtlasRegion;
     public static TextureRegion fraction1OrangeShipTexture;
     public static TextureRegion fraction1OrangeShip2Texture;
     public static TextureRegion fraction1OrangeShip3Texture;
@@ -100,7 +99,6 @@ public class GameScreen extends AbstractScreen {
 
     //Pools
     private final GenericPool genericPool;
-    private final Pool bulletBox2DPool;
     private ParticleEffectPool effectPool;
 
     //Arrays
@@ -127,7 +125,7 @@ public class GameScreen extends AbstractScreen {
     public static int POINTS = 0;
     private boolean wasTouched = false;
 
-    public GameScreen(final MyGdxGame game) {
+    public GameScreen(final SpaceInvaderApp game) {
         super(game);
 
         this.world = new World(new Vector2(0, 0), false);
@@ -148,7 +146,6 @@ public class GameScreen extends AbstractScreen {
 
         //pools
         genericPool = new GenericPool(world);
-        bulletBox2DPool = genericPool.getBasicBulletPool();
         effectPool = new ParticleEffectPool(flameEffect, 0, 40);
 
         playerSpaceship = new PlayerSpaceship(this);
@@ -160,12 +157,11 @@ public class GameScreen extends AbstractScreen {
         boss1 = spawningSystem.boss1;
 
 
-
         flameEffect.start();
         flameEffect.scaleEffect(2f);
         engineEffect.start();
         engineEffect.flipY();
-        engineEffect.scaleEffect(1f/PPM);
+        engineEffect.scaleEffect(1f / PPM);
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, WIDTH / PPM, HEIGHT / PPM);
@@ -183,14 +179,14 @@ public class GameScreen extends AbstractScreen {
 
     @Override
     public void update(float delta) {
-        elapsedTime =+ delta;
+        elapsedTime = +delta;
         //messageManager.update();
         updatePlayerMovement();
         waveImageHandler.update();
 
         GdxAI.getTimepiece().update(delta);
 
-        if(elapsedTime > 0.8f) {
+        if (elapsedTime > 0.8f) {
             boss1.update(elapsedTime); //TODO to refactor
             // Dispatch any delayed messages
             MessageManager.getInstance().update();
@@ -206,7 +202,7 @@ public class GameScreen extends AbstractScreen {
         camera.update();
         game.batch.setProjectionMatrix(camera.combined);
 
-        //logger.log();
+        logger.log();
         backgroundY -= 5 * delta;
 
         game.batch.begin();
@@ -285,6 +281,7 @@ public class GameScreen extends AbstractScreen {
 
         textureAtlas = game.assets.manager.get("packedImages/playerAndEnemies.atlas", TextureAtlas.class);
         spaceshipAtlasRegion = textureAtlas.findRegion("basicPlayerSpaceship");
+        spaceshipHitAtlasRegion = textureAtlas.findRegion("basicPlayerShipHIT");
         fraction1OrangeShipTexture = new TextureRegion(textureAtlas.findRegion("fraction1/orangeship"));
         fraction1OrangeShip2Texture = new TextureRegion(textureAtlas.findRegion("fraction1/orangeship2"));
         fraction1OrangeShip3Texture = new TextureRegion(textureAtlas.findRegion("fraction1/orangeship3"));
@@ -324,8 +321,8 @@ public class GameScreen extends AbstractScreen {
         for (Bullet bullet : activeBullet2D) {
             bullet.update(delta);
 
-            game.batch.draw(bulletImage, bullet.getBody().getPosition().x - (bullet.getWidth()/2),
-                    bullet.getBody().getPosition().y - (bullet.getHeight()/2), bullet.getWidth(), bullet.getHeight());
+            game.batch.draw(bulletImage, bullet.getBody().getPosition().x - (bullet.getWidth() / 2),
+                    bullet.getBody().getPosition().y - (bullet.getHeight() / 2), bullet.getWidth(), bullet.getHeight());
 
             if (bullet.getBody().getPosition().y > HEIGHT - bullet.getHeight() || !bullet.getBody().isActive() || bullet.isToDestroy()) {
                 genericPool.freeBulletFromSpecifiedPool(bullet); // reset and place back in pool
@@ -339,8 +336,8 @@ public class GameScreen extends AbstractScreen {
         for (EnemyBullet enemyBullet : activeEnemyBullets) {
             enemyBullet.update(delta);
 
-            game.batch.draw(bulletImage, enemyBullet.getBody().getPosition().x - (enemyBullet.getWidth()/2),
-                    enemyBullet.getBody().getPosition().y - (enemyBullet.getHeight()/2), enemyBullet.getWidth(), enemyBullet.getHeight());
+            game.batch.draw(bulletImage, enemyBullet.getBody().getPosition().x - (enemyBullet.getWidth() / 2),
+                    enemyBullet.getBody().getPosition().y - (enemyBullet.getHeight() / 2), enemyBullet.getWidth(), enemyBullet.getHeight());
 
             if (enemyBullet.getBody().getPosition().y < 0 || !enemyBullet.getBody().isActive() || enemyBullet.isToDestroy()) {
                 genericPool.freeEnemyBulletFromSpecifiedPool(enemyBullet);
@@ -396,7 +393,7 @@ public class GameScreen extends AbstractScreen {
             } else {
                 playerSpaceship.stop();
             }
-        } else if(wasTouched) {
+        } else if (wasTouched) {
             messageManager.dispatchMessage(MessageType.PLAYER_STOP);
             wasTouched = false;
         }
@@ -404,12 +401,12 @@ public class GameScreen extends AbstractScreen {
 
     private void updateAndDrawEffects(float delta) {
 
-        if(!waveImageHandler.isCompleted())
+        if (!waveImageHandler.isCompleted())
             game.batch.draw(waveImageHandler.getTexture(), waveImageHandler.getPositionX(), waveImageHandler.getPositionY(),
                     waveImageHandler.getWidth(), waveImageHandler.getHeight());
 
         engineEffect.setPosition(playerSpaceship.getBody().getPosition().x,
-                playerSpaceship.getBody().getPosition().y - (PLAYER_HEIGHT/2f));
+                playerSpaceship.getBody().getPosition().y - (PLAYER_HEIGHT / 2f));
         engineEffect.update(delta);
         engineEffect.draw(game.batch);
 

@@ -3,13 +3,11 @@ package com.mygdx.game.screen;
 import com.badlogic.gdx.ai.msg.Telegram;
 import com.badlogic.gdx.ai.msg.Telegraph;
 import com.badlogic.gdx.utils.Timer;
-import com.mygdx.game.MyGdxGame;
+import com.mygdx.game.SpaceInvaderApp;
 import com.mygdx.game.enums.GameState;
 import com.mygdx.game.screen.event.YouWinScreen;
 import com.mygdx.game.screen.menu.LevelScreen;
 import com.mygdx.game.screen.menu.LoadingScreen;
-import com.mygdx.game.screen.menu.MainMenuScreen;
-import com.mygdx.game.screen.pause.PauseScreen;
 import com.mygdx.game.util.MessageType;
 
 import java.lang.reflect.InvocationTargetException;
@@ -18,12 +16,12 @@ import java.util.Map;
 
 public class GameScreenManager<T extends AbstractScreen> implements Telegraph {
 
-    public final MyGdxGame game;
+    public final SpaceInvaderApp game;
     private Map<GameState, AbstractScreen> gameScreens;
 
     private GameState activeScreen;
 
-    public GameScreenManager(final MyGdxGame game) {
+    public GameScreenManager(final SpaceInvaderApp game) {
         this.game = game;
         initScreens();
         setScreen(GameState.LOADINGSCREEN, (Class<T>) LoadingScreen.class);

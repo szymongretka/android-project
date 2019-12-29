@@ -56,7 +56,10 @@ public class OrangeSpaceship4 extends Enemy {
         isMovingRight = true;
     }
 
-    public void hitPlayer(PlayerSpaceship playerSpaceship) {}
+    @Override
+    public void hitPlayer(PlayerSpaceship playerSpaceship) {
+        super.hitPlayer(playerSpaceship);
+    }
 
 
 }

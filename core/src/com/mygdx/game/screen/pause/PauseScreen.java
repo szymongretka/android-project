@@ -9,7 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.mygdx.game.MyGdxGame;
+import com.mygdx.game.SpaceInvaderApp;
 import com.mygdx.game.enums.GameState;
 import com.mygdx.game.screen.AbstractScreen;
 import com.mygdx.game.screen.game.GameScreen;
@@ -23,7 +23,7 @@ public class PauseScreen extends AbstractScreen {
     private TextButton resumeButton;
     private TextButton mainMenuButton;
 
-    public PauseScreen(final MyGdxGame game) {
+    public PauseScreen(final SpaceInvaderApp game) {
         super(game);
 
         if(game.assets.manager.isFinished()){

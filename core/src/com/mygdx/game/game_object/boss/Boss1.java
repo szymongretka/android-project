@@ -136,16 +136,8 @@ public class Boss1 extends Enemy implements Telegraph {
 
     @Override
     public void hitPlayer(PlayerSpaceship playerSpaceship) {
+        super.hitPlayer(playerSpaceship);
         playerSpaceship.setHp(playerSpaceship.getHp() - 6);
-        playerSpaceship.getBody().setActive(false);
-
-        Timer.schedule(new Timer.Task() {
-            @Override
-            public void run() {
-                playerSpaceship.getBody().setActive(true);
-            }
-        }, 1);
-
     }
 
 

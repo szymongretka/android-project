@@ -2,6 +2,7 @@ package com.mygdx.game.game_object.bullet;
 
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Timer;
 import com.mygdx.game.game_object.Box2DObject;
 import com.mygdx.game.game_object.player.PlayerSpaceship;
 
@@ -23,7 +24,16 @@ public abstract class EnemyBullet extends Box2DObject {
         this.toDestroy = false;
     }
 
-    public abstract void hitPlayer(PlayerSpaceship playerSpaceship);
+    public void hitPlayer(PlayerSpaceship playerSpaceship) {
+        this.reset();
+        playerSpaceship.gotShot = true;
+        Timer.schedule(new Timer.Task() {
+            @Override
+            public void run() {
+                playerSpaceship.gotShot = false;
+            }
+        }, 1);
+    }
 
     public boolean isToDestroy() {
         return toDestroy;

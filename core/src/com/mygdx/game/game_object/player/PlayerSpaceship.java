@@ -27,6 +27,8 @@ public class PlayerSpaceship extends Box2DObject implements Telegraph {
     private int tileHeight = 127;
     private boolean isDead;
 
+    public boolean gotShot = false;
+
     public enum State {STRAIGHT, TURNING_RIGHT, TURNING_LEFT, DEAD, GOT_HIT}
 
     public State currentState;
@@ -67,7 +69,13 @@ public class PlayerSpaceship extends Box2DObject implements Telegraph {
 
         frames.clear();
 
+        for (int i = 4; i >= 1; i--)
+            frames.add(new TextureRegion(screen.spaceshipHitAtlasRegion, i * tileWidth, 0, tileWidth, tileHeight));
+        for (int i = 1; i <= 4; i++)
+            frames.add(new TextureRegion(screen.spaceshipHitAtlasRegion, i * tileWidth, 0, tileWidth, tileHeight));
+        playerGotHitAnimation = new Animation(0.1f, frames);
 
+        frames.clear();
 
         playerStraight = new TextureRegion(screen.spaceshipAtlasRegion, 5 * tileWidth, 0, tileWidth, tileHeight);
 
@@ -133,7 +141,7 @@ public class PlayerSpaceship extends Box2DObject implements Telegraph {
                 region = (TextureRegion) playerMoveRightAnimation.getKeyFrame(stateTimer, true);
                 break;
             case GOT_HIT:
-                region = (TextureRegion) playerMoveRightAnimation.getKeyFrame(stateTimer, true);
+                region = (TextureRegion) playerGotHitAnimation.getKeyFrame(stateTimer, true);
                 break;
             case STRAIGHT:
             default:
@@ -155,11 +163,11 @@ public class PlayerSpaceship extends Box2DObject implements Telegraph {
         //Test to Box2D for velocity on the X and Y-Axis
         if (isDead)
             return State.DEAD;
-        else if (this.getBody().getLinearVelocity().x > 0)
+        else if (this.getBody().getLinearVelocity().x > 0 && !gotShot)
             return State.TURNING_RIGHT;
-        else if (this.getBody().getLinearVelocity().x < 0)
+        else if (this.getBody().getLinearVelocity().x < 0 && !gotShot)
             return State.TURNING_LEFT;
-        else if (!this.getBody().isActive())
+        else if (!this.getBody().isActive() || gotShot)
             return State.GOT_HIT;
             //if none of these return then he must be standing
         else

@@ -3,7 +3,7 @@ package com.mygdx.game.screen.menu;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
-import com.mygdx.game.MyGdxGame;
+import com.mygdx.game.SpaceInvaderApp;
 import com.mygdx.game.enums.GameState;
 import com.mygdx.game.screen.AbstractScreen;
 import com.mygdx.game.util.Constants;
@@ -14,7 +14,7 @@ public class LoadingScreen extends AbstractScreen {
     private float progress = 0f;
 
 
-    public LoadingScreen(final MyGdxGame game) {
+    public LoadingScreen(final SpaceInvaderApp game) {
         super(game);
         this.shapeRenderer = new ShapeRenderer();
         queueAssets();
@@ -36,10 +36,10 @@ public class LoadingScreen extends AbstractScreen {
 
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(Color.BLACK);
-        shapeRenderer.rect(32, 100, Constants.WIDTH - 48, 16);
+        shapeRenderer.rect(48, Constants.HEIGHT/2, Constants.WIDTH - 48, 32);
 
         shapeRenderer.setColor(Color.BLUE);
-        shapeRenderer.rect(32, 100, progress * (Constants.WIDTH - 48), 16);
+        shapeRenderer.rect(48, Constants.HEIGHT/2, progress * (Constants.WIDTH - 48), 32);
         shapeRenderer.end();
 
         game.batch.begin();

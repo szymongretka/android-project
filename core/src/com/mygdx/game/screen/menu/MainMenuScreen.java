@@ -9,7 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.mygdx.game.MyGdxGame;
+import com.mygdx.game.SpaceInvaderApp;
 import com.mygdx.game.enums.GameState;
 import com.mygdx.game.screen.AbstractScreen;
 
@@ -27,7 +27,7 @@ public class MainMenuScreen extends AbstractScreen {
     private TextButton openBrowserButton;
 
 
-    public MainMenuScreen(final MyGdxGame game) {
+    public MainMenuScreen(final SpaceInvaderApp game) {
         super(game);
 
         if(game.assets.manager.isFinished()){

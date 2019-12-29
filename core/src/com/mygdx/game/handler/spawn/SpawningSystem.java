@@ -6,7 +6,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.Timer;
-import com.mygdx.game.MyGdxGame;
+import com.mygdx.game.SpaceInvaderApp;
 import com.mygdx.game.game_object.boss.Boss1;
 import com.mygdx.game.game_object.enemy.Enemy;
 import com.mygdx.game.game_object.enemy.enemies.fraction1.OrangeSpaceship1;
@@ -24,7 +24,7 @@ import java.util.Random;
 
 public class SpawningSystem {
 
-    private final MyGdxGame game;
+    private final SpaceInvaderApp game;
     private GenericPool genericPool;
     private Array array;
     private WaveImageHandler waveImageHandler;
@@ -40,7 +40,7 @@ public class SpawningSystem {
 
     private MessageManager messageManager;
 
-    public SpawningSystem(final MyGdxGame game, GenericPool genericPool, Array array, GameScreen gameScreen) {
+    public SpawningSystem(final SpaceInvaderApp game, GenericPool genericPool, Array array, GameScreen gameScreen) {
         this.game = game;
         this.genericPool = genericPool;
         this.array = array;

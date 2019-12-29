@@ -1,9 +1,9 @@
 package com.mygdx.game.game_object.enemy;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Timer;
 import com.mygdx.game.game_object.Box2DObject;
 import com.mygdx.game.game_object.player.PlayerSpaceship;
 
@@ -22,7 +22,17 @@ public abstract class Enemy extends Box2DObject {
                 BIT_ENEMY, (short) (BIT_BULLET | BIT_PLAYER), (short) 0, false);
     }
 
-    public abstract void hitPlayer(PlayerSpaceship playerSpaceship);
+    public void hitPlayer(PlayerSpaceship playerSpaceship) {
+        playerSpaceship.getBody().setActive(false);
+        playerSpaceship.gotShot = true;
+        Timer.schedule(new Timer.Task() {
+            @Override
+            public void run() {
+                playerSpaceship.gotShot = false;
+                playerSpaceship.getBody().setActive(true);
+            }
+        }, 1.5f);
+    }
 
     public float getOnDestroyCoordX() {
         return onDestroyCoordX;

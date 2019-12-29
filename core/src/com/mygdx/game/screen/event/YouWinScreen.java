@@ -2,14 +2,14 @@ package com.mygdx.game.screen.event;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.mygdx.game.MyGdxGame;
+import com.mygdx.game.SpaceInvaderApp;
 import com.mygdx.game.screen.AbstractScreen;
 
 public class YouWinScreen extends AbstractScreen {
 
     private BitmapFont font;
 
-    public YouWinScreen(MyGdxGame game) {
+    public YouWinScreen(SpaceInvaderApp game) {
         super(game);
 
         font = new BitmapFont();
