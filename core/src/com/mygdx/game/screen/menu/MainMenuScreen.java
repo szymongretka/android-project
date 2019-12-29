@@ -66,7 +66,7 @@ public class MainMenuScreen extends AbstractScreen {
             @Override
             public void clicked (InputEvent event, float x, float y){
                 dispose();
-                String url = "http://192.168.1.107:8080/player/all";
+                String url = "http://192.168.1.105:8080/highScore";
                 Gdx.net.openURI(url);
             }
         });

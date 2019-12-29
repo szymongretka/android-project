@@ -4,13 +4,18 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.mygdx.game.SpaceInvaderApp;
 import com.mygdx.game.screen.AbstractScreen;
+import com.mygdx.game.util.MyPreferences;
 
 public class YouWinScreen extends AbstractScreen {
 
     private BitmapFont font;
+    private MyPreferences myPreferences;
 
     public YouWinScreen(SpaceInvaderApp game) {
         super(game);
+
+        myPreferences = new MyPreferences();
+        myPreferences.updatePoints();
 
         font = new BitmapFont();
         font.setColor(Color.RED);

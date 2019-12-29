@@ -48,6 +48,7 @@ import com.mygdx.game.handler.spawn.SpawningSystem;
 import com.mygdx.game.screen.AbstractScreen;
 import com.mygdx.game.screen.pause.PauseScreen;
 import com.mygdx.game.util.MessageType;
+import com.mygdx.game.util.MyPreferences;
 
 import java.util.Iterator;
 
@@ -113,6 +114,7 @@ public class GameScreen extends AbstractScreen {
     public static WaveImageHandler waveImageHandler = new WaveImageHandler();
     private MessageManager messageManager;
     private BulletHandler bulletHandler;
+    private MyPreferences myPreferences;
 
     public static long lastBulletTime;
     private float backgroundY = 0f;
@@ -122,7 +124,7 @@ public class GameScreen extends AbstractScreen {
 
     private FPSLogger logger;
     public static float totalGameTime = 0;
-    public static int POINTS = 0;
+    public static int POINTS;
     private boolean wasTouched = false;
 
     public GameScreen(final SpaceInvaderApp game) {
@@ -134,6 +136,8 @@ public class GameScreen extends AbstractScreen {
         //for testing only
         box2DDebugRenderer = new Box2DDebugRenderer();
 
+        myPreferences = new MyPreferences();
+        POINTS = myPreferences.getPoints();
 
         flameEffect = new ParticleEffect();
         engineEffect = new ParticleEffect();
@@ -173,6 +177,7 @@ public class GameScreen extends AbstractScreen {
         itemChanceList.addEntry(BasicShield.class, 10f);
 
 
+        System.out.println("points:" + POINTS);
     }
 
     private float elapsedTime = 0;
