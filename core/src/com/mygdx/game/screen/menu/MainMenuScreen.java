@@ -9,7 +9,6 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
@@ -18,21 +17,21 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.SpaceInvaderApp;
 import com.mygdx.game.enums.GameState;
 import com.mygdx.game.screen.AbstractScreen;
+import com.mygdx.game.screen.game.GameScreen;
 import com.mygdx.game.util.Constants;
+import com.mygdx.game.util.IRequestCallback;
 
 
 public class MainMenuScreen extends AbstractScreen {
 
-    //private OrthographicCamera camera;
-
     private Stage stage;
     private Table table;
-    private Skin skin;
 
     private ImageButton startButton;
     private ImageButton quitButton;
     private ImageButton settingsButton;
-    private ImageButton openBrowserButton;
+    private ImageButton statsButton;
+    private ImageButton shipButton;
 
     private TextureAtlas textureAtlas;
     private Texture background;
@@ -41,6 +40,8 @@ public class MainMenuScreen extends AbstractScreen {
     private TextureRegion startTextureDown;
     private TextureRegion checkTextureUp;
     private TextureRegion checkTextureDown;
+    private TextureRegion shipTextureUp;
+    private TextureRegion shipTextureDown;
     private TextureRegion quitTextureUp;
     private TextureRegion quitTextureDown;
     private TextureRegion settingsTextureUp;
@@ -80,19 +81,46 @@ public class MainMenuScreen extends AbstractScreen {
             }
         });
 
-        openBrowserButton.addListener(new ClickListener(){
+        statsButton.addListener(new ClickListener(){
             @Override
             public void clicked (InputEvent event, float x, float y){
-                dispose();
-                String url = "http://192.168.1.105:8080/highScore";
-                Gdx.net.openURI(url);
+
+                game.getScoreService().createScoreRequest(new IRequestCallback() {
+                    @Override
+                    public void onSucceed() {
+                        Gdx.app.postRunnable(new Runnable() {
+                            @Override
+                            public void run() {
+                                game.gameScreenManager.setActiveScreen(GameState.STATISTICS);
+                                game.gameScreenManager.setScreen(GameState.STATISTICS, StatisticsScreen.class);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onError() {
+                        //TODO
+                    }
+                });
+
+                //String url = "http://192.168.1.100:8080/highScore";
+                //Gdx.net.openURI(url);
             }
         });
 
-        table.padTop(Constants.HEIGHT/3f);
+        shipButton.addListener(new ClickListener(){
+            @Override
+            public void clicked (InputEvent event, float x, float y){
+                //TODO
+            }
+        });
+
+        table.padTop(Constants.HEIGHT/4f);
         table.add(startButton).height(200f).width(500f).padBottom(30);
         table.row();
-        table.add(openBrowserButton).height(200f).width(500f).padBottom(30);
+        table.add(statsButton).height(200f).width(500f).padBottom(30);
+        table.row();
+        table.add(shipButton).height(200f).width(500f).padBottom(30);
         table.row();
         table.add(quitButton).height(200f).width(500f);
 
@@ -133,7 +161,7 @@ public class MainMenuScreen extends AbstractScreen {
 
         Drawable checkUp = new TextureRegionDrawable(checkTextureUp);
         Drawable checkDown = new TextureRegionDrawable(checkTextureDown);
-        openBrowserButton = new ImageButton(checkUp, checkDown);
+        statsButton = new ImageButton(checkUp, checkDown);
 
         Drawable quitUp = new TextureRegionDrawable(quitTextureUp);
         Drawable quitDown = new TextureRegionDrawable(quitTextureDown);
@@ -143,9 +171,12 @@ public class MainMenuScreen extends AbstractScreen {
         Drawable settingsDown = new TextureRegionDrawable(settingsTextureDown);
         settingsButton = new ImageButton(settingsUp, settingsDown);
 
-        settingsButton.setSize(80f, 80f);
-        settingsButton.setPosition(Constants.WIDTH - 80f, Constants.HEIGHT - 80f);
+        Drawable shipUp = new TextureRegionDrawable(shipTextureUp);
+        Drawable shipDown = new TextureRegionDrawable(shipTextureDown);
+        shipButton = new ImageButton(shipUp, shipDown);
 
+        settingsButton.setSize(80f, 80f);
+        settingsButton.setPosition(Constants.WIDTH - 100f, Constants.HEIGHT - 100f);
 
     }
 
@@ -182,13 +213,16 @@ public class MainMenuScreen extends AbstractScreen {
         startTextureDown = new TextureRegion(textureAtlas.findRegion("menu/main_menu_buttons/Start1"));
 
         checkTextureUp = new TextureRegion(textureAtlas.findRegion("menu/main_menu_buttons/STATS"));
-        checkTextureDown = new TextureRegion(textureAtlas.findRegion("menu/main_menu_buttons/STATS1"));
+        checkTextureDown = new TextureRegion(textureAtlas.findRegion("menu/main_menu_buttons/STATSk"));
 
         quitTextureUp = new TextureRegion(textureAtlas.findRegion("menu/main_menu_buttons/Quit"));
         quitTextureDown = new TextureRegion(textureAtlas.findRegion("menu/main_menu_buttons/Quit1"));
 
         settingsTextureUp = new TextureRegion(textureAtlas.findRegion("menu/main_menu_buttons/opcje"));
         settingsTextureDown = new TextureRegion(textureAtlas.findRegion("menu/main_menu_buttons/opcje1"));
+
+        shipTextureUp = new TextureRegion(textureAtlas.findRegion("menu/main_menu_buttons/SPACESHIP"));
+        shipTextureDown = new TextureRegion(textureAtlas.findRegion("menu/main_menu_buttons/SPACESHIPk"));
 
     }
 

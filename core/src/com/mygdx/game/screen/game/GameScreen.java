@@ -114,7 +114,6 @@ public class GameScreen extends AbstractScreen {
     public static WaveImageHandler waveImageHandler = new WaveImageHandler();
     private MessageManager messageManager;
     private BulletHandler bulletHandler;
-    private MyPreferences myPreferences;
 
     public static long lastBulletTime;
     private float backgroundY = 0f;
@@ -136,8 +135,7 @@ public class GameScreen extends AbstractScreen {
         //for testing only
         box2DDebugRenderer = new Box2DDebugRenderer();
 
-        myPreferences = new MyPreferences();
-        POINTS = myPreferences.getPoints();
+        POINTS = game.myPreferences.getPoints();
 
         flameEffect = new ParticleEffect();
         engineEffect = new ParticleEffect();

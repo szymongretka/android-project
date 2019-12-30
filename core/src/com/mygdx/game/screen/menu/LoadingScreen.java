@@ -7,6 +7,7 @@ import com.mygdx.game.SpaceInvaderApp;
 import com.mygdx.game.enums.GameState;
 import com.mygdx.game.screen.AbstractScreen;
 import com.mygdx.game.util.Constants;
+import com.mygdx.game.util.MyPreferences;
 
 public class LoadingScreen extends AbstractScreen {
 
@@ -24,8 +25,13 @@ public class LoadingScreen extends AbstractScreen {
     public void update(float delta) {
         progress = MathUtils.lerp(progress, game.assets.manager.getProgress(), .1f);
         if(game.assets.manager.update() && progress <= game.assets.manager.getProgress() - .001f) {
-           // game.gameScreenManager.setActiveScreen(GameState.MENU);
-            game.gameScreenManager.setScreen(GameState.MENU, MainMenuScreen.class);
+            if (game.myPreferences.getNickname().equals(game.myPreferences.EMPTY)) {
+                game.gameScreenManager.setActiveScreen(GameState.SPECIFY_NICKNAME);
+                game.gameScreenManager.setScreen(GameState.SPECIFY_NICKNAME, SetNicknameScreen.class);
+            } else {
+                game.gameScreenManager.setActiveScreen(GameState.MENU);
+                game.gameScreenManager.setScreen(GameState.MENU, MainMenuScreen.class);
+            }
         }
     }
 

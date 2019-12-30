@@ -1,5 +1,6 @@
 package com.mygdx.game.screen.event;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.mygdx.game.SpaceInvaderApp;
@@ -41,7 +42,7 @@ public class YouDiedScreen extends AbstractScreen {
 
     @Override
     public void show() {
-
+        //Gdx.input.setInputProcessor(stage);
     }
 
     @Override
