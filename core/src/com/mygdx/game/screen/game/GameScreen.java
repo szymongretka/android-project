@@ -74,7 +74,7 @@ public class GameScreen extends AbstractScreen {
     public static TextureRegion fraction1OrangeShip2Texture;
     public static TextureRegion fraction1OrangeShip3Texture;
     public static TextureRegion fraction1OrangeShip4Texture;
-    private Texture bulletImage;
+    private TextureRegion bulletImage;
     private Texture pauseTexture;
     public static Texture coinImage;
     public static Texture revertImage;
@@ -287,7 +287,7 @@ public class GameScreen extends AbstractScreen {
         fraction1OrangeShip3Texture = new TextureRegion(textureAtlas.findRegion("fraction1/orangeship3"));
         fraction1OrangeShip4Texture = new TextureRegion(textureAtlas.findRegion("fraction1/orangeship4"));
         lvl1background = game.assets.manager.get("background/lvl1.jpg");
-        bulletImage = game.assets.manager.get("bullet2.png", Texture.class);
+        bulletImage = new TextureRegion(textureAtlas.findRegion("bullet/bullet2"));
         wave1 = new TextureRegion(textureAtlas.findRegion("waves/wave1"));
         wave2 = new TextureRegion(textureAtlas.findRegion("waves/wave2"));
         wave3 = new TextureRegion(textureAtlas.findRegion("waves/wave3"));

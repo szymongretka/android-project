@@ -1,12 +1,18 @@
 package com.mygdx.game.screen.pause;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.SpaceInvaderApp;
@@ -14,14 +20,24 @@ import com.mygdx.game.enums.GameState;
 import com.mygdx.game.screen.AbstractScreen;
 import com.mygdx.game.screen.game.GameScreen;
 import com.mygdx.game.screen.menu.MainMenuScreen;
+import com.mygdx.game.util.Constants;
 
 public class PauseScreen extends AbstractScreen {
 
     private Stage stage;
     private Table table;
-    private Skin skin;
-    private TextButton resumeButton;
-    private TextButton mainMenuButton;
+
+    private ImageButton resumeButton;
+    private ImageButton mainMenuButton;
+
+    private TextureAtlas textureAtlas;
+    private Texture background;
+    private TextureRegion resumeTextureUp;
+    private TextureRegion resumeTextureDown;
+    private TextureRegion mainMenuTextureUp;
+    private TextureRegion mainMenuTextureDown;
+
+
 
     public PauseScreen(final SpaceInvaderApp game) {
         super(game);
@@ -35,8 +51,7 @@ public class PauseScreen extends AbstractScreen {
         table.align(Align.center|Align.top);
         table.setPosition(0, Gdx.graphics.getHeight());
 
-        resumeButton = new TextButton("Resume", skin);
-        mainMenuButton = new TextButton("Main menu",skin);
+        initButtons();
 
 
         resumeButton.addListener(new ClickListener(){
@@ -60,7 +75,7 @@ public class PauseScreen extends AbstractScreen {
 
 
 
-        table.padTop(30);
+        table.padTop(Constants.HEIGHT/3f);
         table.add(resumeButton).height(200f).width(500f).padBottom(60);
         table.row();
         table.add(mainMenuButton).height(200f).width(500f).padBottom(60);
@@ -75,9 +90,24 @@ public class PauseScreen extends AbstractScreen {
     public void render(float delta) {
         super.render(delta);
 
-        stage.draw();
-        stage.act();
+        stage.act(Gdx.graphics.getDeltaTime());
 
+        stage.getBatch().begin();
+        stage.getBatch().draw(background, 0, 0, Constants.WIDTH, Constants.HEIGHT);
+        stage.getBatch().end();
+
+        stage.draw();
+
+    }
+
+    private void initButtons() {
+        Drawable resumeUp = new TextureRegionDrawable(resumeTextureUp);
+        Drawable resumeDown = new TextureRegionDrawable(resumeTextureDown);
+        resumeButton = new ImageButton(resumeUp, resumeDown);
+
+        Drawable menuUp = new TextureRegionDrawable(mainMenuTextureUp);
+        Drawable menuDown = new TextureRegionDrawable(mainMenuTextureDown);
+        mainMenuButton = new ImageButton(menuUp, menuDown);
     }
 
 
@@ -117,7 +147,15 @@ public class PauseScreen extends AbstractScreen {
     }
 
     private void loadAssets() {
-        skin = game.assets.manager.get("data/uiskin.json", Skin.class);
+        textureAtlas = game.assets.manager.get("packedImages/playerAndEnemies.atlas", TextureAtlas.class);
+
+        background = game.assets.manager.get("background/menu_background.png", Texture.class);
+
+        resumeTextureUp = new TextureRegion(textureAtlas.findRegion("menu/pause_buttons/RESUME"));
+        resumeTextureDown = new TextureRegion(textureAtlas.findRegion("menu/pause_buttons/RESUMEk"));
+
+        mainMenuTextureUp = new TextureRegion(textureAtlas.findRegion("menu/pause_buttons/Menu"));
+        mainMenuTextureDown = new TextureRegion(textureAtlas.findRegion("menu/pause_buttons/Menuk"));
     }
 
 }
