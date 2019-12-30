@@ -15,23 +15,18 @@ public class Assets implements Disposable {
 
     public void load() {
 
-        //TODO pack all textures into atlas
-
         //music & sounds
         manager.load("music/level1Music.wav", Music.class);
         manager.load("music/sfx-laser.wav", Sound.class);
         manager.load("music/score.wav", Sound.class);
-
-        //menu
-        manager.load("menu/pause.png", Texture.class);
 
         //items
         manager.load("revert.png", Texture.class);
         manager.load("coin.png", Texture.class);
         manager.load("shield.png", Texture.class);
 
-        //skins
-        manager.load("data/uiskin.json", Skin.class);
+        //menu
+        manager.load("menu/pause.png", Texture.class);
 
         //Particle effects
         manager.load("effects/explosion.flame", ParticleEffect.class);
@@ -39,14 +34,11 @@ public class Assets implements Disposable {
 
         //backgrounds
         manager.load("background/lvl1.jpg", Texture.class);
+        manager.load("background/menu_background.png", Texture.class);
 
         //atlas
         manager.load("packedImages/playerAndEnemies.atlas", TextureAtlas.class);
 
-        //bullets
-        manager.load("bullet.png", Texture.class);
-        manager.load("bullet2.png", Texture.class);
-        manager.load("bullet3.png", Texture.class);
 
     }
 
