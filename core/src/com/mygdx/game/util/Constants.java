@@ -49,4 +49,8 @@ public class Constants {
     public static final short BIT_OBSTACLE = 16;
     public static final short BIT_ENEMY_BULLET = 2;
 
+
+
+    public static final String LOCALHOST_URL = "http://192.168.1.102:8080/";
+
 }

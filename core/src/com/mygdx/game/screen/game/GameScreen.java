@@ -76,7 +76,7 @@ public class GameScreen extends AbstractScreen {
     public static TextureRegion fraction1OrangeShip3Texture;
     public static TextureRegion fraction1OrangeShip4Texture;
     private TextureRegion bulletImage;
-    private Texture pauseTexture;
+    private Texture pauseTexture; //TODO
     public static Texture coinImage;
     public static Texture revertImage;
     public static Texture shieldImage;

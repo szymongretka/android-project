@@ -102,9 +102,6 @@ public class MainMenuScreen extends AbstractScreen {
                         //TODO
                     }
                 });
-
-                //String url = "http://192.168.1.100:8080/highScore";
-                //Gdx.net.openURI(url);
             }
         });
 

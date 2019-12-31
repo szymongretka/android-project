@@ -21,7 +21,6 @@ public class SpaceInvaderApp extends Game {
     public GameScreenManager gameScreenManager;
     public MessageManager messageManager = MessageManager.getInstance();
     public MyPreferences myPreferences;
-    public TextureAtlas textureAtlas;
 
     //services
     private ShipService shipService;

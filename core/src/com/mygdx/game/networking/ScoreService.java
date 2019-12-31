@@ -6,9 +6,26 @@ import com.badlogic.gdx.Net.HttpResponse;
 import com.badlogic.gdx.net.HttpRequestBuilder;
 import com.mygdx.game.util.IRequestCallback;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static com.mygdx.game.util.Constants.LOCALHOST_URL;
+
+
 public class ScoreService {
 
-    public final static String REQUEST_URL = "http://192.168.1.100:8080/highScore/mobile";
+
+    public final static String REQUEST_URL = LOCALHOST_URL + "highScore/mobile";
+
+    private Map<String, Long> mapOfTopScores;
+
+    public ScoreService() {
+        mapOfTopScores = new HashMap<>();
+    }
 
     public void createScoreRequest(final IRequestCallback requestCallback) {
         HttpRequestBuilder requestBuilder = new HttpRequestBuilder();
@@ -16,10 +33,7 @@ public class ScoreService {
         Gdx.net.sendHttpRequest(request, new Net.HttpResponseListener() {
             @Override
             public void handleHttpResponse(HttpResponse httpResponse) {
-                System.out.println("Result:");
-                System.out.println(httpResponse.getResultAsString());
-                System.out.println("---------------");
-
+                parseResponse(httpResponse.getResultAsString());
                 requestCallback.onSucceed();
             }
 
@@ -35,5 +49,23 @@ public class ScoreService {
             }
         });
     }
+
+    public Map<String, Long> getMapOfTopScores() {
+        return mapOfTopScores;
+    }
+
+    private void parseResponse(String result) {
+        try {
+            JSONArray jsonArray = new JSONArray(result);
+            for(int i = 0; i < jsonArray.length(); i++){
+                JSONObject innerObj = jsonArray.getJSONObject(i);
+                mapOfTopScores.put(innerObj.getString("nickname"), innerObj.getLong("score"));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 
 }
