@@ -2,9 +2,13 @@ package com.mygdx.game.networking;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net;
+import com.badlogic.gdx.Net.HttpRequest;
 import com.badlogic.gdx.Net.HttpResponse;
+import com.badlogic.gdx.Net.HttpMethods;
 import com.badlogic.gdx.net.HttpRequestBuilder;
+import com.badlogic.gdx.net.HttpResponseHeader;
 import com.mygdx.game.util.IRequestCallback;
+import com.mygdx.game.util.MyPreferences;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -49,6 +53,43 @@ public class ScoreService {
             }
         });
     }
+
+    public void createUpdateScoreResponse(final IRequestCallback requestCallback, MyPreferences preferences) {
+
+        HttpRequest saveRequest = new HttpRequest(HttpMethods.POST);
+        saveRequest.setUrl(REQUEST_URL + "/post");
+
+        String content = "nickname: " + preferences.getNickname() + " score: " + preferences.getPoints();
+
+        saveRequest.setContent(content);
+        //Set a header so the server can tell this is JSON
+        saveRequest.setHeader("Content-Type", "application/json");
+        //Set a header telling the server that it's okay to send JSON back
+        saveRequest.setHeader("Accept", "application/json");
+
+
+        Gdx.net.sendHttpRequest(saveRequest, new Net.HttpResponseListener() {
+            @Override
+            public void handleHttpResponse(HttpResponse httpResponse) {
+                requestCallback.onSucceed();
+            }
+
+            @Override
+            public void failed(Throwable t) {
+                System.out.println(t.getMessage());
+                requestCallback.onError();
+            }
+
+            @Override
+            public void cancelled() {
+                requestCallback.onError();
+            }
+        });
+
+    }
+
+
+
 
     public Map<String, Long> getMapOfTopScores() {
         return mapOfTopScores;

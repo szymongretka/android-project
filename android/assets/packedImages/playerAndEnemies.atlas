@@ -461,7 +461,7 @@ menu/main_menu_buttons/Quit1
   orig: 831, 328
   offset: 0, 0
   index: -1
-menu/main_menu_buttons/SPACESHIP
+menu/main_menu_buttons/SEND SCORE
   rotate: false
   xy: 2, 2
   size: 831, 328
@@ -474,21 +474,21 @@ size: 1024,1024
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-menu/main_menu_buttons/SPACESHIPk
+menu/main_menu_buttons/SEND SCOREk
   rotate: false
   xy: 2, 662
   size: 831, 328
   orig: 831, 328
   offset: 0, 0
   index: -1
-menu/main_menu_buttons/STATS
+menu/main_menu_buttons/SPACESHIP
   rotate: false
   xy: 2, 332
   size: 831, 328
   orig: 831, 328
   offset: 0, 0
   index: -1
-menu/main_menu_buttons/STATSk
+menu/main_menu_buttons/SPACESHIPk
   rotate: false
   xy: 2, 2
   size: 831, 328
@@ -501,36 +501,56 @@ size: 1024,1024
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-menu/main_menu_buttons/Start
+menu/main_menu_buttons/STATS
   rotate: false
-  xy: 2, 618
+  xy: 2, 662
   size: 831, 328
   orig: 831, 328
   offset: 0, 0
   index: -1
+menu/main_menu_buttons/STATSk
+  rotate: false
+  xy: 2, 332
+  size: 831, 328
+  orig: 831, 328
+  offset: 0, 0
+  index: -1
+menu/main_menu_buttons/Start
+  rotate: false
+  xy: 2, 2
+  size: 831, 328
+  orig: 831, 328
+  offset: 0, 0
+  index: -1
+
+playerAndEnemies23.png
+size: 1024,1024
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
 menu/main_menu_buttons/Start1
   rotate: false
-  xy: 2, 288
+  xy: 2, 574
   size: 831, 328
   orig: 831, 328
   offset: 0, 0
   index: -1
 menu/main_menu_buttons/opcje
   rotate: false
-  xy: 2, 2
+  xy: 2, 288
   size: 284, 284
   orig: 284, 284
   offset: 0, 0
   index: -1
 menu/main_menu_buttons/opcje1
   rotate: false
-  xy: 288, 2
+  xy: 2, 2
   size: 284, 284
   orig: 284, 284
   offset: 0, 0
   index: -1
 
-playerAndEnemies23.png
+playerAndEnemies24.png
 size: 1024,1024
 format: RGBA8888
 filter: Nearest,Nearest
@@ -550,7 +570,7 @@ menu/pause_buttons/Menuk
   offset: 0, 0
   index: -1
 
-playerAndEnemies24.png
+playerAndEnemies25.png
 size: 1024,1024
 format: RGBA8888
 filter: Nearest,Nearest
@@ -570,7 +590,20 @@ menu/pause_buttons/RESUMEk
   offset: 0, 0
   index: -1
 
-playerAndEnemies25.png
+playerAndEnemies26.png
+size: 512,512
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+menu/pause_buttons/pause
+  rotate: false
+  xy: 2, 2
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+
+playerAndEnemies27.png
 size: 512,256
 format: RGBA8888
 filter: Nearest,Nearest

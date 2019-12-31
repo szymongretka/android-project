@@ -20,6 +20,7 @@ import com.mygdx.game.SpaceInvaderApp;
 import com.mygdx.game.enums.GameState;
 import com.mygdx.game.screen.AbstractScreen;
 import com.mygdx.game.util.Constants;
+import com.mygdx.game.util.IRequestCallback;
 
 import java.util.Map;
 
@@ -31,6 +32,8 @@ public class StatisticsScreen extends AbstractScreen {
     private TextureAtlas textureAtlas;
     private TextureRegion backTextureUp;
     private TextureRegion backTextureDown;
+    private TextureRegion updateTextureUp;
+    private TextureRegion updateTextureDown;
 
     private Map<String, Long> mapOfTopScores;
     private Skin skin;
@@ -38,6 +41,8 @@ public class StatisticsScreen extends AbstractScreen {
 
     private Label label;
     private Label topTenLabel;
+    private ImageButton updateStatsButton;
+
 
     public StatisticsScreen(final SpaceInvaderApp game) {
         super(game);
@@ -65,6 +70,28 @@ public class StatisticsScreen extends AbstractScreen {
             }
         });
 
+        updateStatsButton.addListener(new ClickListener(){
+            @Override
+            public void clicked (InputEvent event, float x, float y){
+                game.getScoreService().createUpdateScoreResponse(new IRequestCallback() {
+                    @Override
+                    public void onSucceed() {
+                        Gdx.app.postRunnable(new Runnable() {
+                            @Override
+                            public void run() {
+                                //TODO
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onError() {
+                        //TODO
+                    }
+                }, game.myPreferences);
+            }
+        });
+
         StringBuilder stringBuilder = new StringBuilder();
         int i = 0;
 
@@ -78,10 +105,12 @@ public class StatisticsScreen extends AbstractScreen {
         label = new Label(stringBuilder.toString(), skin);
         skin.getFont("default-font").getData().setScale(3f);
 
-        table.padTop(Constants.HEIGHT / 8f);
-        table.add(topTenLabel).height(200f).width(Constants.WIDTH / 1.5f).padBottom(200f);
+        table.padTop(100f);
+        table.add(topTenLabel).padBottom(150f);
         table.row();
-        table.add(label).height(200f).width(Constants.WIDTH / 1.5f).padBottom(100f);
+        table.add(label);
+        table.row();
+        table.add(updateStatsButton).height(200f).width(350f);
         table.row();
 
         stage.addActor(table);
@@ -105,6 +134,9 @@ public class StatisticsScreen extends AbstractScreen {
         backTextureDown = new TextureRegion(textureAtlas.findRegion("menu/level_buttons/strzalka1"));
         skin = game.assets.manager.get("skin/uiskin.json", Skin.class);
 
+        updateTextureUp = new TextureRegion(textureAtlas.findRegion("menu/main_menu_buttons/SEND SCORE"));
+        updateTextureDown = new TextureRegion(textureAtlas.findRegion("menu/main_menu_buttons/SEND SCOREk"));
+
     }
 
     private void initButtons() {
@@ -114,6 +146,10 @@ public class StatisticsScreen extends AbstractScreen {
 
         backButton.setSize(120f, 120f);
         backButton.setPosition(0, Constants.HEIGHT - 120f);
+
+        Drawable updateUp = new TextureRegionDrawable(updateTextureUp);
+        Drawable updateDown = new TextureRegionDrawable(updateTextureDown);
+        updateStatsButton = new ImageButton(updateUp, updateDown);
     }
 
     @Override

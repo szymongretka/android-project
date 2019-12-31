@@ -76,7 +76,7 @@ public class GameScreen extends AbstractScreen {
     public static TextureRegion fraction1OrangeShip3Texture;
     public static TextureRegion fraction1OrangeShip4Texture;
     private TextureRegion bulletImage;
-    private Texture pauseTexture; //TODO
+    private TextureRegion pauseTexture;
     public static Texture coinImage;
     public static Texture revertImage;
     public static Texture shieldImage;
@@ -300,7 +300,7 @@ public class GameScreen extends AbstractScreen {
         level1Music = game.assets.manager.get("music/level1Music.wav", Music.class);
         flameEffect = game.assets.manager.get("effects/explosion.flame", ParticleEffect.class);
         engineEffect = game.assets.manager.get("effects/engine2.flame", ParticleEffect.class);
-        pauseTexture = game.assets.manager.get("menu/pause.png", Texture.class);
+        pauseTexture = new TextureRegion(textureAtlas.findRegion("menu/pause_buttons/pause"));
         coinImage = game.assets.manager.get("coin.png", Texture.class);
         revertImage = game.assets.manager.get("revert.png", Texture.class);
         shieldImage = game.assets.manager.get("shield.png", Texture.class);
