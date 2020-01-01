@@ -1,14 +1,15 @@
 package com.mygdx.game.game_object.player.ship;
 
-public class BasicShip {
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-    private float speed = 150f;
-    private boolean active = false;
-    private boolean available = false;
+public class BasicShip extends Ship {
 
-    public BasicShip() {}
-
-    public float getSpeed() {
-        return speed;
+    public BasicShip(TextureRegion textureRegion){
+        super(textureRegion);
+        active = false; //is bought but not selected
+        available = true;
+        speed = 150f;
+        name = "basicShip";
     }
+
 }

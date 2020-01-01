@@ -108,7 +108,8 @@ public class MainMenuScreen extends AbstractScreen {
         shipButton.addListener(new ClickListener(){
             @Override
             public void clicked (InputEvent event, float x, float y){
-                //TODO
+                game.gameScreenManager.setActiveScreen(GameState.SPACESHIP_CUSTOMIZATION);
+                game.gameScreenManager.setScreen(GameState.SPACESHIP_CUSTOMIZATION, SpaceshipScreen.class);
             }
         });
 

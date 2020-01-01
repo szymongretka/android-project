@@ -2,11 +2,10 @@ package com.mygdx.game.networking;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net;
+import com.badlogic.gdx.Net.HttpMethods;
 import com.badlogic.gdx.Net.HttpRequest;
 import com.badlogic.gdx.Net.HttpResponse;
-import com.badlogic.gdx.Net.HttpMethods;
 import com.badlogic.gdx.net.HttpRequestBuilder;
-import com.badlogic.gdx.net.HttpResponseHeader;
 import com.mygdx.game.util.IRequestCallback;
 import com.mygdx.game.util.MyPreferences;
 
@@ -57,9 +56,9 @@ public class ScoreService {
     public void createUpdateScoreResponse(final IRequestCallback requestCallback, MyPreferences preferences) {
 
         HttpRequest saveRequest = new HttpRequest(HttpMethods.POST);
-        saveRequest.setUrl(REQUEST_URL + "/post");
+        saveRequest.setUrl(REQUEST_URL);
 
-        String content = "nickname: " + preferences.getNickname() + " score: " + preferences.getPoints();
+        String content = preferences.getNickname() + "&" + preferences.getPoints();
 
         saveRequest.setContent(content);
         //Set a header so the server can tell this is JSON
@@ -89,8 +88,6 @@ public class ScoreService {
     }
 
 
-
-
     public Map<String, Long> getMapOfTopScores() {
         return mapOfTopScores;
     }
@@ -98,7 +95,7 @@ public class ScoreService {
     private void parseResponse(String result) {
         try {
             JSONArray jsonArray = new JSONArray(result);
-            for(int i = 0; i < jsonArray.length(); i++){
+            for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject innerObj = jsonArray.getJSONObject(i);
                 mapOfTopScores.put(innerObj.getString("nickname"), innerObj.getLong("score"));
             }
@@ -106,7 +103,6 @@ public class ScoreService {
             e.printStackTrace();
         }
     }
-
 
 
 }

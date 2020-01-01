@@ -2,11 +2,13 @@ package com.mygdx.game.networking;
 
 import com.mygdx.game.util.IRequestCallback;
 
+import static com.mygdx.game.util.Constants.LOCALHOST_URL;
+
 public class ShipService {
 
-    public final static String REQUEST_URL = "http://192.168.1.105:8080/ship";
+    public final static String REQUEST_URL = LOCALHOST_URL + "ship/mobile";
 
-    public void createShipRequest(final IRequestCallback requestCallback) {
+    public void createSaveShipRequest(final IRequestCallback requestCallback) {
 
     }
 

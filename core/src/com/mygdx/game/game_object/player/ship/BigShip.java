@@ -1,15 +1,15 @@
 package com.mygdx.game.game_object.player.ship;
 
-public class BigShip {
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-    private float speed = 100f;
-    private boolean active = false;
-    private boolean available = false;
+public class BigShip extends Ship {
 
-    public BigShip() {}
-
-    public float getSpeed() {
-        return speed;
+    public BigShip(TextureRegion textureRegion) {
+        super(textureRegion);
+        active = false; //is bought but not selected
+        available = false; //is not bought but available to buy
+        speed = 100f;
+        name = "bigShip";
     }
 
 }

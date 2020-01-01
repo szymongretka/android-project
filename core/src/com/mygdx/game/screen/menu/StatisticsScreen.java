@@ -28,6 +28,7 @@ public class StatisticsScreen extends AbstractScreen {
 
     private Stage stage;
     private ImageButton backButton;
+    private ImageButton updateStatsButton;
 
     private TextureAtlas textureAtlas;
     private TextureRegion backTextureUp;
@@ -41,7 +42,6 @@ public class StatisticsScreen extends AbstractScreen {
 
     private Label label;
     private Label topTenLabel;
-    private ImageButton updateStatsButton;
 
 
     public StatisticsScreen(final SpaceInvaderApp game) {
@@ -65,6 +65,7 @@ public class StatisticsScreen extends AbstractScreen {
         backButton.addListener(new ClickListener(){
             @Override
             public void clicked (InputEvent event, float x, float y){
+                dispose();
                 game.gameScreenManager.setActiveScreen(GameState.MENU);
                 game.gameScreenManager.setScreen(GameState.MENU, MainMenuScreen.class);
             }
@@ -184,6 +185,6 @@ public class StatisticsScreen extends AbstractScreen {
 
     @Override
     public void dispose() {
-
+        stage.dispose();
     }
 }
