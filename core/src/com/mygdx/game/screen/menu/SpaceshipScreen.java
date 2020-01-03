@@ -5,7 +5,10 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
@@ -19,9 +22,7 @@ import com.mygdx.game.game_object.player.ship.BigShip;
 import com.mygdx.game.game_object.player.ship.Ship;
 import com.mygdx.game.screen.AbstractScreen;
 import com.mygdx.game.util.Constants;
-
-import java.util.HashMap;
-import java.util.Map;
+import com.mygdx.game.util.MyPreferences;
 
 
 public class SpaceshipScreen extends AbstractScreen {
@@ -31,6 +32,9 @@ public class SpaceshipScreen extends AbstractScreen {
     private ImageButton attachmentsButton;
     private ImageButton arrowForwardButton;
     private ImageButton arrowBackwardButton;
+    private ImageButton saveButton;
+    private ImageButton selectButton;
+    private ImageButton buyButton;
 
     private TextureAtlas textureAtlas;
     private TextureRegion backTextureUp;
@@ -47,16 +51,26 @@ public class SpaceshipScreen extends AbstractScreen {
     private TextureRegion arrowLeftTextureUp;
     private TextureRegion arrowLeftTextureDown;
 
+    private TextureRegion saveTextureUp;
+    private TextureRegion saveTextureDown;
+
+    private TextureRegion selectTextureUp;
+    private TextureRegion selectTextureDown;
+
+    private TextureRegion buyTextureUp;
+    private TextureRegion buyTextureDown;
+
     private Table table;
 
     private float shipWidth = 400f, shipHeight = 400f;
     private Integer shipNumber = 0;
 
-    private BigShip bigShip;
-    private BasicShip basicShip;
-
-    private Map<Integer, Ship> map = new HashMap<>();
-
+    private Ship[] shipArray;
+    private Integer playerMoney;
+    private MyPreferences preferences;
+    private Skin skin;
+    private Label playerMoneyLabel;
+    private Label shipPriceLabel;
 
     public SpaceshipScreen(final SpaceInvaderApp game) {
         super(game);
@@ -66,19 +80,21 @@ public class SpaceshipScreen extends AbstractScreen {
             loadAssets();
         }
 
-        basicShip = new BasicShip(basicShipTex);
-        bigShip = new BigShip(bigShipTex);
-
-        map.put(0, basicShip);
-        map.put(1, bigShip);
+        preferences = game.myPreferences;
+        playerMoney = preferences.getPoints();
+        shipArray = preferences.getShipArray();
+        for (Ship ship : shipArray) {
+            if(ship instanceof BasicShip)
+                ship.setTextureRegion(basicShipTex);
+            else if(ship instanceof BigShip)
+                ship.setTextureRegion(bigShipTex);
+        }
 
         stage = new Stage(new ScreenViewport());
         table = new Table();
         table.setWidth(stage.getWidth());
         table.align(Align.center|Align.top);
         table.setPosition(0, Gdx.graphics.getHeight());
-
-        table.setDebug(true);
 
         initButtons();
 
@@ -93,7 +109,7 @@ public class SpaceshipScreen extends AbstractScreen {
         arrowForwardButton.addListener(new ClickListener(){
             @Override
             public void clicked (InputEvent event, float x, float y){
-                if(shipNumber < map.size() - 1)
+                if(shipNumber < shipArray.length - 1)
                     shipNumber++;
             }
         });
@@ -106,12 +122,53 @@ public class SpaceshipScreen extends AbstractScreen {
             }
         });
 
+        attachmentsButton.addListener(new ClickListener(){
+            @Override
+            public void clicked (InputEvent event, float x, float y){
+                //todo
+            }
+        });
+
+        selectButton.addListener(new ClickListener(){
+            @Override
+            public void clicked (InputEvent event, float x, float y){
+                preferences.setActiveShip(shipArray[shipNumber]);
+            }
+        });
 
 
-        table.padTop(100f);
-        table.add(attachmentsButton).height(200f).width(350f).padBottom(400f);
+        saveButton.addListener(new ClickListener(){
+            @Override
+            public void clicked (InputEvent event, float x, float y){
+                //TODO
+            }
+        });
+
+        buyButton.addListener(new ClickListener(){
+            @Override
+            public void clicked (InputEvent event, float x, float y){
+                playerMoney = playerMoney - shipArray[shipNumber].getPrice();
+                shipArray[shipNumber].setAvailable(true);
+                preferences.buyShip(shipArray[shipNumber].getClass());
+                preferences.setNewAmountOfPoints(playerMoney);
+            }
+        });
+
+
+        playerMoneyLabel = new Label("Money: " + playerMoney, skin);
+        shipPriceLabel = new Label("Cost: " + shipArray[shipNumber].getPrice() , skin);
+        skin.getFont("default-font").getData().setScale(2f);
+
+        table.add(playerMoneyLabel).padBottom(100f).colspan(2).center();
         table.row();
-
+        table.add(attachmentsButton).colspan(2).center().height(200f).width(350f).padBottom(800f);
+        table.row();
+        table.add(shipPriceLabel).padBottom(100f).colspan(2).center();
+        table.row();
+        table.add(selectButton).height(200f).width(350f);
+        table.add(buyButton).height(200f).width(350f);
+        table.row();
+        table.add(saveButton).colspan(2).center().height(200f).width(350f);
 
         stage.addActor(table);
         stage.addActor(backButton);
@@ -122,6 +179,19 @@ public class SpaceshipScreen extends AbstractScreen {
 
     @Override
     public void update(float delta) {
+        Ship ship = shipArray[shipNumber];
+        if(ship.getPrice() > playerMoney || ship.isAvailable()) { //ship is not available to buy if player doesn't have enough money or already bought it
+            buyButton.setTouchable(Touchable.disabled);
+        } else {
+            buyButton.setTouchable(Touchable.enabled);
+        }
+        if(!ship.isAvailable()) {
+            selectButton.setTouchable(Touchable.disabled);
+        } else {
+            selectButton.setTouchable(Touchable.enabled);
+        }
+        shipPriceLabel.setText("Cost: " + shipArray[shipNumber].getPrice());
+        playerMoneyLabel.setText("Money: " + playerMoney);
 
     }
 
@@ -132,8 +202,7 @@ public class SpaceshipScreen extends AbstractScreen {
         stage.act(Gdx.graphics.getDeltaTime());
 
         stage.getBatch().begin();
-
-        stage.getBatch().draw(map.get(shipNumber).getTextureRegion(), Constants.WIDTH/2f - (shipWidth/2f),
+        stage.getBatch().draw(shipArray[shipNumber].getTextureRegion(), Constants.WIDTH/2f - (shipWidth/2f),
                 Constants.HEIGHT/2f - (shipHeight/2f), shipWidth, shipHeight);
         stage.getBatch().end();
 
@@ -143,6 +212,7 @@ public class SpaceshipScreen extends AbstractScreen {
 
     private void loadAssets() {
         textureAtlas = game.assets.manager.get("packedImages/playerAndEnemies.atlas", TextureAtlas.class);
+
         backTextureUp = new TextureRegion(textureAtlas.findRegion("menu/level_buttons/strzalka"));
         backTextureDown = new TextureRegion(textureAtlas.findRegion("menu/level_buttons/strzalka1"));
 
@@ -155,10 +225,19 @@ public class SpaceshipScreen extends AbstractScreen {
         arrowLeftTextureUp = new TextureRegion(textureAtlas.findRegion("menu/customize_spaceship/arrowLeft"));
         arrowLeftTextureDown = new TextureRegion(textureAtlas.findRegion("menu/customize_spaceship/arrowLeftk"));
 
-
         basicShipTex = new TextureRegion(textureAtlas.findRegion("basicPlayerSpaceship"), 5 * 80, 0, 80, 127);
         bigShipTex = new TextureRegion(textureAtlas.findRegion("basicPlayerShipHIT"), 0, 0, 80, 127);
 
+        buyTextureUp = new TextureRegion(textureAtlas.findRegion("menu/customize_spaceship/BUY"));
+        buyTextureDown = new TextureRegion(textureAtlas.findRegion("menu/customize_spaceship/BUYk"));
+
+        selectTextureUp = new TextureRegion(textureAtlas.findRegion("menu/customize_spaceship/SELECT"));
+        selectTextureDown = new TextureRegion(textureAtlas.findRegion("menu/customize_spaceship/SELECTk"));
+
+        saveTextureUp = new TextureRegion(textureAtlas.findRegion("menu/SAVE"));
+        saveTextureDown = new TextureRegion(textureAtlas.findRegion("menu/SAVEk"));
+
+        skin = game.assets.manager.get("skin/uiskin.json", Skin.class);
     }
 
     private void initButtons() {
@@ -190,6 +269,17 @@ public class SpaceshipScreen extends AbstractScreen {
         arrowForwardButton.setPosition(Constants.WIDTH/2f + (shipWidth/2f),
                 Constants.HEIGHT/2f - (shipHeight/2f));
 
+        Drawable saveUp = new TextureRegionDrawable(saveTextureUp);
+        Drawable saveDown = new TextureRegionDrawable(saveTextureDown);
+        saveButton = new ImageButton(saveUp, saveDown);
+
+        Drawable selectUp = new TextureRegionDrawable(selectTextureUp);
+        Drawable selectDown = new TextureRegionDrawable(selectTextureDown);
+        selectButton = new ImageButton(selectUp, selectDown);
+
+        Drawable buyUp = new TextureRegionDrawable(buyTextureUp);
+        Drawable buyDown = new TextureRegionDrawable(buyTextureDown);
+        buyButton = new ImageButton(buyUp, buyDown);
 
     }
 
@@ -220,6 +310,6 @@ public class SpaceshipScreen extends AbstractScreen {
 
     @Override
     public void dispose() {
-        stage.dispose();
+//        stage.dispose();
     }
 }

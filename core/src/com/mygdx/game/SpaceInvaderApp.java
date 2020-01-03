@@ -42,12 +42,11 @@ public class SpaceInvaderApp extends Game {
 	}
 
 	public void dispose() {
+        batch.dispose();
         gameScreenManager.dispose();
-        //batch.dispose();
         font.dispose();
         assets.dispose();
 	}
-
 
     public ShipService getShipService() {
         return shipService;

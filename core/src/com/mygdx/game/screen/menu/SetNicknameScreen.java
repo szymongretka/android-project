@@ -17,8 +17,19 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.SpaceInvaderApp;
 import com.mygdx.game.enums.GameState;
+import com.mygdx.game.game_object.player.ship.BasicShip;
+import com.mygdx.game.game_object.player.ship.BigShip;
+import com.mygdx.game.game_object.player.ship.Ship;
 import com.mygdx.game.screen.AbstractScreen;
 import com.mygdx.game.util.Constants;
+import com.mygdx.game.util.MyPreferences;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static com.mygdx.game.util.Constants.BASIC_SHIP;
+import static com.mygdx.game.util.Constants.BIG_SHIP;
+
 
 public class SetNicknameScreen extends AbstractScreen {
 
@@ -35,12 +46,17 @@ public class SetNicknameScreen extends AbstractScreen {
     private ImageButton saveButton;
     private TextField nicknameTextField;
 
+    private MyPreferences preferences;
+
     public SetNicknameScreen(final SpaceInvaderApp game) {
         super(game);
 
         if (game.assets.manager.isFinished()) {
             loadAssets();
         }
+
+        preferences = game.myPreferences;
+        initShipMap();
 
         stage = new Stage(new ScreenViewport());
 
@@ -77,6 +93,20 @@ public class SetNicknameScreen extends AbstractScreen {
 
         stage.addActor(table);
 
+    }
+
+    private void initShipMap() {
+
+        BasicShip basicShip = new BasicShip();
+        BigShip bigShip = new BigShip();
+
+        basicShip.setActive(true);
+        basicShip.setAvailable(true);
+
+        bigShip.setActive(false);
+        bigShip.setAvailable(false);
+
+        preferences.initShipMap(new Ship[]{basicShip, bigShip});
     }
 
     @Override

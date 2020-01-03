@@ -50,6 +50,13 @@ public class Constants {
     public static final short BIT_ENEMY_BULLET = 2;
 
 
+    //My preferences
+    public static final String SHIP_ARRAY = "shipMap";
+    public static final String NICKNAME = "nickname";
+    public static final String EMPTY = "empty";
+    public static final String POINTS = "points";
+    public static final String BIG_SHIP = "bigShip";
+    public static final String BASIC_SHIP = "basicShip";
 
     public static final String LOCALHOST_URL = "http://192.168.1.106:8080/";
 

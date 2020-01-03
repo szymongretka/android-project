@@ -7,7 +7,8 @@ import com.mygdx.game.SpaceInvaderApp;
 import com.mygdx.game.enums.GameState;
 import com.mygdx.game.screen.AbstractScreen;
 import com.mygdx.game.util.Constants;
-import com.mygdx.game.util.MyPreferences;
+
+import static com.mygdx.game.util.Constants.EMPTY;
 
 public class LoadingScreen extends AbstractScreen {
 
@@ -24,8 +25,8 @@ public class LoadingScreen extends AbstractScreen {
     @Override
     public void update(float delta) {
         progress = MathUtils.lerp(progress, game.assets.manager.getProgress(), .1f);
-        if(game.assets.manager.update() && progress <= game.assets.manager.getProgress() - .001f) {
-            if (game.myPreferences.getNickname().equals(game.myPreferences.EMPTY)) {
+        if (game.assets.manager.update() && progress <= game.assets.manager.getProgress() - .001f) {
+            if (game.myPreferences.getNickname().equals(EMPTY)) {
                 game.gameScreenManager.setActiveScreen(GameState.SPECIFY_NICKNAME);
                 game.gameScreenManager.setScreen(GameState.SPECIFY_NICKNAME, SetNicknameScreen.class);
             } else {
@@ -42,10 +43,10 @@ public class LoadingScreen extends AbstractScreen {
 
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(Color.BLACK);
-        shapeRenderer.rect(48, Constants.HEIGHT/2, Constants.WIDTH - 48, 32);
+        shapeRenderer.rect(48, Constants.HEIGHT / 2, Constants.WIDTH - 48, 32);
 
         shapeRenderer.setColor(Color.BLUE);
-        shapeRenderer.rect(48, Constants.HEIGHT/2, progress * (Constants.WIDTH - 48), 32);
+        shapeRenderer.rect(48, Constants.HEIGHT / 2, progress * (Constants.WIDTH - 48), 32);
         shapeRenderer.end();
 
         game.batch.begin();
