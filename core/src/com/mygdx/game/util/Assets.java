@@ -20,13 +20,13 @@ public class Assets implements Disposable {
         manager.load("music/sfx-laser.wav", Sound.class);
         manager.load("music/score.wav", Sound.class);
 
+        //skin
+        manager.load("skin/uiskin.json", Skin.class);
+
         //items
         manager.load("revert.png", Texture.class);
         manager.load("coin.png", Texture.class);
         manager.load("shield.png", Texture.class);
-
-        //menu
-        manager.load("menu/pause.png", Texture.class);
 
         //Particle effects
         manager.load("effects/explosion.flame", ParticleEffect.class);

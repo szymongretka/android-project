@@ -1,5 +1,6 @@
 package com.mygdx.game.game_object.enemy;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
@@ -23,15 +24,20 @@ public abstract class Enemy extends Box2DObject {
     }
 
     public void hitPlayer(PlayerSpaceship playerSpaceship) {
-        playerSpaceship.getBody().setActive(false);
-        playerSpaceship.gotShot = true;
-        Timer.schedule(new Timer.Task() {
+        Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
-                playerSpaceship.gotShot = false;
-                playerSpaceship.getBody().setActive(true);
+                playerSpaceship.getBody().setActive(false);
+                playerSpaceship.gotShot = true;
+                Timer.schedule(new Timer.Task() {
+                    @Override
+                    public void run() {
+                        playerSpaceship.gotShot = false;
+                        playerSpaceship.getBody().setActive(true);
+                    }
+                }, 1.5f);
             }
-        }, 1.5f);
+        });
     }
 
     public float getOnDestroyCoordX() {

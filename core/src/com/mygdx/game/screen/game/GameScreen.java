@@ -48,6 +48,7 @@ import com.mygdx.game.handler.spawn.SpawningSystem;
 import com.mygdx.game.screen.AbstractScreen;
 import com.mygdx.game.screen.pause.PauseScreen;
 import com.mygdx.game.util.MessageType;
+import com.mygdx.game.util.MyPreferences;
 
 import java.util.Iterator;
 
@@ -75,7 +76,7 @@ public class GameScreen extends AbstractScreen {
     public static TextureRegion fraction1OrangeShip3Texture;
     public static TextureRegion fraction1OrangeShip4Texture;
     private TextureRegion bulletImage;
-    private Texture pauseTexture;
+    private TextureRegion pauseTexture;
     public static Texture coinImage;
     public static Texture revertImage;
     public static Texture shieldImage;
@@ -122,7 +123,7 @@ public class GameScreen extends AbstractScreen {
 
     private FPSLogger logger;
     public static float totalGameTime = 0;
-    public static int POINTS = 0;
+    public static int POINTS;
     private boolean wasTouched = false;
 
     public GameScreen(final SpaceInvaderApp game) {
@@ -134,6 +135,7 @@ public class GameScreen extends AbstractScreen {
         //for testing only
         box2DDebugRenderer = new Box2DDebugRenderer();
 
+        POINTS = game.myPreferences.getPoints();
 
         flameEffect = new ParticleEffect();
         engineEffect = new ParticleEffect();
@@ -173,6 +175,7 @@ public class GameScreen extends AbstractScreen {
         itemChanceList.addEntry(BasicShield.class, 10f);
 
 
+        System.out.println("points:" + POINTS);
     }
 
     private float elapsedTime = 0;
@@ -297,7 +300,7 @@ public class GameScreen extends AbstractScreen {
         level1Music = game.assets.manager.get("music/level1Music.wav", Music.class);
         flameEffect = game.assets.manager.get("effects/explosion.flame", ParticleEffect.class);
         engineEffect = game.assets.manager.get("effects/engine2.flame", ParticleEffect.class);
-        pauseTexture = game.assets.manager.get("menu/pause.png", Texture.class);
+        pauseTexture = new TextureRegion(textureAtlas.findRegion("menu/pause_buttons/pause"));
         coinImage = game.assets.manager.get("coin.png", Texture.class);
         revertImage = game.assets.manager.get("revert.png", Texture.class);
         shieldImage = game.assets.manager.get("shield.png", Texture.class);

@@ -12,5 +12,8 @@ public enum GameState {
     LEVEL5,
     MENU,
     PAUSE,
-    SHOP
+    SHOP,
+    STATISTICS,
+    SPACESHIP_CUSTOMIZATION,
+    SPECIFY_NICKNAME
 }
