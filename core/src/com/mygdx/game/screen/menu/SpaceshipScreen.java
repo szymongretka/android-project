@@ -22,6 +22,7 @@ import com.mygdx.game.game_object.player.ship.BigShip;
 import com.mygdx.game.game_object.player.ship.Ship;
 import com.mygdx.game.screen.AbstractScreen;
 import com.mygdx.game.util.Constants;
+import com.mygdx.game.util.IRequestCallback;
 import com.mygdx.game.util.MyPreferences;
 
 
@@ -140,7 +141,17 @@ public class SpaceshipScreen extends AbstractScreen {
         saveButton.addListener(new ClickListener(){
             @Override
             public void clicked (InputEvent event, float x, float y){
-                //TODO
+                game.getShipService().createSaveShipRequest(new IRequestCallback() {
+                    @Override
+                    public void onSucceed() {
+
+                    }
+
+                    @Override
+                    public void onError() {
+
+                    }
+                }, shipArray, preferences);
             }
         });
 

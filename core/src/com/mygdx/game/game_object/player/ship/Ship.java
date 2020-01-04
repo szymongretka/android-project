@@ -7,7 +7,7 @@ public abstract class Ship {
     protected float speed = 150f;
     protected String name;
 
-    protected boolean active; //is bought and selected
+    protected Boolean active; //is bought and selected
     protected boolean available; //is bought
     protected int price;
 
@@ -18,6 +18,14 @@ public abstract class Ship {
     }
 
     public Ship() {}
+
+    public Ship(float speed, String name, Boolean active, boolean available, int price) {
+        this.speed = speed;
+        this.name = name;
+        this.active = active;
+        this.available = available;
+        this.price = price;
+    }
 
     public float getSpeed() {
         return speed;

@@ -58,6 +58,6 @@ public class Constants {
     public static final String BIG_SHIP = "bigShip";
     public static final String BASIC_SHIP = "basicShip";
 
-    public static final String LOCALHOST_URL = "http://192.168.1.106:8080/";
+    public static final String LOCALHOST_URL = "http://192.168.1.107:8080/";
 
 }
