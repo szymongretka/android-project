@@ -42,7 +42,7 @@ public class SpaceInvaderApp extends Game {
 	}
 
 	public void dispose() {
-        batch.dispose();
+       // batch.dispose();
         gameScreenManager.dispose();
         font.dispose();
         assets.dispose();

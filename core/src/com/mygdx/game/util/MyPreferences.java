@@ -71,6 +71,18 @@ public class MyPreferences {
         prefs.flush();
     }
 
+    public Ship getActiveShip() {
+        Ship activeShip = null;
+        Json json = new Json();
+        String serializedShips = prefs.getString(SHIP_ARRAY);
+        Ship[] ships =  json.fromJson(Ship[].class, serializedShips);
+        for(Ship s : ships)
+            if(s.isActive())
+                activeShip = s;
+
+        return activeShip != null ? activeShip : ships[0];
+    }
+
     public void buyShip(Class<?> clazz) {
         Json json = new Json();
         Ship[] ships = json.fromJson(Ship[].class, prefs.getString(SHIP_ARRAY));

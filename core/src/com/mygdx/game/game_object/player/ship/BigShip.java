@@ -9,12 +9,14 @@ public class BigShip extends Ship {
         speed = 100f;
         name = "bigShip";
         price = 25;
+        HP = 50;
     }
 
     public BigShip() {
         speed = 100f;
         name = "bigShip";
         price = 25;
+        HP = 50;
     }
 
 }

@@ -36,6 +36,7 @@ import com.mygdx.game.game_object.bullet.EnemyBullet;
 import com.mygdx.game.game_object.enemy.Enemy;
 import com.mygdx.game.game_object.item.Item;
 import com.mygdx.game.game_object.item.bonus.BasicShield;
+import com.mygdx.game.game_object.item.bonus.NumberOfBullets;
 import com.mygdx.game.game_object.item.bonus.RevertMovement;
 import com.mygdx.game.game_object.item.coin.Coin;
 import com.mygdx.game.game_object.player.PlayerSpaceship;
@@ -115,6 +116,8 @@ public class GameScreen extends AbstractScreen {
     private MessageManager messageManager;
     private BulletHandler bulletHandler;
 
+    public MyPreferences preferences = game.myPreferences;
+
     public static long lastBulletTime;
     private float backgroundY = 0f;
 
@@ -124,6 +127,7 @@ public class GameScreen extends AbstractScreen {
     private FPSLogger logger;
     public static float totalGameTime = 0;
     public static int POINTS;
+    public static int NUMBER_OF_BULLETS = 3;
     private boolean wasTouched = false;
 
     public GameScreen(final SpaceInvaderApp game) {
@@ -170,12 +174,11 @@ public class GameScreen extends AbstractScreen {
 
         logger = new FPSLogger();
 
-        itemChanceList.addEntry(Coin.class, 80f);
+        itemChanceList.addEntry(Coin.class, 10f);
         itemChanceList.addEntry(RevertMovement.class, 10f);
         itemChanceList.addEntry(BasicShield.class, 10f);
+        itemChanceList.addEntry(NumberOfBullets.class, 70f);
 
-
-        System.out.println("points:" + POINTS);
     }
 
     private float elapsedTime = 0;
@@ -189,12 +192,18 @@ public class GameScreen extends AbstractScreen {
 
         GdxAI.getTimepiece().update(delta);
 
-        if (elapsedTime > 0.8f) {
+       /* if (elapsedTime > 0.8f) {
             boss1.update(elapsedTime); //TODO to refactor
             // Dispatch any delayed messages
             MessageManager.getInstance().update();
 
             elapsedTime = 0;
+        }*/
+
+        if (TimeUtils.nanoTime() - lastBulletTime > 250000000) {
+            bulletHandler.spawnBasicBullets(playerSpaceship.getBody().getPosition().x,
+                    playerSpaceship.getBody().getPosition().y);
+            //shootSound.play();
         }
     }
 
@@ -224,15 +233,9 @@ public class GameScreen extends AbstractScreen {
 
         game.batch.end();
 
-        if (TimeUtils.nanoTime() - lastBulletTime > 250000000) {
-            bulletHandler.spawnBasicBullets(playerSpaceship.getBody().getPosition().x,
-                    playerSpaceship.getBody().getPosition().y);
-            shootSound.play();
-        }
-
 
         box2DDebugRenderer.render(this.world, camera.combined);
-        world.step(1 / 60f, 6, 2);
+        world.step(1 / 45f, 6, 2);
 
         stage.draw();
         stage.act(delta);
@@ -289,6 +292,7 @@ public class GameScreen extends AbstractScreen {
         fraction1OrangeShip2Texture = new TextureRegion(textureAtlas.findRegion("fraction1/orangeship2"));
         fraction1OrangeShip3Texture = new TextureRegion(textureAtlas.findRegion("fraction1/orangeship3"));
         fraction1OrangeShip4Texture = new TextureRegion(textureAtlas.findRegion("fraction1/orangeship4"));
+        pauseTexture = new TextureRegion(textureAtlas.findRegion("menu/pause_buttons/pause"));
         lvl1background = game.assets.manager.get("background/lvl1.jpg");
         bulletImage = new TextureRegion(textureAtlas.findRegion("bullet/bullet2"));
         wave1 = new TextureRegion(textureAtlas.findRegion("waves/wave1"));
@@ -300,7 +304,7 @@ public class GameScreen extends AbstractScreen {
         level1Music = game.assets.manager.get("music/level1Music.wav", Music.class);
         flameEffect = game.assets.manager.get("effects/explosion.flame", ParticleEffect.class);
         engineEffect = game.assets.manager.get("effects/engine2.flame", ParticleEffect.class);
-        pauseTexture = new TextureRegion(textureAtlas.findRegion("menu/pause_buttons/pause"));
+
         coinImage = game.assets.manager.get("coin.png", Texture.class);
         revertImage = game.assets.manager.get("revert.png", Texture.class);
         shieldImage = game.assets.manager.get("shield.png", Texture.class);
@@ -322,12 +326,11 @@ public class GameScreen extends AbstractScreen {
 
     private void updateAndDrawBullets(float delta) {
         for (Bullet bullet : activeBullet2D) {
-            bullet.update(delta);
 
             game.batch.draw(bulletImage, bullet.getBody().getPosition().x - (bullet.getWidth() / 2),
                     bullet.getBody().getPosition().y - (bullet.getHeight() / 2), bullet.getWidth(), bullet.getHeight());
 
-            if (bullet.getBody().getPosition().y > HEIGHT - bullet.getHeight() || !bullet.getBody().isActive() || bullet.isToDestroy()) {
+            if (bullet.getBody().getPosition().y > HEIGHT / PPM - bullet.getHeight()|| !bullet.getBody().isActive() || bullet.isToDestroy()) {
                 genericPool.freeBulletFromSpecifiedPool(bullet); // reset and place back in pool
                 activeBullet2D.removeValue(bullet, true); // remove bullet from our array so we don't render it anymore
             }

@@ -60,6 +60,7 @@ public abstract class Box2DObject implements Pool.Poolable {
         body.createFixture(def).setUserData(this);
         polygonShape.dispose();
 
+
         body.setActive(false);
 
         return body;
@@ -76,7 +77,7 @@ public abstract class Box2DObject implements Pool.Poolable {
     @Override
     public void reset() {
         this.body.setActive(false);
-        this.body.setTransform(0, 0, 0);
+       // this.body.setTransform(0, 0, 0);
         this.body.setLinearVelocity(0, 0);
     }
 

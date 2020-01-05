@@ -10,6 +10,7 @@ public abstract class Ship {
     protected Boolean active; //is bought and selected
     protected boolean available; //is bought
     protected int price;
+    protected int HP;
 
     protected TextureRegion textureRegion;
 
@@ -61,5 +62,13 @@ public abstract class Ship {
 
     public void setAvailable(boolean available) {
         this.available = available;
+    }
+
+    public int getHP() {
+        return HP;
+    }
+
+    public void setHP(int HP) {
+        this.HP = HP;
     }
 }

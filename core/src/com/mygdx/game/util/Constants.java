@@ -32,6 +32,7 @@ public class Constants {
     public static final int PLAYER_HEIGHT = 16;
     public static final int BASIC_SHIP_HP = 10;
 
+
     public static final int COIN_WIDTH = 4;
     public static final int COIN_HEIGHT = 6;
 

@@ -9,7 +9,9 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.game_object.Box2DObject;
+import com.mygdx.game.game_object.player.ship.Ship;
 import com.mygdx.game.screen.game.GameScreen;
+import com.mygdx.game.util.Constants;
 import com.mygdx.game.util.MessageType;
 
 import static com.mygdx.game.util.Constants.BASIC_SHIP_HP;
@@ -36,13 +38,14 @@ public class PlayerSpaceship extends Box2DObject implements Telegraph {
 
     private TextureRegion playerStraight; //player flying straight
     private TextureRegion playerDead;
+    private Ship ship;
     private Animation playerMoveRightAnimation; //player turning right
     private Animation playerMoveLeftAnimation;
     private Animation playerGotHitAnimation;
     private Animation playerExplodeAnimation;
     private float stateTimer;
 
-    private float speed = 100;
+    private float speed;
     private Vector2 direction = new Vector2();
 
 
@@ -50,35 +53,48 @@ public class PlayerSpaceship extends Box2DObject implements Telegraph {
         super(screen.world, 32, 32, PLAYER_WIDTH, PLAYER_HEIGHT, BASIC_SHIP_HP, 0,
                 BodyDef.BodyType.DynamicBody, BIT_PLAYER, (short) (BIT_ENEMY | BIT_ITEM | BIT_ENEMY_BULLET), (short) 0, false);
 
+        this.ship = screen.preferences.getActiveShip();
+        this.setHp(ship.getHP());
+        this.setSpeed(ship.getSpeed());
+
         currentState = State.STRAIGHT;
         previousState = State.STRAIGHT;
         stateTimer = 0;
 
+        initAnimations(screen);
+
+    }
+
+    private void initAnimations(GameScreen screen) {
         Array<TextureRegion> frames = new Array<>();
 
-        //get run animation frames and add them to animation
-        for (int i = 5; i >= 1; i--)
-            frames.add(new TextureRegion(screen.spaceshipAtlasRegion, i * tileWidth, 0, tileWidth, tileHeight));
-        playerMoveLeftAnimation = new Animation(0.1f, frames);
+        if(ship.getName().equals(Constants.BASIC_SHIP)) {
+            //get run animation frames and add them to animation
+            for (int i = 5; i >= 1; i--)
+                frames.add(new TextureRegion(screen.spaceshipAtlasRegion, i * tileWidth, 0, tileWidth, tileHeight));
+            playerMoveLeftAnimation = new Animation(0.1f, frames);
 
-        frames.clear();
+            frames.clear();
 
-        for (int i = 6; i <= 11; i++)
-            frames.add(new TextureRegion(screen.spaceshipAtlasRegion, i * tileWidth, 0, tileWidth, tileHeight));
-        playerMoveRightAnimation = new Animation(0.1f, frames);
+            for (int i = 6; i <= 11; i++)
+                frames.add(new TextureRegion(screen.spaceshipAtlasRegion, i * tileWidth, 0, tileWidth, tileHeight));
+            playerMoveRightAnimation = new Animation(0.1f, frames);
 
-        frames.clear();
+            frames.clear();
 
-        for (int i = 4; i >= 1; i--)
-            frames.add(new TextureRegion(screen.spaceshipHitAtlasRegion, i * tileWidth, 0, tileWidth, tileHeight));
-        for (int i = 1; i <= 4; i++)
-            frames.add(new TextureRegion(screen.spaceshipHitAtlasRegion, i * tileWidth, 0, tileWidth, tileHeight));
-        playerGotHitAnimation = new Animation(0.1f, frames);
+            for (int i = 4; i >= 1; i--)
+                frames.add(new TextureRegion(screen.spaceshipHitAtlasRegion, i * tileWidth, 0, tileWidth, tileHeight));
+            for (int i = 1; i <= 4; i++)
+                frames.add(new TextureRegion(screen.spaceshipHitAtlasRegion, i * tileWidth, 0, tileWidth, tileHeight));
+            playerGotHitAnimation = new Animation(0.1f, frames);
 
-        frames.clear();
+            frames.clear();
 
-        playerStraight = new TextureRegion(screen.spaceshipAtlasRegion, 5 * tileWidth, 0, tileWidth, tileHeight);
+            playerStraight = new TextureRegion(screen.spaceshipAtlasRegion, 5 * tileWidth, 0, tileWidth, tileHeight);
 
+        } else if(ship.getName().equals(Constants.BIG_SHIP)) {
+            //TODO ADD NEW SPACESHIP
+        }
     }
 
 
@@ -183,5 +199,11 @@ public class PlayerSpaceship extends Box2DObject implements Telegraph {
         return stateTimer;
     }
 
+    public Ship getShip() {
+        return ship;
+    }
 
+    public void setShip(Ship ship) {
+        this.ship = ship;
+    }
 }

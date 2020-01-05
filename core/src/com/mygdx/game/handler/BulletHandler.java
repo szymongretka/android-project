@@ -1,5 +1,6 @@
 package com.mygdx.game.handler;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ai.msg.Telegram;
 import com.badlogic.gdx.ai.msg.Telegraph;
 import com.badlogic.gdx.math.Vector2;
@@ -34,16 +35,29 @@ public class BulletHandler implements Telegraph {
         this.activeEnemyBullets = activeEnemyBullets;
     }
 
-
     public void spawnBasicBullets(float x, float y) {
         /** Returns an object from this pool. The object may be new (from {@link #newObject()}) or reused (previously
          * {@link #free(Object) freed}). */
-        // get a bullet from our pool
-        BasicBullet basicBullet = (BasicBullet) basicBulletPool.obtain();
-        basicBullet.init(x, y + PLAYER_HEIGHT/2f, basicBullet.getVelX(), basicBullet.getVelY());
-        // add to our array of bullets so we can access them in our render method
-        activeBullets.add(basicBullet);
-        GameScreen.lastBulletTime = TimeUtils.nanoTime();
+        // get a bullet from pool
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Gdx.app.postRunnable(new Runnable() {
+                    @Override
+                    public void run() {
+                        for(int i = 1; i <= GameScreen.NUMBER_OF_BULLETS; i++) {
+                            BasicBullet basicBullet = (BasicBullet) basicBulletPool.obtain();
+                            basicBullet.init(x + i, y + PLAYER_HEIGHT / 2f, basicBullet.getVelX(), basicBullet.getVelY());
+                            // add to our array of bullets so we can access them in our render method
+                            activeBullets.add(basicBullet);
+                        }
+                        GameScreen.lastBulletTime = TimeUtils.nanoTime();
+                    }
+                });
+            }
+        }).start();
+
     }
 
     public void spawnRedBullets(float x, float y) {
