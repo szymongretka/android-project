@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.SpaceInvaderApp;
 import com.mygdx.game.enums.GameState;
@@ -67,6 +68,7 @@ public class PauseScreen extends AbstractScreen {
             public void clicked (InputEvent event, float x, float y){
                 dispose();
                 //game.gameScreenManager.setActiveScreen(GameState.MENU);
+                Timer.instance().clear();
                 game.gameScreenManager.clearGameStateMap();
                 game.gameScreenManager.setScreen(GameState.MENU, MainMenuScreen.class);
 

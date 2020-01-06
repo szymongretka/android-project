@@ -127,7 +127,7 @@ public class GameScreen extends AbstractScreen {
     private FPSLogger logger;
     public static float totalGameTime = 0;
     public static int POINTS;
-    public static int NUMBER_OF_BULLETS = 3;
+    public static int NUMBER_OF_BULLETS = 1;
     private boolean wasTouched = false;
 
     public GameScreen(final SpaceInvaderApp game) {
@@ -192,18 +192,20 @@ public class GameScreen extends AbstractScreen {
 
         GdxAI.getTimepiece().update(delta);
 
-       /* if (elapsedTime > 0.8f) {
-            boss1.update(elapsedTime); //TODO to refactor
-            // Dispatch any delayed messages
-            MessageManager.getInstance().update();
+        if(game.gameScreenManager.getActiveScreen().equals(GameState.LEVEL2) || game.gameScreenManager.getActiveScreen().equals(GameState.LEVEL4)) {
+            if (elapsedTime > 0.8f) {
+                boss1.update(elapsedTime); //TODO to refactor
+                // Dispatch any delayed messages
+                MessageManager.getInstance().update();
 
-            elapsedTime = 0;
-        }*/
+                elapsedTime = 0;
+            }
+        }
 
         if (TimeUtils.nanoTime() - lastBulletTime > 250000000) {
             bulletHandler.spawnBasicBullets(playerSpaceship.getBody().getPosition().x,
                     playerSpaceship.getBody().getPosition().y);
-            //shootSound.play();
+            shootSound.play();
         }
     }
 

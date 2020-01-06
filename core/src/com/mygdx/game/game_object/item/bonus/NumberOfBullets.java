@@ -5,6 +5,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.game.game_object.item.Item;
 import com.mygdx.game.game_object.player.PlayerSpaceship;
 import com.mygdx.game.screen.game.GameScreen;
+import com.mygdx.game.util.Constants;
 
 import static com.mygdx.game.util.Constants.ITEM_HEIGHT;
 import static com.mygdx.game.util.Constants.ITEM_WIDTH;
@@ -27,7 +28,7 @@ public class NumberOfBullets extends Item {
     @Override
     public void takenByPlayer(PlayerSpaceship playerSpaceship) {
         super.takenByPlayer(playerSpaceship);
-        if(GameScreen.NUMBER_OF_BULLETS < 4)
+        if(GameScreen.NUMBER_OF_BULLETS < Constants.MAX_NUMBER_OF_BULLETS)
             GameScreen.NUMBER_OF_BULLETS++;
     }
 }

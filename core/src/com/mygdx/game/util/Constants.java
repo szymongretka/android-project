@@ -42,6 +42,8 @@ public class Constants {
     public static final int BASIC_SHIELD_WIDTH = 10;
     public static final int BASIC_SHIELD_HEIGHT = 10;
 
+    public static final int MAX_NUMBER_OF_BULLETS = 4;
+
     //mask & category bits
     public static final short BIT_PLAYER = 1;
     public static final short BIT_ENEMY = 2;

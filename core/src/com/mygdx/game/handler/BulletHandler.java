@@ -14,9 +14,11 @@ import com.mygdx.game.game_object.bullet.player_bullet.BasicBullet;
 import com.mygdx.game.game_object.bullet.player_bullet.RedBullet;
 import com.mygdx.game.game_object.pool.GenericPool;
 import com.mygdx.game.screen.game.GameScreen;
+import com.mygdx.game.util.Constants;
 import com.mygdx.game.util.MessageType;
 
 import static com.mygdx.game.util.Constants.PLAYER_HEIGHT;
+import static com.mygdx.game.util.Constants.PLAYER_WIDTH;
 
 public class BulletHandler implements Telegraph {
 
@@ -25,6 +27,8 @@ public class BulletHandler implements Telegraph {
     private Pool enemyBulletPool;
     private Array<Bullet> activeBullets;
     private Array<EnemyBullet> activeEnemyBullets;
+
+    private Array<Bullet> bullets = new Array<>();
 
 
     public BulletHandler(GenericPool genericPool, Array<Bullet> activeBullets, Array<EnemyBullet> activeEnemyBullets) {
@@ -35,24 +39,65 @@ public class BulletHandler implements Telegraph {
         this.activeEnemyBullets = activeEnemyBullets;
     }
 
+    private void prepareBulletsToInit(float x, float y) {
+
+        BasicBullet basicBullet;
+        BasicBullet basicBullet2;
+        BasicBullet basicBullet3;
+        BasicBullet basicBullet4;
+        float width = PLAYER_WIDTH/2f;
+
+        switch (GameScreen.NUMBER_OF_BULLETS) {
+
+            case 1:
+                basicBullet = (BasicBullet) basicBulletPool.obtain();
+                basicBullet.init(x, y + PLAYER_HEIGHT / 2f, basicBullet.getVelX(), basicBullet.getVelY());
+                bullets.add(basicBullet);
+                break;
+            case 2:
+                basicBullet = (BasicBullet) basicBulletPool.obtain();
+                basicBullet2 = (BasicBullet) basicBulletPool.obtain();
+                basicBullet.init(x - width, y, basicBullet.getVelX(), basicBullet.getVelY());
+                basicBullet2.init(x + width, y, basicBullet.getVelX(), basicBullet.getVelY());
+                bullets.add(basicBullet, basicBullet2);
+                break;
+            case 3:
+                basicBullet = (BasicBullet) basicBulletPool.obtain();
+                basicBullet2 = (BasicBullet) basicBulletPool.obtain();
+                basicBullet3 = (BasicBullet) basicBulletPool.obtain();
+                basicBullet.init(x - width, y, basicBullet.getVelX(), basicBullet.getVelY());
+                basicBullet2.init(x, y + PLAYER_HEIGHT / 2f, basicBullet.getVelX(), basicBullet.getVelY());
+                basicBullet3.init(x + width, y, basicBullet.getVelX(), basicBullet.getVelY());
+                bullets.add(basicBullet, basicBullet2, basicBullet3);
+                break;
+            case 4:
+                basicBullet = (BasicBullet) basicBulletPool.obtain();
+                basicBullet2 = (BasicBullet) basicBulletPool.obtain();
+                basicBullet3 = (BasicBullet) basicBulletPool.obtain();
+                basicBullet4 = (BasicBullet) basicBulletPool.obtain();
+                basicBullet.init(x - width, y, basicBullet.getVelX(), basicBullet.getVelY());
+                basicBullet2.init(x - width/2f, y + PLAYER_HEIGHT / 2f, basicBullet.getVelX(), basicBullet.getVelY());
+                basicBullet3.init(x + width/2f, y + PLAYER_HEIGHT / 2f, basicBullet.getVelX(), basicBullet.getVelY());
+                basicBullet4.init(x + width, y, basicBullet.getVelX(), basicBullet.getVelY());
+                bullets.add(basicBullet, basicBullet2, basicBullet3, basicBullet4);
+                break;
+        }
+    }
+
     public void spawnBasicBullets(float x, float y) {
-        /** Returns an object from this pool. The object may be new (from {@link #newObject()}) or reused (previously
-         * {@link #free(Object) freed}). */
-        // get a bullet from pool
 
         new Thread(new Runnable() {
             @Override
             public void run() {
+
+                prepareBulletsToInit(x, y);
+
                 Gdx.app.postRunnable(new Runnable() {
                     @Override
                     public void run() {
-                        for(int i = 1; i <= GameScreen.NUMBER_OF_BULLETS; i++) {
-                            BasicBullet basicBullet = (BasicBullet) basicBulletPool.obtain();
-                            basicBullet.init(x + i, y + PLAYER_HEIGHT / 2f, basicBullet.getVelX(), basicBullet.getVelY());
-                            // add to our array of bullets so we can access them in our render method
-                            activeBullets.add(basicBullet);
-                        }
+                        activeBullets.addAll(bullets);
                         GameScreen.lastBulletTime = TimeUtils.nanoTime();
+                        bullets.clear();
                     }
                 });
             }
