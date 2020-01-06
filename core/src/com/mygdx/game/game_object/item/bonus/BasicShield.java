@@ -1,7 +1,5 @@
 package com.mygdx.game.game_object.item.bonus;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Timer;
 import com.mygdx.game.game_object.item.Item;
@@ -13,12 +11,11 @@ import static com.mygdx.game.util.Constants.ITEM_WIDTH;
 
 public class BasicShield extends Item {
 
-    private float velY = 200;
-
     public BasicShield(World world) {
         super(world, 0, 0, ITEM_WIDTH, ITEM_HEIGHT, 5, 0);
-        this.body.setLinearVelocity(0, -velY * Gdx.graphics.getDeltaTime());
         this.texture = GameScreen.shieldImage;
+        this.velY = (-1500f);
+        this.body.setLinearVelocity(0, velY);
     }
 
     @Override

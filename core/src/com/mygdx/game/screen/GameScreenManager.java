@@ -5,6 +5,7 @@ import com.badlogic.gdx.ai.msg.Telegraph;
 import com.badlogic.gdx.utils.Timer;
 import com.mygdx.game.SpaceInvaderApp;
 import com.mygdx.game.enums.GameState;
+import com.mygdx.game.screen.event.YouDiedScreen;
 import com.mygdx.game.screen.event.YouWinScreen;
 import com.mygdx.game.screen.menu.LevelScreen;
 import com.mygdx.game.screen.menu.LoadingScreen;
@@ -81,10 +82,20 @@ public class GameScreenManager<T extends AbstractScreen> implements Telegraph {
                         setActiveScreen(GameState.LEVELSCREEN);
                         setScreen(GameState.LEVELSCREEN, (Class<T>) LevelScreen.class);
                     }
-                }, 2);
+                }, 2.5f);
 
                 return true;
             case MessageType.YOU_DIED_SCREEN:
+                clearGameStateMap();
+                setActiveScreen(GameState.YOU_DIED_SCREEN);
+                setScreen(GameState.YOU_DIED_SCREEN, (Class<T>) YouDiedScreen.class);
+                Timer.schedule(new Timer.Task() {
+                    @Override
+                    public void run() {
+                        setActiveScreen(GameState.LEVELSCREEN);
+                        setScreen(GameState.LEVELSCREEN, (Class<T>) LevelScreen.class);
+                    }
+                }, 2.5f);
 
                 return true;
         }

@@ -25,9 +25,11 @@ import java.util.Random;
 public class SpawningSystem {
 
     private final SpaceInvaderApp game;
+
     private GenericPool genericPool;
-    private Array array;
+    private Array<Enemy> activeEnemiesArray;
     private WaveImageHandler waveImageHandler;
+
     private World world;
     private PlayerSpaceship playerSpaceship;
     public Boss1 boss1;
@@ -40,10 +42,11 @@ public class SpawningSystem {
 
     private MessageManager messageManager;
 
-    public SpawningSystem(final SpaceInvaderApp game, GenericPool genericPool, Array array, GameScreen gameScreen) {
+    public SpawningSystem(final SpaceInvaderApp game, GenericPool genericPool,
+                          Array<Enemy> activeEnemiesArray, GameScreen gameScreen) {
         this.game = game;
         this.genericPool = genericPool;
-        this.array = array;
+        this.activeEnemiesArray = activeEnemiesArray;
         this.messageManager = game.messageManager;
         messageManager.addListeners(game.gameScreenManager, MessageType.YOU_WIN_SCREEN, MessageType.YOU_DIED_SCREEN);
         waveImageHandler = GameScreen.waveImageHandler;
@@ -56,14 +59,14 @@ public class SpawningSystem {
         switch (game.gameScreenManager.getActiveScreen()) {
 
             case LEVEL1:
-                firstLevel(array);
+                firstLevel(activeEnemiesArray);
                 break;
             case LEVEL2:
                 boss1 = new Boss1(world, playerSpaceship);
-                secondLevel(boss1, array);
+                secondLevel(boss1, activeEnemiesArray);
                 break;
             case LEVEL3:
-
+                thirdLevel();
                 break;
             case PAUSE:
 
@@ -73,12 +76,16 @@ public class SpawningSystem {
 
     }
 
+    private void thirdLevel() {
+
+    }
+
 
     private void firstLevel(Array<Enemy> activeEnemies) {
 
-        wave1 = 6;
-        wave2 = 10;
-        wave3 = 20;
+        wave1 = 30;
+        wave2 = 20;
+        wave3 = 40;
 
         Pool<OrangeSpaceship1> orangeSpaceship1Pool = genericPool.getOrangeSpaceship1Pool();
         Pool<OrangeSpaceship2> orangeSpaceship2Pool = genericPool.getOrangeSpaceship2Pool();
@@ -90,8 +97,10 @@ public class SpawningSystem {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                // do something important here, asynchronously to the rendering thread
-                // post a Runnable to the rendering thread that processes the result
+
+                float screenX = Constants.WIDTH/Constants.PPM;
+                float screenY = Constants.HEIGHT/Constants.PPM;
+
                 Gdx.app.postRunnable(new Runnable() {
                     @Override
                     public void run() {
@@ -103,17 +112,20 @@ public class SpawningSystem {
                             }
                         }, 1);
                         Timer.schedule(new Timer.Task() {
+                            float spaceBetweenX = screenX/10f;
+                            float spaceBetweenY = 10f;
                             @Override
                             public void run() {
                                 OrangeSpaceship1 orangeSpaceship1;
-
-                                for (int i = 0; i < wave1; i++) {
-                                    orangeSpaceship1 = orangeSpaceship1Pool.obtain();
-                                    orangeSpaceship1.init(random.nextInt((int) ((int) Constants.WIDTH / Constants.PPM)),
-                                            Constants.HEIGHT / Constants.PPM, orangeSpaceship1.getVelX(), orangeSpaceship1.getVelY());
-                                    activeEnemies.add(orangeSpaceship1);
+                                for (int i = 0; i < wave1/10; i++) {
+                                    for(int j = 0; j < wave1/3; j++) {
+                                        orangeSpaceship1 = orangeSpaceship1Pool.obtain();
+                                        orangeSpaceship1.init(j*spaceBetweenX, screenY + i*spaceBetweenY , orangeSpaceship1.getVelX(), orangeSpaceship1.getVelY());
+                                        orangeSpaceship1.setBoundaryCoordX(j*spaceBetweenX);
+                                        activeEnemies.add(orangeSpaceship1);
+                                    }
                                 }
-
+                                game.messageManager.dispatchMessage(MessageType.CLASSIC_SPACE_INVADER_MOVE);
                             }
                         }, 6);
                         Timer.schedule(new Timer.Task() {
@@ -127,17 +139,25 @@ public class SpawningSystem {
                         Timer.schedule(new Timer.Task() {
                             @Override
                             public void run() {
-                                OrangeSpaceship2 orangeSpaceship2;
+                                Timer.schedule(new Timer.Task() {
+                                    @Override
+                                    public void run() {
+                                        OrangeSpaceship2 orangeSpaceship2 = orangeSpaceship2Pool.obtain();
+                                        OrangeSpaceship2 orangeSpaceship22 = orangeSpaceship2Pool.obtain();
+                                        orangeSpaceship2.init(screenX/2f, screenY*0.75f, orangeSpaceship2.getVelX(), 0);
+                                        orangeSpaceship22.init(screenX/2f, screenY*0.75f + 15f, orangeSpaceship2.getVelX(), 0);
+                                        orangeSpaceship2.setBoundaryCoordX(screenX/2f);
+                                        orangeSpaceship22.setBoundaryCoordX(screenX/2f);
+                                        activeEnemies.add(orangeSpaceship2);
+                                        activeEnemies.add(orangeSpaceship22);
 
-                                for (int i = 0; i < wave2; i++) {
-                                    orangeSpaceship2 = orangeSpaceship2Pool.obtain();
-                                    orangeSpaceship2.init(random.nextInt((int) ((int) Constants.WIDTH / Constants.PPM)),
-                                            Constants.HEIGHT / Constants.PPM, orangeSpaceship2.getVelX(), orangeSpaceship2.getVelY());
-                                    activeEnemies.add(orangeSpaceship2);
-                                }
+                                    }
+                                }, 1, 0.3f, wave2/2);
 
+                                game.messageManager.dispatchMessage(MessageType.LEFT_RIGHT_MOVE);
                             }
                         }, 19);
+
                         Timer.schedule(new Timer.Task() {
                             @Override
                             public void run() {
@@ -146,23 +166,31 @@ public class SpawningSystem {
                             }
                         }, 25);
                         Timer.schedule(new Timer.Task() {
+                            float spaceBetweenX = screenX/10f;
+                            float spaceBetweenY = 10f;
                             @Override
                             public void run() {
                                 OrangeSpaceship3 orangeSpaceship3;
-                                for (int i = 0; i < wave3; i++) {
-                                    orangeSpaceship3 = orangeSpaceship3Pool.obtain();
-                                    orangeSpaceship3.init(random.nextInt((int) ((int) Constants.WIDTH / Constants.PPM)),
-                                            Constants.HEIGHT / Constants.PPM, orangeSpaceship3.getVelX(), orangeSpaceship3.getVelY());
-                                    activeEnemies.add(orangeSpaceship3);
+                                for (int i = 0; i < wave3/10; i++) {
+                                    for(int j = 0; j < wave3/4; j++) {
+                                        orangeSpaceship3 = orangeSpaceship3Pool.obtain();
+                                        orangeSpaceship3.init(j*spaceBetweenX, screenY + i*spaceBetweenY , orangeSpaceship3.getVelX(), orangeSpaceship3.getVelY());
+                                        orangeSpaceship3.setBoundaryCoordX(j*spaceBetweenX);
+                                        activeEnemies.add(orangeSpaceship3);
+                                    }
                                 }
+                                game.messageManager.dispatchMessage(MessageType.CLASSIC_SPACE_INVADER_MOVE);
                             }
                         }, 29);
+
+
                         Timer.schedule(new Timer.Task() {
                             @Override
                             public void run() {
-                                messageManager.dispatchMessage(MessageType.YOU_WIN_SCREEN);
+                                if(activeEnemies.isEmpty())
+                                    messageManager.dispatchMessage(MessageType.YOU_WIN_SCREEN);
                             }
-                        }, 39);
+                        }, 39, 2f, 200);
                     }
                 });
             }
@@ -190,7 +218,6 @@ public class SpawningSystem {
                         Timer.schedule(new Timer.Task() {
                             @Override
                             public void run() {
-
                                 boss1.init(Constants.WIDTH / Constants.PPM / 2,
                                         (Constants.HEIGHT / Constants.PPM - boss1.getHeight()), boss1.getVelX(), boss1.getVelY());
                                 activeEnemies.add(boss1);
@@ -202,6 +229,5 @@ public class SpawningSystem {
         }).start();
 
     }
-
 
 }

@@ -31,10 +31,10 @@ public class OrangeSpaceship2 extends Enemy {
             this.onDestroyCoordY = this.getY();
             reset();
         }
-        if(!isInLeftBound() && isMovingLeft)
+        /*if(!isInLeftBound() && isMovingLeft)
             moveRight(deltaTime);
         else if(!isInRightBound() && isMovingRight)
-            moveLeft(deltaTime);
+            moveLeft(deltaTime);*/
     }
 
     private boolean isInLeftBound() {

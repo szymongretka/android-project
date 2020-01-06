@@ -17,6 +17,7 @@ import com.mygdx.game.screen.game.GameScreen;
 import com.mygdx.game.util.Constants;
 import com.mygdx.game.util.MessageType;
 
+import static com.mygdx.game.util.Constants.ORANGE_SPACESHIP1_WIDTH;
 import static com.mygdx.game.util.Constants.PLAYER_HEIGHT;
 import static com.mygdx.game.util.Constants.PLAYER_WIDTH;
 
@@ -119,11 +120,22 @@ public class BulletHandler implements Telegraph {
         activeEnemyBullets.add(enemyBullet);
     }
 
+    public void spawnEnemyBullets(Object enemyCoordsInfo) {
+        Vector2 vector2 = (Vector2) enemyCoordsInfo;
+        EnemyBasicBullet enemyBullet = (EnemyBasicBullet) enemyBulletPool.obtain();
+        enemyBullet.init(vector2.x, vector2.y + ORANGE_SPACESHIP1_WIDTH/2f, enemyBullet.getVelX(), enemyBullet.getVelY());
+        activeEnemyBullets.add(enemyBullet);
+    }
+
 
     @Override
     public boolean handleMessage(Telegram msg) {
         if(msg.message == MessageType.BOSS_SHOOT_BULLET) {
             spawnBossBullets(msg.extraInfo);
+            return true;
+        }
+        if(msg.message == MessageType.ENEMY_SHOOT) {
+            spawnEnemyBullets(msg.extraInfo);
             return true;
         }
 

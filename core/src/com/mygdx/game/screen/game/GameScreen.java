@@ -43,6 +43,7 @@ import com.mygdx.game.game_object.player.PlayerSpaceship;
 import com.mygdx.game.game_object.pool.GenericPool;
 import com.mygdx.game.handler.BulletHandler;
 import com.mygdx.game.handler.CollisionManager;
+import com.mygdx.game.handler.EnemyMovementHandler;
 import com.mygdx.game.handler.WaveImageHandler;
 import com.mygdx.game.handler.spawn.RandomItemSpawnSystem;
 import com.mygdx.game.handler.spawn.SpawningSystem;
@@ -77,6 +78,7 @@ public class GameScreen extends AbstractScreen {
     public static TextureRegion fraction1OrangeShip3Texture;
     public static TextureRegion fraction1OrangeShip4Texture;
     private TextureRegion bulletImage;
+    private TextureRegion enemyBulletImage;
     private TextureRegion pauseTexture;
     public static Texture coinImage;
     public static Texture revertImage;
@@ -84,6 +86,8 @@ public class GameScreen extends AbstractScreen {
     public static TextureRegion wave1;
     public static TextureRegion wave2;
     public static TextureRegion wave3;
+    public static TextureRegion youDiedImage;
+    public static TextureRegion youWinImage;
     public static TextureRegion boss1Image;
     private TextureAtlas textureAtlas;
     private Texture lvl1background;
@@ -115,6 +119,7 @@ public class GameScreen extends AbstractScreen {
     public static WaveImageHandler waveImageHandler = new WaveImageHandler();
     private MessageManager messageManager;
     private BulletHandler bulletHandler;
+    private EnemyMovementHandler enemyMovementHandler;
 
     public MyPreferences preferences = game.myPreferences;
 
@@ -158,6 +163,7 @@ public class GameScreen extends AbstractScreen {
         playerSpaceship.init(50, 50, 0, 0);
 
         bulletHandler = new BulletHandler(genericPool, activeBullet2D, activeEnemyBullets);
+        enemyMovementHandler = new EnemyMovementHandler(game, activeEnemies);
         SpawningSystem spawningSystem = new SpawningSystem(game, genericPool, activeEnemies, this);
         spawningSystem.spawn();
         boss1 = spawningSystem.boss1;
@@ -207,6 +213,8 @@ public class GameScreen extends AbstractScreen {
                     playerSpaceship.getBody().getPosition().y);
             shootSound.play();
         }
+
+        enemyMovementHandler.update(delta);
     }
 
 
@@ -236,7 +244,7 @@ public class GameScreen extends AbstractScreen {
         game.batch.end();
 
 
-        box2DDebugRenderer.render(this.world, camera.combined);
+       // box2DDebugRenderer.render(this.world, camera.combined);
         world.step(1 / 45f, 6, 2);
 
         stage.draw();
@@ -296,11 +304,14 @@ public class GameScreen extends AbstractScreen {
         fraction1OrangeShip4Texture = new TextureRegion(textureAtlas.findRegion("fraction1/orangeship4"));
         pauseTexture = new TextureRegion(textureAtlas.findRegion("menu/pause_buttons/pause"));
         lvl1background = game.assets.manager.get("background/lvl1.jpg");
-        bulletImage = new TextureRegion(textureAtlas.findRegion("bullet/bullet2"));
+        bulletImage = new TextureRegion(textureAtlas.findRegion("bullet/bullet3"));
+        enemyBulletImage = new TextureRegion(textureAtlas.findRegion("bullet/bullet2"));
         wave1 = new TextureRegion(textureAtlas.findRegion("waves/wave1"));
         wave2 = new TextureRegion(textureAtlas.findRegion("waves/wave2"));
         wave3 = new TextureRegion(textureAtlas.findRegion("waves/wave3"));
         boss1Image = new TextureRegion(textureAtlas.findRegion("boss/boss1/spacestation"));
+        youDiedImage = new TextureRegion(textureAtlas.findRegion("menu/event_screen/lose"));
+        youWinImage = new TextureRegion(textureAtlas.findRegion("menu/event_screen/win"));
         shootSound = game.assets.manager.get("music/sfx-laser.wav", Sound.class);
         scoreSound = game.assets.manager.get("music/score.wav", Sound.class);
         level1Music = game.assets.manager.get("music/level1Music.wav", Music.class);
@@ -315,7 +326,7 @@ public class GameScreen extends AbstractScreen {
     private void initMessages() {
         messageManager = game.messageManager;
         messageManager.addListeners(playerSpaceship, MessageType.PLAYER_MOVE, MessageType.PLAYER_STOP);
-        messageManager.addListeners(bulletHandler, MessageType.BOSS_SHOOT_BULLET);
+        messageManager.addListeners(bulletHandler, MessageType.BOSS_SHOOT_BULLET, MessageType.ENEMY_SHOOT);
     }
 
 
@@ -344,7 +355,7 @@ public class GameScreen extends AbstractScreen {
         for (EnemyBullet enemyBullet : activeEnemyBullets) {
             enemyBullet.update(delta);
 
-            game.batch.draw(bulletImage, enemyBullet.getBody().getPosition().x - (enemyBullet.getWidth() / 2),
+            game.batch.draw(enemyBulletImage, enemyBullet.getBody().getPosition().x - (enemyBullet.getWidth() / 2),
                     enemyBullet.getBody().getPosition().y - (enemyBullet.getHeight() / 2), enemyBullet.getWidth(), enemyBullet.getHeight());
 
             if (enemyBullet.getBody().getPosition().y < 0 || !enemyBullet.getBody().isActive() || enemyBullet.isToDestroy()) {
@@ -385,7 +396,11 @@ public class GameScreen extends AbstractScreen {
                 spawnEffects(enemy.getOnDestroyCoordX(), enemy.getOnDestroyCoordY());
                 genericPool.freeEnemyFromSpecifiedPool(enemy); // place back in pool
                 activeEnemies.removeValue(enemy, true); // remove bullet from our array so we don't render it anymore
+            } else if (enemy.getBody().getPosition().y < 0) {
+                genericPool.freeEnemyFromSpecifiedPool(enemy);
+                activeEnemies.removeValue(enemy, true);
             }
+
         }
     }
 

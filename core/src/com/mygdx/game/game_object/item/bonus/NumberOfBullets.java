@@ -15,9 +15,10 @@ public class NumberOfBullets extends Item {
     private float velY = 400;
 
     public NumberOfBullets(World world) {
-        super(world, 0, 0, ITEM_WIDTH, ITEM_HEIGHT, 5, 0);
-        this.body.setLinearVelocity(0, -velY * Gdx.graphics.getDeltaTime());
+        super(world, 0, 0, ITEM_WIDTH, ITEM_HEIGHT, 1, 0);
         this.texture = GameScreen.shieldImage;
+        this.velY = (-1500f);
+        this.body.setLinearVelocity(0, velY);
     }
 
     @Override
