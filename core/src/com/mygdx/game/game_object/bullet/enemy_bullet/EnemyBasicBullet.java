@@ -11,9 +11,9 @@ public class EnemyBasicBullet extends EnemyBullet {
 
 
     public EnemyBasicBullet(World world) {
-        super(world, 0, 0, BASICBULLETWIDTH, BASICBULLETHEIGHT, 1, 6);
+        super(world, 0, 0, BASICBULLETWIDTH, BASICBULLETHEIGHT, 1, 1);
         this.velX = 0f;
-        this.velY = (-7000f);
+        this.velY = (-2000f);
     }
 
     @Override

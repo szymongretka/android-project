@@ -16,4 +16,12 @@ public final class MessageType {
     public final static int BOSS_SHOOT_BOMB = 8;
     public final static int BOSS_SPIN = 9;
 
+    public final static int ENEMY_SHOOT = 20;
+
+
+    public final static int CLASSIC_SPACE_INVADER_MOVE = 10;
+    public final static int LEFT_RIGHT_MOVE = 11;
+    public final static int LEVEL_ONE_WAVE_THREE = 12;
+    public final static int LEVEL_ONE_WAVE_FOUR = 13;
+
 }

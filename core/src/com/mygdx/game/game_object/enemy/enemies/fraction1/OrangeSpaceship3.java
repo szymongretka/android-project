@@ -1,9 +1,12 @@
 package com.mygdx.game.game_object.enemy.enemies.fraction1;
 
+import com.badlogic.gdx.ai.msg.MessageManager;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.game.game_object.enemy.Enemy;
 import com.mygdx.game.game_object.player.PlayerSpaceship;
 import com.mygdx.game.screen.game.GameScreen;
+import com.mygdx.game.util.MessageType;
 
 import static com.mygdx.game.util.Constants.ORANGE_SPACESHIP3_HEIGHT;
 import static com.mygdx.game.util.Constants.ORANGE_SPACESHIP3_WIDTH;
@@ -20,8 +23,8 @@ public class OrangeSpaceship3 extends Enemy {
         this.texture = GameScreen.fraction1OrangeShip3Texture;
         isMovingLeft = false;
         isMovingRight = true;
-        this.velX = 1200f;
-        this.velY = (-1200f);
+        this.velX = 600f;
+        this.velY = (-300f);
     }
 
     @Override
@@ -31,10 +34,13 @@ public class OrangeSpaceship3 extends Enemy {
             this.onDestroyCoordY = this.getY();
             reset();
         }
-        if(!isInLeftBound() && isMovingLeft)
+
+        if(MathUtils.randomBoolean(0.002f))
+            MessageManager.getInstance().dispatchMessage(MessageType.ENEMY_SHOOT, this.getBody().getPosition());
+       /* if(!isInLeftBound() && isMovingLeft)
             moveRight(deltaTime);
         else if(!isInRightBound() && isMovingRight)
-            moveLeft(deltaTime);
+            moveLeft(deltaTime);*/
     }
 
     private boolean isInLeftBound() {
