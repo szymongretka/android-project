@@ -66,13 +66,17 @@ public class SpawningSystem {
                 secondLevel(boss1, activeEnemiesArray);
                 break;
             case LEVEL3:
-
+                thirdLevel();
                 break;
             case PAUSE:
 
                 break;
 
         }
+
+    }
+
+    private void thirdLevel() {
 
     }
 

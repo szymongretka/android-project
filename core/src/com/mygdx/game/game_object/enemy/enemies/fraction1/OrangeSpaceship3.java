@@ -35,7 +35,7 @@ public class OrangeSpaceship3 extends Enemy {
             reset();
         }
 
-        if(MathUtils.randomBoolean(0.002f))
+        if(MathUtils.randomBoolean(0.001f))
             MessageManager.getInstance().dispatchMessage(MessageType.ENEMY_SHOOT, this.getBody().getPosition());
        /* if(!isInLeftBound() && isMovingLeft)
             moveRight(deltaTime);

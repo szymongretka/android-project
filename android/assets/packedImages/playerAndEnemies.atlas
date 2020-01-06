@@ -353,6 +353,26 @@ size: 1024,1024
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
+menu/event_screen/lose
+  rotate: false
+  xy: 2, 304
+  size: 800, 300
+  orig: 800, 300
+  offset: 0, 0
+  index: -1
+menu/event_screen/win
+  rotate: false
+  xy: 2, 2
+  size: 800, 300
+  orig: 800, 300
+  offset: 0, 0
+  index: -1
+
+playerAndEnemies17.png
+size: 1024,1024
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
 menu/level_buttons/level1
   rotate: false
   xy: 2, 662
@@ -375,7 +395,7 @@ menu/level_buttons/level3
   offset: 0, 0
   index: -1
 
-playerAndEnemies17.png
+playerAndEnemies18.png
 size: 1024,1024
 format: RGBA8888
 filter: Nearest,Nearest
@@ -402,7 +422,7 @@ menu/level_buttons/level5
   offset: 0, 0
   index: -1
 
-playerAndEnemies18.png
+playerAndEnemies19.png
 size: 1024,1024
 format: RGBA8888
 filter: Nearest,Nearest
@@ -429,7 +449,7 @@ menu/level_buttons/level4k
   offset: 0, 0
   index: -1
 
-playerAndEnemies19.png
+playerAndEnemies20.png
 size: 1024,1024
 format: RGBA8888
 filter: Nearest,Nearest
@@ -456,7 +476,7 @@ menu/level_buttons/strzalka1
   offset: 0, 0
   index: -1
 
-playerAndEnemies20.png
+playerAndEnemies21.png
 size: 1024,1024
 format: RGBA8888
 filter: Nearest,Nearest
@@ -483,7 +503,7 @@ menu/main_menu_buttons/SEND SCORE
   offset: 0, 0
   index: -1
 
-playerAndEnemies21.png
+playerAndEnemies22.png
 size: 1024,1024
 format: RGBA8888
 filter: Nearest,Nearest
@@ -510,7 +530,7 @@ menu/main_menu_buttons/SPACESHIPk
   offset: 0, 0
   index: -1
 
-playerAndEnemies22.png
+playerAndEnemies23.png
 size: 1024,1024
 format: RGBA8888
 filter: Nearest,Nearest
@@ -537,7 +557,7 @@ menu/main_menu_buttons/Start
   offset: 0, 0
   index: -1
 
-playerAndEnemies23.png
+playerAndEnemies24.png
 size: 1024,1024
 format: RGBA8888
 filter: Nearest,Nearest
@@ -564,7 +584,7 @@ menu/main_menu_buttons/opcje1
   offset: 0, 0
   index: -1
 
-playerAndEnemies24.png
+playerAndEnemies25.png
 size: 1024,1024
 format: RGBA8888
 filter: Nearest,Nearest
@@ -584,7 +604,7 @@ menu/pause_buttons/Menuk
   offset: 0, 0
   index: -1
 
-playerAndEnemies25.png
+playerAndEnemies26.png
 size: 1024,1024
 format: RGBA8888
 filter: Nearest,Nearest
@@ -604,7 +624,7 @@ menu/pause_buttons/RESUMEk
   offset: 0, 0
   index: -1
 
-playerAndEnemies26.png
+playerAndEnemies27.png
 size: 512,512
 format: RGBA8888
 filter: Nearest,Nearest
@@ -617,7 +637,33 @@ menu/pause_buttons/pause
   offset: 0, 0
   index: -1
 
-playerAndEnemies27.png
+playerAndEnemies28.png
+size: 1024,1024
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+obstacle/met1
+  rotate: false
+  xy: 2, 2
+  size: 686, 582
+  orig: 686, 582
+  offset: 0, 0
+  index: -1
+
+playerAndEnemies29.png
+size: 1024,1024
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+obstacle/met2
+  rotate: false
+  xy: 2, 2
+  size: 686, 582
+  orig: 686, 582
+  offset: 0, 0
+  index: -1
+
+playerAndEnemies30.png
 size: 512,256
 format: RGBA8888
 filter: Nearest,Nearest

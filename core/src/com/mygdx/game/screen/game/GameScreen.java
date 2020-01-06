@@ -86,6 +86,8 @@ public class GameScreen extends AbstractScreen {
     public static TextureRegion wave1;
     public static TextureRegion wave2;
     public static TextureRegion wave3;
+    public static TextureRegion youDiedImage;
+    public static TextureRegion youWinImage;
     public static TextureRegion boss1Image;
     private TextureAtlas textureAtlas;
     private Texture lvl1background;
@@ -308,6 +310,8 @@ public class GameScreen extends AbstractScreen {
         wave2 = new TextureRegion(textureAtlas.findRegion("waves/wave2"));
         wave3 = new TextureRegion(textureAtlas.findRegion("waves/wave3"));
         boss1Image = new TextureRegion(textureAtlas.findRegion("boss/boss1/spacestation"));
+        youDiedImage = new TextureRegion(textureAtlas.findRegion("menu/event_screen/lose"));
+        youWinImage = new TextureRegion(textureAtlas.findRegion("menu/event_screen/win"));
         shootSound = game.assets.manager.get("music/sfx-laser.wav", Sound.class);
         scoreSound = game.assets.manager.get("music/score.wav", Sound.class);
         level1Music = game.assets.manager.get("music/level1Music.wav", Music.class);
