@@ -22,7 +22,17 @@ import com.mygdx.game.screen.AbstractScreen;
 import com.mygdx.game.util.Constants;
 import com.mygdx.game.util.IRequestCallback;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
+
+import static java.util.Map.Entry.comparingByValue;
+import static java.util.stream.Collectors.toMap;
 
 public class StatisticsScreen extends AbstractScreen {
 
@@ -92,6 +102,9 @@ public class StatisticsScreen extends AbstractScreen {
                 }, game.myPreferences);
             }
         });
+
+
+        mapOfTopScores = sortByValue(mapOfTopScores);
 
         StringBuilder stringBuilder = new StringBuilder();
         int i = 0;
@@ -187,4 +200,20 @@ public class StatisticsScreen extends AbstractScreen {
     public void dispose() {
         stage.dispose();
     }
+
+
+
+    public static <K, V extends Comparable<? super V>> Map<K, V> sortByValue(Map<K, V> map) {
+        List<Map.Entry<K, V>> list = new ArrayList<>(map.entrySet());
+        list.sort(Map.Entry.comparingByValue());
+        Collections.reverse(list);
+
+        Map<K, V> result = new LinkedHashMap<>();
+        for (Map.Entry<K, V> entry : list) {
+            result.put(entry.getKey(), entry.getValue());
+        }
+        return result;
+    }
+
+
 }

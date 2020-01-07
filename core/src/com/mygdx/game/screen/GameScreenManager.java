@@ -7,6 +7,7 @@ import com.mygdx.game.SpaceInvaderApp;
 import com.mygdx.game.enums.GameState;
 import com.mygdx.game.screen.event.YouDiedScreen;
 import com.mygdx.game.screen.event.YouWinScreen;
+import com.mygdx.game.screen.game.GameScreen;
 import com.mygdx.game.screen.menu.LevelScreen;
 import com.mygdx.game.screen.menu.LoadingScreen;
 import com.mygdx.game.util.MessageType;
@@ -35,7 +36,11 @@ public class GameScreenManager<T extends AbstractScreen> implements Telegraph {
 
     public void setScreen(GameState gameStateScreen, Class<T> clazz) {
         try {
-            gameScreens.putIfAbsent(gameStateScreen, clazz.getConstructor(game.getClass()).newInstance(game));
+            if(clazz.getClass().equals(GameScreen.class)) {
+                gameScreens.put(gameStateScreen, new GameScreen(game));
+            } else {
+                gameScreens.putIfAbsent(gameStateScreen, clazz.getConstructor(game.getClass()).newInstance(game));
+            }
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             e.printStackTrace();
         }

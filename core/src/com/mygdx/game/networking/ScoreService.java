@@ -15,6 +15,7 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 import static com.mygdx.game.util.Constants.LOCALHOST_URL;
 
@@ -27,7 +28,7 @@ public class ScoreService {
     private Map<String, Long> mapOfTopScores;
 
     public ScoreService() {
-        mapOfTopScores = new HashMap<>();
+        mapOfTopScores = new TreeMap<>();
     }
 
     public void createScoreRequest(final IRequestCallback requestCallback) {

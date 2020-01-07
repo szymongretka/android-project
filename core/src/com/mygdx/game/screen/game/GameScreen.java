@@ -31,6 +31,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
+import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.SpaceInvaderApp;
 import com.mygdx.game.enums.GameState;
@@ -264,7 +265,7 @@ public class GameScreen extends AbstractScreen {
         updateAndDrawHPbar();
 
 
-        box2DDebugRenderer.render(this.world, camera.combined);
+        //box2DDebugRenderer.render(this.world, camera.combined);
         world.step(1 / 45f, 6, 2);
 
         stage.draw();
@@ -294,6 +295,7 @@ public class GameScreen extends AbstractScreen {
         game.gameScreenManager.setActiveScreen(GameState.PAUSE);
         game.gameScreenManager.setScreen(GameState.PAUSE, PauseScreen.class);
         level1Music.pause();
+        Timer.instance().stop();
     }
 
     @Override
