@@ -9,14 +9,14 @@ public class BasicShip extends Ship {
         speed = 150f;
         name = "basicShip";
         price = 20;
-        HP = 25;
+        HP = 10;
     }
 
     public BasicShip(){
         speed = 150f;
         name = "basicShip";
         price = 20;
-        HP = 25;
+        HP = 10;
     }
 
 }

@@ -1,17 +1,13 @@
 package com.mygdx.game.screen.event;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.SpaceInvaderApp;
@@ -47,10 +43,10 @@ public class YouDiedScreen extends AbstractScreen {
         Drawable youDied = new TextureRegionDrawable(youDiedTex);
         youDiedButton = new ImageButton(youDied);
         youDiedButton.setSize(width, height);
-        youDiedButton.setPosition(Constants.WIDTH/2f - (width/2f), Constants.HEIGHT/2f - (height/2f));
+        youDiedButton.setPosition(Constants.WIDTH / 2f - (width / 2f), Constants.HEIGHT / 2f - (height / 2f));
 
 
-        SequenceAction flicker = new SequenceAction(Actions.fadeOut(0.01f),Actions.fadeIn(0.9f));
+        SequenceAction flicker = new SequenceAction(Actions.fadeOut(0.01f), Actions.fadeIn(0.9f));
         youDiedButton.addAction(Actions.repeat(1, flicker));
 
         stage.addActor(youDiedButton);

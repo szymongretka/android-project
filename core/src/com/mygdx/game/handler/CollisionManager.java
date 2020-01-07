@@ -9,7 +9,7 @@ import com.mygdx.game.game_object.bullet.Bullet;
 import com.mygdx.game.game_object.bullet.EnemyBullet;
 import com.mygdx.game.game_object.enemy.Enemy;
 import com.mygdx.game.game_object.item.Item;
-import com.mygdx.game.game_object.obstacle.Meteor;
+import com.mygdx.game.game_object.obstacle.Obstacle;
 import com.mygdx.game.game_object.player.PlayerSpaceship;
 
 
@@ -57,11 +57,11 @@ public class CollisionManager implements ContactListener {
             }
         }
 
-        if (isPlayerMeteorContact(fixtureA, fixtureB)) {
+        if (isPlayerObstacleContact(fixtureA, fixtureB)) {
             if (fixtureA.getUserData() instanceof PlayerSpaceship) {
-                ((Meteor) fixtureB.getUserData()).hitPlayer((PlayerSpaceship) fixtureA.getUserData());
+                ((Obstacle) fixtureB.getUserData()).hitPlayer((PlayerSpaceship) fixtureA.getUserData());
             } else {
-                ((Meteor) fixtureA.getUserData()).hitPlayer((PlayerSpaceship) fixtureB.getUserData());
+                ((Obstacle) fixtureA.getUserData()).hitPlayer((PlayerSpaceship) fixtureB.getUserData());
             }
         }
 
@@ -83,9 +83,9 @@ public class CollisionManager implements ContactListener {
 
     }
 
-    private boolean isPlayerMeteorContact(Fixture a, Fixture b) {
+    private boolean isPlayerObstacleContact(Fixture a, Fixture b) {
         if (a.getUserData() instanceof PlayerSpaceship || b.getUserData() instanceof PlayerSpaceship) {
-            if (a.getUserData() instanceof Meteor || b.getUserData() instanceof Meteor) {
+            if (a.getUserData() instanceof Obstacle || b.getUserData() instanceof Obstacle) {
                 return true;
             }
         }

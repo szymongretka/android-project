@@ -1,16 +1,12 @@
 package com.mygdx.game.game_object.enemy;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.ai.msg.MessageManager;
-import com.badlogic.gdx.ai.msg.Telegram;
-import com.badlogic.gdx.ai.msg.Telegraph;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Timer;
 import com.mygdx.game.game_object.Box2DObject;
 import com.mygdx.game.game_object.player.PlayerSpaceship;
-import com.mygdx.game.util.MessageType;
 
 import static com.mygdx.game.util.Constants.BIT_BULLET;
 import static com.mygdx.game.util.Constants.BIT_ENEMY;
@@ -34,6 +30,7 @@ public abstract class Enemy extends Box2DObject {
             public void run() {
                 playerSpaceship.getBody().setActive(false);
                 playerSpaceship.gotShot = true;
+                playerSpaceship.setHp(playerSpaceship.getHp() - getDamage());
                 Timer.schedule(new Timer.Task() {
                     @Override
                     public void run() {

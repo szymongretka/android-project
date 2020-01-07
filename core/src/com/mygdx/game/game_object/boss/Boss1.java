@@ -137,7 +137,6 @@ public class Boss1 extends Enemy implements Telegraph {
     @Override
     public void hitPlayer(PlayerSpaceship playerSpaceship) {
         super.hitPlayer(playerSpaceship);
-        playerSpaceship.setHp(playerSpaceship.getHp() - 6);
     }
 
 

@@ -12,6 +12,8 @@ import com.mygdx.game.game_object.enemy.enemies.fraction1.OrangeSpaceship1;
 import com.mygdx.game.game_object.enemy.enemies.fraction1.OrangeSpaceship2;
 import com.mygdx.game.game_object.enemy.enemies.fraction1.OrangeSpaceship3;
 import com.mygdx.game.game_object.enemy.enemies.fraction1.OrangeSpaceship4;
+import com.mygdx.game.game_object.obstacle.Meteor1;
+import com.mygdx.game.game_object.obstacle.Obstacle;
 
 public class GenericPool {
 
@@ -71,6 +73,13 @@ public class GenericPool {
         }
     };
 
+    private final Pool<Meteor1> meteorPool = new Pool<Meteor1>() {
+        @Override
+        protected Meteor1 newObject() {
+            return new Meteor1(world);
+        }
+    };
+
 
     public Pool<BasicBullet> getBasicBulletPool() {
         return basicBulletPool;
@@ -100,6 +109,10 @@ public class GenericPool {
         return enemyBulletPool;
     }
 
+    public Pool<Meteor1> getMeteorPool() {
+        return meteorPool;
+    }
+
     public void freeEnemyFromSpecifiedPool(Enemy enemy) {
         if (enemy instanceof OrangeSpaceship1)
             this.orangeSpaceship1Pool.free((OrangeSpaceship1) enemy);
@@ -122,7 +135,11 @@ public class GenericPool {
     public void freeEnemyBulletFromSpecifiedPool(EnemyBullet enemyBullet) {
         if (enemyBullet instanceof EnemyBasicBullet)
             this.enemyBulletPool.free((EnemyBasicBullet) enemyBullet);
+    }
 
+    public void freeObstacleFromSpecifiedPool(Obstacle obstacle) {
+        if(obstacle instanceof Meteor1)
+            this.meteorPool.free((Meteor1) obstacle);
     }
 
 

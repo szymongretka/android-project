@@ -42,6 +42,12 @@ public class Constants {
     public static final int BASIC_SHIELD_WIDTH = 10;
     public static final int BASIC_SHIELD_HEIGHT = 10;
 
+    public static final int METEOR1_WIDTH = 20;
+    public static final int METEOR1_HEIGHT = 20;
+
+    public static final int METEOR2_WIDTH = 30;
+    public static final int METEOR2_HEIGHT = 30;
+
     public static final int MAX_NUMBER_OF_BULLETS = 4;
 
     //mask & category bits

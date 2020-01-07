@@ -1,5 +1,6 @@
 package com.mygdx.game.game_object.player;
 
+import com.badlogic.gdx.ai.msg.MessageManager;
 import com.badlogic.gdx.ai.msg.Telegram;
 import com.badlogic.gdx.ai.msg.Telegraph;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -44,6 +45,7 @@ public class PlayerSpaceship extends Box2DObject implements Telegraph {
     private Animation playerGotHitAnimation;
     private Animation playerExplodeAnimation;
     private float stateTimer;
+    private int totalHP;
 
     private float speed;
     private Vector2 direction = new Vector2();
@@ -56,6 +58,7 @@ public class PlayerSpaceship extends Box2DObject implements Telegraph {
         this.ship = screen.preferences.getActiveShip();
         this.setHp(ship.getHP());
         this.setSpeed(ship.getSpeed());
+        this.totalHP = getHp();
 
         currentState = State.STRAIGHT;
         previousState = State.STRAIGHT;
@@ -100,6 +103,8 @@ public class PlayerSpaceship extends Box2DObject implements Telegraph {
 
     @Override
     public void update(float deltaTime) {
+        if(getHp() <= 0)
+            MessageManager.getInstance().dispatchMessage(MessageType.YOU_DIED_SCREEN);
         //this.body.setLinearVelocity(100, 100);
     }
 
@@ -205,5 +210,9 @@ public class PlayerSpaceship extends Box2DObject implements Telegraph {
 
     public void setShip(Ship ship) {
         this.ship = ship;
+    }
+
+    public int getTotalHP() {
+        return totalHP;
     }
 }

@@ -5,7 +5,9 @@ import com.badlogic.gdx.ai.GdxAI;
 import com.badlogic.gdx.ai.msg.MessageManager;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.FPSLogger;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
@@ -13,6 +15,7 @@ import com.badlogic.gdx.graphics.g2d.ParticleEffectPool;
 import com.badlogic.gdx.graphics.g2d.ParticleEffectPool.PooledEffect;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
@@ -39,6 +42,7 @@ import com.mygdx.game.game_object.item.bonus.BasicShield;
 import com.mygdx.game.game_object.item.bonus.NumberOfBullets;
 import com.mygdx.game.game_object.item.bonus.RevertMovement;
 import com.mygdx.game.game_object.item.coin.Coin;
+import com.mygdx.game.game_object.obstacle.Obstacle;
 import com.mygdx.game.game_object.player.PlayerSpaceship;
 import com.mygdx.game.game_object.pool.GenericPool;
 import com.mygdx.game.handler.BulletHandler;
@@ -49,6 +53,7 @@ import com.mygdx.game.handler.spawn.RandomItemSpawnSystem;
 import com.mygdx.game.handler.spawn.SpawningSystem;
 import com.mygdx.game.screen.AbstractScreen;
 import com.mygdx.game.screen.pause.PauseScreen;
+import com.mygdx.game.util.Constants;
 import com.mygdx.game.util.MessageType;
 import com.mygdx.game.util.MyPreferences;
 
@@ -89,6 +94,8 @@ public class GameScreen extends AbstractScreen {
     public static TextureRegion youDiedImage;
     public static TextureRegion youWinImage;
     public static TextureRegion boss1Image;
+    public static TextureRegion meteor1;
+    public static TextureRegion meteor2;
     private TextureAtlas textureAtlas;
     private Texture lvl1background;
 
@@ -111,6 +118,7 @@ public class GameScreen extends AbstractScreen {
     private final Array<Enemy> activeEnemies = new Array<>();
     private final Array<Bullet> activeBullet2D = new Array<>();
     private final Array<EnemyBullet> activeEnemyBullets = new Array<>();
+    private final Array<Obstacle> activeObstacles = new Array<>();
     private Array<PooledEffect> activeEffects = new Array<>();
     private Array<Item> items = new Array<>();
 
@@ -135,11 +143,17 @@ public class GameScreen extends AbstractScreen {
     public static int NUMBER_OF_BULLETS = 1;
     private boolean wasTouched = false;
 
+    private ShapeRenderer shapeRenderer;
+    private float hpBarWidth = Constants.WIDTH/4f, hpBarHeight = Constants.HEIGHT/40f;
+    private float hpBarX = hpBarWidth/8f, hpBarY = Constants.HEIGHT - (1.5f*hpBarHeight);
+    private float hpUnit;
+
     public GameScreen(final SpaceInvaderApp game) {
         super(game);
 
         this.world = new World(new Vector2(0, 0), false);
         this.world.setContactListener(new CollisionManager());
+        this.shapeRenderer = new ShapeRenderer();
 
         //for testing only
         box2DDebugRenderer = new Box2DDebugRenderer();
@@ -161,6 +175,7 @@ public class GameScreen extends AbstractScreen {
 
         playerSpaceship = new PlayerSpaceship(this);
         playerSpaceship.init(50, 50, 0, 0);
+        hpUnit = hpBarWidth/playerSpaceship.getTotalHP();
 
         bulletHandler = new BulletHandler(genericPool, activeBullet2D, activeEnemyBullets);
         enemyMovementHandler = new EnemyMovementHandler(game, activeEnemies);
@@ -240,6 +255,7 @@ public class GameScreen extends AbstractScreen {
         updateAndDrawEffects(delta);
         updateAndDrawEnemyBullets(delta);
         updateAndDrawItems(delta);
+        updateAndDrawHPbar();
 
         game.batch.end();
 
@@ -264,6 +280,7 @@ public class GameScreen extends AbstractScreen {
 
     @Override
     public void hide() {
+        level1Music.pause();
         engineEffect.reset();
         flameEffect.reset();
     }
@@ -291,6 +308,7 @@ public class GameScreen extends AbstractScreen {
         world.dispose();
         flameEffect.dispose();
         engineEffect.dispose();
+        shapeRenderer.dispose();
     }
 
     private void loadAssets() {
@@ -312,6 +330,8 @@ public class GameScreen extends AbstractScreen {
         boss1Image = new TextureRegion(textureAtlas.findRegion("boss/boss1/spacestation"));
         youDiedImage = new TextureRegion(textureAtlas.findRegion("menu/event_screen/lose"));
         youWinImage = new TextureRegion(textureAtlas.findRegion("menu/event_screen/win"));
+        meteor1 = new TextureRegion(textureAtlas.findRegion("obstacle/met1"));
+        meteor2 = new TextureRegion(textureAtlas.findRegion("obstacle/met2"));
         shootSound = game.assets.manager.get("music/sfx-laser.wav", Sound.class);
         scoreSound = game.assets.manager.get("music/score.wav", Sound.class);
         level1Music = game.assets.manager.get("music/level1Music.wav", Music.class);
@@ -335,6 +355,21 @@ public class GameScreen extends AbstractScreen {
         effect.setPosition(x, y);
         activeEffects.add(effect);
         effect.start();
+    }
+
+    private void updateAndDrawHPbar() {
+
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.setColor(Color.RED);
+        shapeRenderer.rect(hpBarX, hpBarY, hpBarWidth, hpBarHeight);
+
+        Gdx.gl20.glDisable(GL20.GL_BLEND);
+
+        int missingHP = playerSpaceship.getTotalHP() - playerSpaceship.getHp();
+
+        shapeRenderer.setColor(Color.GREEN);
+        shapeRenderer.rect(hpBarX, hpBarY, hpBarWidth - (hpUnit*missingHP), hpBarHeight);
+        shapeRenderer.end();
     }
 
     private void updateAndDrawBullets(float delta) {
