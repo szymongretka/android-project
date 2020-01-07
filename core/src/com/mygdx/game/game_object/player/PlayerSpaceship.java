@@ -19,6 +19,7 @@ import static com.mygdx.game.util.Constants.BASIC_SHIP_HP;
 import static com.mygdx.game.util.Constants.BIT_ENEMY;
 import static com.mygdx.game.util.Constants.BIT_ENEMY_BULLET;
 import static com.mygdx.game.util.Constants.BIT_ITEM;
+import static com.mygdx.game.util.Constants.BIT_OBSTACLE;
 import static com.mygdx.game.util.Constants.BIT_PLAYER;
 import static com.mygdx.game.util.Constants.PLAYER_HEIGHT;
 import static com.mygdx.game.util.Constants.PLAYER_WIDTH;
@@ -53,7 +54,7 @@ public class PlayerSpaceship extends Box2DObject implements Telegraph {
 
     public PlayerSpaceship(GameScreen screen) {
         super(screen.world, 32, 32, PLAYER_WIDTH, PLAYER_HEIGHT, BASIC_SHIP_HP, 0,
-                BodyDef.BodyType.DynamicBody, BIT_PLAYER, (short) (BIT_ENEMY | BIT_ITEM | BIT_ENEMY_BULLET), (short) 0, false);
+                BodyDef.BodyType.DynamicBody, BIT_PLAYER, (short) (BIT_ENEMY | BIT_ITEM | BIT_ENEMY_BULLET | BIT_OBSTACLE), (short) 0, false);
 
         this.ship = screen.preferences.getActiveShip();
         this.setHp(ship.getHP());

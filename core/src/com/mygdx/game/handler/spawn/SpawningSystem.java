@@ -13,6 +13,8 @@ import com.mygdx.game.game_object.enemy.enemies.fraction1.OrangeSpaceship1;
 import com.mygdx.game.game_object.enemy.enemies.fraction1.OrangeSpaceship2;
 import com.mygdx.game.game_object.enemy.enemies.fraction1.OrangeSpaceship3;
 import com.mygdx.game.game_object.enemy.enemies.fraction1.OrangeSpaceship4;
+import com.mygdx.game.game_object.obstacle.Meteor1;
+import com.mygdx.game.game_object.obstacle.Obstacle;
 import com.mygdx.game.game_object.player.PlayerSpaceship;
 import com.mygdx.game.game_object.pool.GenericPool;
 import com.mygdx.game.handler.WaveImageHandler;
@@ -28,6 +30,7 @@ public class SpawningSystem {
 
     private GenericPool genericPool;
     private Array<Enemy> activeEnemiesArray;
+    Array<Obstacle> activeObstacles;
     private WaveImageHandler waveImageHandler;
 
     private World world;
@@ -43,10 +46,11 @@ public class SpawningSystem {
     private MessageManager messageManager;
 
     public SpawningSystem(final SpaceInvaderApp game, GenericPool genericPool,
-                          Array<Enemy> activeEnemiesArray, GameScreen gameScreen) {
+                          Array<Enemy> activeEnemiesArray, Array<Obstacle> activeObstacles, GameScreen gameScreen) {
         this.game = game;
         this.genericPool = genericPool;
         this.activeEnemiesArray = activeEnemiesArray;
+        this.activeObstacles = activeObstacles;
         this.messageManager = game.messageManager;
         messageManager.addListeners(game.gameScreenManager, MessageType.YOU_WIN_SCREEN, MessageType.YOU_DIED_SCREEN);
         waveImageHandler = GameScreen.waveImageHandler;
@@ -66,7 +70,7 @@ public class SpawningSystem {
                 secondLevel(boss1, activeEnemiesArray);
                 break;
             case LEVEL3:
-                thirdLevel();
+                thirdLevel(activeObstacles);
                 break;
             case PAUSE:
 
@@ -76,9 +80,6 @@ public class SpawningSystem {
 
     }
 
-    private void thirdLevel() {
-
-    }
 
 
     private void firstLevel(Array<Enemy> activeEnemies) {
@@ -92,14 +93,13 @@ public class SpawningSystem {
         Pool<OrangeSpaceship3> orangeSpaceship3Pool = genericPool.getOrangeSpaceship3Pool();
         Pool<OrangeSpaceship4> orangeSpaceship4Pool = genericPool.getOrangeSpaceship4Pool();
 
-        random = new Random();
 
         new Thread(new Runnable() {
             @Override
             public void run() {
 
-                float screenX = Constants.WIDTH/Constants.PPM;
-                float screenY = Constants.HEIGHT/Constants.PPM;
+                float screenX = Constants.WIDTH / Constants.PPM;
+                float screenY = Constants.HEIGHT / Constants.PPM;
 
                 Gdx.app.postRunnable(new Runnable() {
                     @Override
@@ -112,16 +112,17 @@ public class SpawningSystem {
                             }
                         }, 1);
                         Timer.schedule(new Timer.Task() {
-                            float spaceBetweenX = screenX/10f;
+                            float spaceBetweenX = screenX / 10f;
                             float spaceBetweenY = 10f;
+
                             @Override
                             public void run() {
                                 OrangeSpaceship1 orangeSpaceship1;
-                                for (int i = 0; i < wave1/10; i++) {
-                                    for(int j = 0; j < wave1/3; j++) {
+                                for (int i = 0; i < wave1 / 10; i++) {
+                                    for (int j = 0; j < wave1 / 3; j++) {
                                         orangeSpaceship1 = orangeSpaceship1Pool.obtain();
-                                        orangeSpaceship1.init(j*spaceBetweenX, screenY + i*spaceBetweenY , orangeSpaceship1.getVelX(), orangeSpaceship1.getVelY());
-                                        orangeSpaceship1.setBoundaryCoordX(j*spaceBetweenX);
+                                        orangeSpaceship1.init(j * spaceBetweenX, screenY + i * spaceBetweenY, orangeSpaceship1.getVelX(), orangeSpaceship1.getVelY());
+                                        orangeSpaceship1.setBoundaryCoordX(j * spaceBetweenX);
                                         activeEnemies.add(orangeSpaceship1);
                                     }
                                 }
@@ -144,15 +145,15 @@ public class SpawningSystem {
                                     public void run() {
                                         OrangeSpaceship2 orangeSpaceship2 = orangeSpaceship2Pool.obtain();
                                         OrangeSpaceship2 orangeSpaceship22 = orangeSpaceship2Pool.obtain();
-                                        orangeSpaceship2.init(screenX/2f, screenY*0.75f, orangeSpaceship2.getVelX(), 0);
-                                        orangeSpaceship22.init(screenX/2f, screenY*0.75f + 15f, orangeSpaceship2.getVelX(), 0);
-                                        orangeSpaceship2.setBoundaryCoordX(screenX/2f);
-                                        orangeSpaceship22.setBoundaryCoordX(screenX/2f);
+                                        orangeSpaceship2.init(screenX / 2f, screenY * 0.75f, orangeSpaceship2.getVelX(), 0);
+                                        orangeSpaceship22.init(screenX / 2f, screenY * 0.75f + 15f, orangeSpaceship2.getVelX(), 0);
+                                        orangeSpaceship2.setBoundaryCoordX(screenX / 2f);
+                                        orangeSpaceship22.setBoundaryCoordX(screenX / 2f);
                                         activeEnemies.add(orangeSpaceship2);
                                         activeEnemies.add(orangeSpaceship22);
 
                                     }
-                                }, 1, 0.3f, wave2/2);
+                                }, 1, 0.3f, wave2 / 2);
 
                                 game.messageManager.dispatchMessage(MessageType.LEFT_RIGHT_MOVE);
                             }
@@ -166,16 +167,17 @@ public class SpawningSystem {
                             }
                         }, 25);
                         Timer.schedule(new Timer.Task() {
-                            float spaceBetweenX = screenX/10f;
+                            float spaceBetweenX = screenX / 10f;
                             float spaceBetweenY = 10f;
+
                             @Override
                             public void run() {
                                 OrangeSpaceship3 orangeSpaceship3;
-                                for (int i = 0; i < wave3/10; i++) {
-                                    for(int j = 0; j < wave3/4; j++) {
+                                for (int i = 0; i < wave3 / 10; i++) {
+                                    for (int j = 0; j < wave3 / 4; j++) {
                                         orangeSpaceship3 = orangeSpaceship3Pool.obtain();
-                                        orangeSpaceship3.init(j*spaceBetweenX, screenY + i*spaceBetweenY , orangeSpaceship3.getVelX(), orangeSpaceship3.getVelY());
-                                        orangeSpaceship3.setBoundaryCoordX(j*spaceBetweenX);
+                                        orangeSpaceship3.init(j * spaceBetweenX, screenY + i * spaceBetweenY, orangeSpaceship3.getVelX(), orangeSpaceship3.getVelY());
+                                        orangeSpaceship3.setBoundaryCoordX(j * spaceBetweenX);
                                         activeEnemies.add(orangeSpaceship3);
                                     }
                                 }
@@ -187,7 +189,7 @@ public class SpawningSystem {
                         Timer.schedule(new Timer.Task() {
                             @Override
                             public void run() {
-                                if(activeEnemies.isEmpty())
+                                if (activeEnemies.isEmpty())
                                     messageManager.dispatchMessage(MessageType.YOU_WIN_SCREEN);
                             }
                         }, 39, 2f, 200);
@@ -228,6 +230,67 @@ public class SpawningSystem {
             }
         }).start();
 
+    }
+
+    private void thirdLevel(Array<Obstacle> activeObstacles) {
+        Pool<Meteor1> meteorPool = genericPool.getMeteorPool();
+
+        random = new Random();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                float screenX = Constants.WIDTH / Constants.PPM;
+                float screenY = Constants.HEIGHT / Constants.PPM;
+
+                Gdx.app.postRunnable(new Runnable() {
+                    @Override
+                    public void run() {
+                        Timer.schedule(new Timer.Task() {
+                            @Override
+                            public void run() {
+                                waveImageHandler.initWaveImage(GameScreen.wave1);
+                            }
+                        }, 1);
+
+                        Timer.schedule(new Timer.Task() {
+                            @Override
+                            public void run() {
+                                Meteor1 meteor1 = meteorPool.obtain();
+                                meteor1.init(random.nextInt((int) screenX), screenY, meteor1.getVelX(), meteor1.getVelY());
+                                activeObstacles.add(meteor1);
+
+                            }
+                        }, 6, 0.7f, 40);
+
+                        Timer.schedule(new Timer.Task() {
+                            @Override
+                            public void run() {
+                                waveImageHandler.initWaveImage(GameScreen.wave2);
+                            }
+                        }, 35);
+
+                        Timer.schedule(new Timer.Task() {
+                            @Override
+                            public void run() {
+                                Meteor1 meteor1 = meteorPool.obtain();
+                                meteor1.init(random.nextInt((int) screenX), screenY, meteor1.getVelX(), meteor1.getVelY());
+                                activeObstacles.add(meteor1);
+                            }
+                        }, 40, 0.6f, 60);
+
+                        Timer.schedule(new Timer.Task() {
+                            @Override
+                            public void run() {
+                                if (activeObstacles.isEmpty())
+                                    messageManager.dispatchMessage(MessageType.YOU_WIN_SCREEN);
+                            }
+                        }, 75, 2f, 200);
+                    }
+                });
+            }
+        }).start();
     }
 
 }

@@ -15,6 +15,7 @@ public abstract class Box2DObject implements Pool.Poolable {
     protected Body body;
     protected float width, height, velY, velX;
     protected int hp, damage;
+    protected int totalHp;
 
     public Box2DObject(World world, float x, float y, float width, float height,
                        int hp, int damage, BodyDef.BodyType bodyType,
@@ -25,6 +26,7 @@ public abstract class Box2DObject implements Pool.Poolable {
         this.damage = damage;
         this.body = this.createBox(world, x, y, this.width, this.height, bodyType, categoryBits,
                 maskBits, gIndex, isBullet);
+        this.totalHp = hp;
     }
 
     private Body createBox(World world, float x, float y, float width, float height,
@@ -70,6 +72,7 @@ public abstract class Box2DObject implements Pool.Poolable {
         this.body.setTransform(x, y, 0);
         this.body.setActive(true);
         this.body.setLinearVelocity(vX / 100f, vY / 100f);
+        this.hp = totalHp;
     }
 
     public abstract void update(float deltaTime);
@@ -77,7 +80,7 @@ public abstract class Box2DObject implements Pool.Poolable {
     @Override
     public void reset() {
         this.body.setActive(false);
-       // this.body.setTransform(0, 0, 0);
+        this.body.setTransform(0, 0, 0);
         this.body.setLinearVelocity(0, 0);
     }
 

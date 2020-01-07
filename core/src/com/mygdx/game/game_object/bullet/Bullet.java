@@ -4,9 +4,11 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.game.game_object.Box2DObject;
 import com.mygdx.game.game_object.enemy.Enemy;
+import com.mygdx.game.game_object.obstacle.Obstacle;
 
 import static com.mygdx.game.util.Constants.BIT_BULLET;
 import static com.mygdx.game.util.Constants.BIT_ENEMY;
+import static com.mygdx.game.util.Constants.BIT_OBSTACLE;
 
 public abstract class Bullet extends Box2DObject {
 
@@ -14,7 +16,7 @@ public abstract class Bullet extends Box2DObject {
 
     public Bullet(World world, float x, float y, float width, float height, int hp, int damage) {
         super(world, x, y, width, height, hp, damage, BodyDef.BodyType.DynamicBody,
-                BIT_BULLET, BIT_ENEMY, (short) 0, true);
+                BIT_BULLET, (short) (BIT_ENEMY | BIT_OBSTACLE), (short) 0, true);
     }
 
     @Override
@@ -33,4 +35,7 @@ public abstract class Bullet extends Box2DObject {
         this.toDestroy = toDestroy;
     }
 
+    public void hitObstacle(Obstacle obstacle) {
+        obstacle.setHp(obstacle.getHp() - this.getDamage());
+    }
 }

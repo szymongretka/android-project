@@ -1,5 +1,6 @@
 package com.mygdx.game.screen.game;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ai.GdxAI;
 import com.badlogic.gdx.ai.msg.MessageManager;
@@ -179,7 +180,7 @@ public class GameScreen extends AbstractScreen {
 
         bulletHandler = new BulletHandler(genericPool, activeBullet2D, activeEnemyBullets);
         enemyMovementHandler = new EnemyMovementHandler(game, activeEnemies);
-        SpawningSystem spawningSystem = new SpawningSystem(game, genericPool, activeEnemies, this);
+        SpawningSystem spawningSystem = new SpawningSystem(game, genericPool, activeEnemies, activeObstacles, this);
         spawningSystem.spawn();
         boss1 = spawningSystem.boss1;
 
@@ -255,12 +256,15 @@ public class GameScreen extends AbstractScreen {
         updateAndDrawEffects(delta);
         updateAndDrawEnemyBullets(delta);
         updateAndDrawItems(delta);
-        updateAndDrawHPbar();
+        if(game.gameScreenManager.getActiveScreen().equals(GameState.LEVEL3))
+            updateAndDrawObstacles(delta);
 
         game.batch.end();
 
+        updateAndDrawHPbar();
 
-       // box2DDebugRenderer.render(this.world, camera.combined);
+
+        box2DDebugRenderer.render(this.world, camera.combined);
         world.step(1 / 45f, 6, 2);
 
         stage.draw();
@@ -370,6 +374,23 @@ public class GameScreen extends AbstractScreen {
         shapeRenderer.setColor(Color.GREEN);
         shapeRenderer.rect(hpBarX, hpBarY, hpBarWidth - (hpUnit*missingHP), hpBarHeight);
         shapeRenderer.end();
+    }
+
+    private void updateAndDrawObstacles(float delta) {
+        for(Obstacle obstacle : activeObstacles) {
+            obstacle.update(delta);
+            game.batch.draw(obstacle.getTexture(), obstacle.getBody().getPosition().x - (obstacle.getWidth()),
+                    obstacle.getBody().getPosition().y - (obstacle.getHeight()), obstacle.getWidth()*2, obstacle.getHeight()*2);
+
+            if (obstacle.getBody().getPosition().y < 0) {
+                genericPool.freeObstacleFromSpecifiedPool(obstacle);
+                activeObstacles.removeValue(obstacle, true);
+            } else if (!obstacle.getBody().isActive() || obstacle.isToDestroy()) {
+                spawnEffects(obstacle.getOnDestroyCoordX(), obstacle.getOnDestroyCoordY());
+                genericPool.freeObstacleFromSpecifiedPool(obstacle);
+                activeObstacles.removeValue(obstacle, true);
+            }
+        }
     }
 
     private void updateAndDrawBullets(float delta) {
