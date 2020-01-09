@@ -2,12 +2,14 @@ package com.mygdx.game.handler.spawn;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ai.msg.MessageManager;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.Timer;
 import com.mygdx.game.SpaceInvaderApp;
 import com.mygdx.game.game_object.boss.Boss1;
+import com.mygdx.game.game_object.boss.Boss2;
 import com.mygdx.game.game_object.enemy.Enemy;
 import com.mygdx.game.game_object.enemy.enemies.fraction1.OrangeSpaceship1;
 import com.mygdx.game.game_object.enemy.enemies.fraction1.OrangeSpaceship2;
@@ -35,11 +37,17 @@ public class SpawningSystem {
 
     private World world;
     private PlayerSpaceship playerSpaceship;
-    public Boss1 boss1;
+    private Boss1 boss1;
+    private Boss2 boss2;
 
     private int wave1;
     private int wave2;
     private int wave3;
+
+    private TextureRegion wave1Tex;
+    private TextureRegion wave2Tex;
+    private TextureRegion wave3Tex;
+    private TextureRegion wave4Tex;
 
     private Random random;
 
@@ -56,6 +64,11 @@ public class SpawningSystem {
         waveImageHandler = GameScreen.waveImageHandler;
         this.world = gameScreen.world;
         this.playerSpaceship = gameScreen.getPlayerSpaceship();
+
+        this.wave1Tex = gameScreen.wave1;
+        this.wave2Tex = gameScreen.wave2;
+        this.wave3Tex = gameScreen.wave3;
+
     }
 
     public void spawn() {
@@ -72,15 +85,17 @@ public class SpawningSystem {
             case LEVEL3:
                 thirdLevel(activeObstacles);
                 break;
-            case PAUSE:
-
+            case LEVEL4:
+                boss2 = new Boss2(world, playerSpaceship);
+                fourthLevel(boss2, activeEnemiesArray);
+                break;
+            case LEVEL5:
+                fifthLevel(activeEnemiesArray, activeObstacles);
                 break;
 
         }
 
     }
-
-
 
     private void firstLevel(Array<Enemy> activeEnemies) {
 
@@ -108,7 +123,7 @@ public class SpawningSystem {
                         Timer.schedule(new Timer.Task() {
                             @Override
                             public void run() {
-                                waveImageHandler.initWaveImage(GameScreen.wave1);
+                                waveImageHandler.initWaveImage(wave1Tex);
                             }
                         }, 1);
                         Timer.schedule(new Timer.Task() {
@@ -133,7 +148,7 @@ public class SpawningSystem {
                             @Override
                             public void run() {
 
-                                waveImageHandler.initWaveImage(GameScreen.wave2);
+                                waveImageHandler.initWaveImage(wave2Tex);
 
                             }
                         }, 15);
@@ -162,7 +177,7 @@ public class SpawningSystem {
                         Timer.schedule(new Timer.Task() {
                             @Override
                             public void run() {
-                                waveImageHandler.initWaveImage(GameScreen.wave3);
+                                waveImageHandler.initWaveImage(wave3Tex);
 
                             }
                         }, 25);
@@ -200,7 +215,6 @@ public class SpawningSystem {
 
     }
 
-
     private void secondLevel(Boss1 boss1, Array<Enemy> activeEnemies) {
         new Thread(new Runnable() {
             @Override
@@ -214,7 +228,7 @@ public class SpawningSystem {
                         Timer.schedule(new Timer.Task() {
                             @Override
                             public void run() {
-                                waveImageHandler.initWaveImage(GameScreen.wave1);
+                                waveImageHandler.initWaveImage(wave1Tex);
                             }
                         }, 1);
                         Timer.schedule(new Timer.Task() {
@@ -250,7 +264,7 @@ public class SpawningSystem {
                         Timer.schedule(new Timer.Task() {
                             @Override
                             public void run() {
-                                waveImageHandler.initWaveImage(GameScreen.wave1);
+                                waveImageHandler.initWaveImage(wave1Tex);
                             }
                         }, 1);
 
@@ -267,7 +281,7 @@ public class SpawningSystem {
                         Timer.schedule(new Timer.Task() {
                             @Override
                             public void run() {
-                                waveImageHandler.initWaveImage(GameScreen.wave2);
+                                waveImageHandler.initWaveImage(wave2Tex);
                             }
                         }, 35);
 
@@ -287,6 +301,65 @@ public class SpawningSystem {
                                     messageManager.dispatchMessage(MessageType.YOU_WIN_SCREEN);
                             }
                         }, 75, 2f, 200);
+                    }
+                });
+            }
+        }).start();
+    }
+
+    private void fourthLevel(Boss2 boss2, Array<Enemy> activeEnemiesArray) {
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                // process the result, e.g. add it to an Array<Result> field of the ApplicationListener.
+                Timer.schedule(new Timer.Task() {
+                    @Override
+                    public void run() {
+                        waveImageHandler.initWaveImage(wave1Tex);
+                    }
+                }, 1);
+                Timer.schedule(new Timer.Task() {
+                    @Override
+                    public void run() {
+                        boss2.init(Constants.WIDTH / Constants.PPM / 2,
+                                (Constants.HEIGHT / Constants.PPM - boss2.getHeight()), boss2.getVelX(), boss2.getVelY());
+                        activeEnemiesArray.add(boss2);
+                    }
+                }, 6);
+            }
+        });
+    }
+
+    private void fifthLevel(Array<Enemy> activeEnemiesArray, Array<Obstacle> activeObstacles) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                // do something important here, asynchronously to the rendering thread
+                // post a Runnable to the rendering thread that processes the result
+                Gdx.app.postRunnable(new Runnable() {
+                    @Override
+                    public void run() {
+                        // process the result, e.g. add it to an Array<Result> field of the ApplicationListener.
+                        Timer.schedule(new Timer.Task() {
+                            @Override
+                            public void run() {
+                                waveImageHandler.initWaveImage(wave1Tex);
+                            }
+                        }, 1);
+                        Timer.schedule(new Timer.Task() {
+                            @Override
+                            public void run() {
+                                Timer.schedule(new Timer.Task() {
+                                    @Override
+                                    public void run() {
+                                        OrangeSpaceship1 orangeSpaceship1 = genericPool.getOrangeSpaceship1Pool().obtain();
+                                        orangeSpaceship1.init(50, 150, orangeSpaceship1.getVelX(), orangeSpaceship1.getVelY());
+                                        activeEnemiesArray.add(orangeSpaceship1);
+                                    }
+                                }, 1, 1f, 10);
+                                game.messageManager.dispatchMessage(MessageType.UPPER_BOUND_MOVE);
+                            }
+                        }, 3);
                     }
                 });
             }

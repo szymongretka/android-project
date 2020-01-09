@@ -18,6 +18,7 @@ public abstract class Enemy extends Box2DObject {
     protected float onDestroyCoordY;
     protected TextureRegion texture;
     protected float boundaryCoordX;
+    public float enemyTime; //for path tracking
 
     public Enemy(World world, float x, float y, float width, float height, int hp, int damage) {
         super(world, x, y, width, height, hp, damage, BodyDef.BodyType.DynamicBody,

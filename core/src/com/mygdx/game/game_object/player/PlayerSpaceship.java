@@ -21,8 +21,11 @@ import static com.mygdx.game.util.Constants.BIT_ENEMY_BULLET;
 import static com.mygdx.game.util.Constants.BIT_ITEM;
 import static com.mygdx.game.util.Constants.BIT_OBSTACLE;
 import static com.mygdx.game.util.Constants.BIT_PLAYER;
+import static com.mygdx.game.util.Constants.HEIGHT;
 import static com.mygdx.game.util.Constants.PLAYER_HEIGHT;
 import static com.mygdx.game.util.Constants.PLAYER_WIDTH;
+import static com.mygdx.game.util.Constants.PPM;
+import static com.mygdx.game.util.Constants.WIDTH;
 
 
 public class PlayerSpaceship extends Box2DObject implements Telegraph {
@@ -60,6 +63,7 @@ public class PlayerSpaceship extends Box2DObject implements Telegraph {
         this.setHp(ship.getHP());
         this.setSpeed(ship.getSpeed());
         this.totalHP = getHp();
+        //this.width = getShip().getWidth();
 
         currentState = State.STRAIGHT;
         previousState = State.STRAIGHT;
@@ -72,7 +76,7 @@ public class PlayerSpaceship extends Box2DObject implements Telegraph {
     private void initAnimations(GameScreen screen) {
         Array<TextureRegion> frames = new Array<>();
 
-        if(ship.getName().equals(Constants.BASIC_SHIP)) {
+        if (ship.getName().equals(Constants.BASIC_SHIP)) {
             //get run animation frames and add them to animation
             for (int i = 5; i >= 1; i--)
                 frames.add(new TextureRegion(screen.spaceshipAtlasRegion, i * tileWidth, 0, tileWidth, tileHeight));
@@ -96,7 +100,7 @@ public class PlayerSpaceship extends Box2DObject implements Telegraph {
 
             playerStraight = new TextureRegion(screen.spaceshipAtlasRegion, 5 * tileWidth, 0, tileWidth, tileHeight);
 
-        } else if(ship.getName().equals(Constants.BIG_SHIP)) {
+        } else if (ship.getName().equals(Constants.BIG_SHIP)) {
             //TODO ADD NEW SPACESHIP
         }
     }
@@ -104,9 +108,17 @@ public class PlayerSpaceship extends Box2DObject implements Telegraph {
 
     @Override
     public void update(float deltaTime) {
-        if(getHp() <= 0)
+        if (getHp() <= 0)
             MessageManager.getInstance().dispatchMessage(MessageType.YOU_DIED_SCREEN);
-        //this.body.setLinearVelocity(100, 100);
+        if(!isInBounds()){
+            if(!isInLeftBound() && getBody().getLinearVelocity().x < 0)
+                getBody().setLinearVelocity(0, getBody().getLinearVelocity().y);
+            if(!isInBottomBound() && getBody().getLinearVelocity().y < 0)
+                getBody().setLinearVelocity(getBody().getLinearVelocity().x, 0);
+
+        }
+
+
     }
 
     public void move(Object touchPosInfo) {
@@ -116,7 +128,9 @@ public class PlayerSpaceship extends Box2DObject implements Telegraph {
         direction.nor();
         direction = direction.scl(speed);
         this.getBody().setLinearVelocity(direction.x, direction.y);
+
     }
+
 
     @Override
     public boolean handleMessage(Telegram msg) {
@@ -196,6 +210,27 @@ public class PlayerSpaceship extends Box2DObject implements Telegraph {
             return State.STRAIGHT;
     }
 
+
+    private boolean isInBounds() {
+        return this.getBody().getPosition().x > 0 && this.getBody().getPosition().x < WIDTH / PPM
+                && this.getBody().getPosition().y > 0 && this.getBody().getPosition().y > HEIGHT / PPM;
+    }
+
+    private boolean isInLeftBound() {
+        return this.getBody().getPosition().x > 0;
+    }
+
+    private boolean isInRightBound() {
+        return this.getBody().getPosition().x < WIDTH / PPM;
+    }
+
+    private boolean isInUpperBound() {
+        return this.getBody().getPosition().y < HEIGHT / PPM;
+    }
+
+    private boolean isInBottomBound() {
+        return this.getBody().getPosition().x > 0;
+    }
 
     public boolean isDead() {
         return isDead;

@@ -29,7 +29,7 @@ public class YouWinScreen extends AbstractScreen {
     public YouWinScreen(SpaceInvaderApp game) {
         super(game);
         youWinTex = GameScreen.youWinImage;
-
+        GameScreen.NUMBER_OF_BULLETS = 1;
 
         myPreferences = new MyPreferences();
         myPreferences.updatePoints();

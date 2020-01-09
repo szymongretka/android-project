@@ -23,6 +23,9 @@ public class Constants {
     public static final int BOSS1_WIDTH = 20;
     public static final int BOSS1_HEIGHT = 20;
 
+    public static final int BOSS2_WIDTH = 25;
+    public static final int BOSS2_HEIGHT = 25;
+
 
     public static final float BASICBULLETWIDTH = 4f;
     public static final float BASICBULLETHEIGHT = 5f;

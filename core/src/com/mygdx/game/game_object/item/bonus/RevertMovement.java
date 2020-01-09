@@ -12,8 +12,6 @@ import static com.mygdx.game.util.Constants.ITEM_WIDTH;
 
 public class RevertMovement extends Item {
 
-    private float velY = 100;
-
     public RevertMovement(World world) {
         super(world, 0, 0, ITEM_WIDTH, ITEM_HEIGHT, 0, 0);
         this.texture = GameScreen.revertImage;

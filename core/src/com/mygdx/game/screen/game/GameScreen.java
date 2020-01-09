@@ -1,6 +1,5 @@
 package com.mygdx.game.screen.game;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ai.GdxAI;
 import com.badlogic.gdx.ai.msg.MessageManager;
@@ -41,7 +40,7 @@ import com.mygdx.game.game_object.bullet.EnemyBullet;
 import com.mygdx.game.game_object.enemy.Enemy;
 import com.mygdx.game.game_object.item.Item;
 import com.mygdx.game.game_object.item.bonus.BasicShield;
-import com.mygdx.game.game_object.item.bonus.NumberOfBullets;
+import com.mygdx.game.game_object.item.bonus.NumberOfBulletsItem;
 import com.mygdx.game.game_object.item.bonus.RevertMovement;
 import com.mygdx.game.game_object.item.coin.Coin;
 import com.mygdx.game.game_object.obstacle.Obstacle;
@@ -90,9 +89,9 @@ public class GameScreen extends AbstractScreen {
     public static Texture coinImage;
     public static Texture revertImage;
     public static Texture shieldImage;
-    public static TextureRegion wave1;
-    public static TextureRegion wave2;
-    public static TextureRegion wave3;
+    public TextureRegion wave1;
+    public TextureRegion wave2;
+    public TextureRegion wave3;
     public static TextureRegion youDiedImage;
     public static TextureRegion youWinImage;
     public static TextureRegion boss1Image;
@@ -137,7 +136,6 @@ public class GameScreen extends AbstractScreen {
     private float backgroundY = 0f;
 
     private PlayerSpaceship playerSpaceship;
-    private Boss1 boss1;
 
     private FPSLogger logger;
     public static float totalGameTime = 0;
@@ -183,7 +181,6 @@ public class GameScreen extends AbstractScreen {
         enemyMovementHandler = new EnemyMovementHandler(game, activeEnemies);
         SpawningSystem spawningSystem = new SpawningSystem(game, genericPool, activeEnemies, activeObstacles, this);
         spawningSystem.spawn();
-        boss1 = spawningSystem.boss1;
 
 
         flameEffect.start();
@@ -200,7 +197,7 @@ public class GameScreen extends AbstractScreen {
         itemChanceList.addEntry(Coin.class, 10f);
         itemChanceList.addEntry(RevertMovement.class, 10f);
         itemChanceList.addEntry(BasicShield.class, 10f);
-        itemChanceList.addEntry(NumberOfBullets.class, 70f);
+        itemChanceList.addEntry(NumberOfBulletsItem.class, 70f);
 
     }
 
@@ -209,20 +206,15 @@ public class GameScreen extends AbstractScreen {
     @Override
     public void update(float delta) {
         elapsedTime = +delta;
-        //messageManager.update();
         updatePlayerMovement();
         waveImageHandler.update();
 
         GdxAI.getTimepiece().update(delta);
 
-        if(game.gameScreenManager.getActiveScreen().equals(GameState.LEVEL2) || game.gameScreenManager.getActiveScreen().equals(GameState.LEVEL4)) {
-            if (elapsedTime > 0.8f) {
-                boss1.update(elapsedTime); //TODO to refactor
-                // Dispatch any delayed messages
-                MessageManager.getInstance().update();
-
-                elapsedTime = 0;
-            }
+        if (elapsedTime > 0.8f) {
+            // Dispatch any delayed messages
+            MessageManager.getInstance().update();
+            elapsedTime = 0;
         }
 
         if (TimeUtils.nanoTime() - lastBulletTime > 250000000) {
@@ -278,6 +270,7 @@ public class GameScreen extends AbstractScreen {
 
     @Override
     public void show() {
+        Timer.instance().start();
         level1Music.play();
         Gdx.input.setInputProcessor(stage);
         initMessages();

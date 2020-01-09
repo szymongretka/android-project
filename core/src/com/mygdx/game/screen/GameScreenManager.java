@@ -70,6 +70,7 @@ public class GameScreenManager<T extends AbstractScreen> implements Telegraph {
     }
 
     public void clearGameStateMap() {
+        GameScreen.NUMBER_OF_BULLETS = 1;
         this.gameScreens.clear();
     }
 

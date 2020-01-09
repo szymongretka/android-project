@@ -12,7 +12,7 @@ import static com.mygdx.game.util.Constants.ITEM_WIDTH;
 public class BasicShield extends Item {
 
     public BasicShield(World world) {
-        super(world, 0, 0, ITEM_WIDTH, ITEM_HEIGHT, 5, 0);
+        super(world, 0, 0, ITEM_WIDTH, ITEM_HEIGHT, 0, 0);
         this.texture = GameScreen.shieldImage;
         this.velY = (-1500f);
         this.body.setLinearVelocity(0, velY);

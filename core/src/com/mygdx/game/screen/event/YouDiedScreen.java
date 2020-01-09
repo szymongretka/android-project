@@ -29,7 +29,7 @@ public class YouDiedScreen extends AbstractScreen {
     public YouDiedScreen(SpaceInvaderApp game) {
         super(game);
         youDiedTex = GameScreen.youDiedImage;
-
+        GameScreen.NUMBER_OF_BULLETS = 1;
 
         myPreferences = new MyPreferences();
         myPreferences.updatePoints();
