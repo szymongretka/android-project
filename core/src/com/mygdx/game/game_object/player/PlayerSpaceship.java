@@ -251,4 +251,8 @@ public class PlayerSpaceship extends Box2DObject implements Telegraph {
     public int getTotalHP() {
         return totalHP;
     }
+
+    public boolean hasLessThanHalfHp() {
+        return 2*getHp() < getTotalHP();
+    }
 }

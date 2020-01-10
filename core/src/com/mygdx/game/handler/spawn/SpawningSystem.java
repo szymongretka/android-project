@@ -15,6 +15,9 @@ import com.mygdx.game.game_object.enemy.enemies.fraction1.OrangeSpaceship1;
 import com.mygdx.game.game_object.enemy.enemies.fraction1.OrangeSpaceship2;
 import com.mygdx.game.game_object.enemy.enemies.fraction1.OrangeSpaceship3;
 import com.mygdx.game.game_object.enemy.enemies.fraction1.OrangeSpaceship4;
+import com.mygdx.game.game_object.enemy.enemies.fraction2.Alien1;
+import com.mygdx.game.game_object.enemy.enemies.fraction2.Alien2;
+import com.mygdx.game.game_object.enemy.enemies.fraction2.Alien3;
 import com.mygdx.game.game_object.obstacle.Meteor1;
 import com.mygdx.game.game_object.obstacle.Obstacle;
 import com.mygdx.game.game_object.player.PlayerSpaceship;
@@ -32,7 +35,7 @@ public class SpawningSystem {
 
     private GenericPool genericPool;
     private Array<Enemy> activeEnemiesArray;
-    Array<Obstacle> activeObstacles;
+    private Array<Obstacle> activeObstacles;
     private WaveImageHandler waveImageHandler;
 
     private World world;
@@ -48,6 +51,7 @@ public class SpawningSystem {
     private TextureRegion wave2Tex;
     private TextureRegion wave3Tex;
     private TextureRegion wave4Tex;
+    private TextureRegion boss2Tex;
 
     private Random random;
 
@@ -68,6 +72,7 @@ public class SpawningSystem {
         this.wave1Tex = gameScreen.wave1;
         this.wave2Tex = gameScreen.wave2;
         this.wave3Tex = gameScreen.wave3;
+        this.boss2Tex = gameScreen.boss2Image;
 
     }
 
@@ -86,7 +91,7 @@ public class SpawningSystem {
                 thirdLevel(activeObstacles);
                 break;
             case LEVEL4:
-                boss2 = new Boss2(world, playerSpaceship);
+                boss2 = new Boss2(world, boss2Tex, playerSpaceship);
                 fourthLevel(boss2, activeEnemiesArray);
                 break;
             case LEVEL5:
@@ -311,7 +316,6 @@ public class SpawningSystem {
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
-                // process the result, e.g. add it to an Array<Result> field of the ApplicationListener.
                 Timer.schedule(new Timer.Task() {
                     @Override
                     public void run() {
@@ -326,11 +330,18 @@ public class SpawningSystem {
                         activeEnemiesArray.add(boss2);
                     }
                 }, 6);
+                game.messageManager.dispatchMessage(MessageType.UPPER_BOUND_MOVE);
             }
         });
     }
 
     private void fifthLevel(Array<Enemy> activeEnemiesArray, Array<Obstacle> activeObstacles) {
+
+        Pool<Meteor1> meteorPool = genericPool.getMeteorPool();
+        random = new Random();
+        float screenX = Constants.WIDTH / Constants.PPM;
+        float screenY = Constants.HEIGHT / Constants.PPM;
+
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -352,14 +363,84 @@ public class SpawningSystem {
                                 Timer.schedule(new Timer.Task() {
                                     @Override
                                     public void run() {
-                                        OrangeSpaceship1 orangeSpaceship1 = genericPool.getOrangeSpaceship1Pool().obtain();
-                                        orangeSpaceship1.init(50, 150, orangeSpaceship1.getVelX(), orangeSpaceship1.getVelY());
-                                        activeEnemiesArray.add(orangeSpaceship1);
+                                        Alien1 alien1 = genericPool.getAlien1Pool().obtain();
+                                        alien1.init(50, 150, alien1.getVelX(), alien1.getVelY());
+                                        activeEnemiesArray.add(alien1);
                                     }
-                                }, 1, 1f, 10);
+                                }, 1, 1f, 12);
+                                game.messageManager.dispatchMessage(MessageType.CIRCULAR_MOVE);
+                            }
+                        }, 8);
+                        Timer.schedule(new Timer.Task() {
+                            @Override
+                            public void run() {
+                                Meteor1 meteor1 = meteorPool.obtain();
+                                meteor1.init(random.nextInt((int) screenX), screenY, meteor1.getVelX(), meteor1.getVelY());
+                                activeObstacles.add(meteor1);
+
+                            }
+                        }, 6, 0.7f, 20);
+                        Timer.schedule(new Timer.Task() {
+                            @Override
+                            public void run() {
+                                if(!activeEnemiesArray.isEmpty())
+                                    game.messageManager.dispatchMessage(MessageType.GO_BOTTOM_MOVE);
+                            }
+                        }, 30);
+                        Timer.schedule(new Timer.Task() {
+                            @Override
+                            public void run() {
+                                waveImageHandler.initWaveImage(wave2Tex);
+                            }
+                        }, 33);
+                        Timer.schedule(new Timer.Task() {
+                            @Override
+                            public void run() {
+                                Timer.schedule(new Timer.Task() {
+                                    @Override
+                                    public void run() {
+                                        Alien2 alien2 = genericPool.getAlien2Pool().obtain();
+                                        alien2.init(50, 150, alien2.getVelX(), alien2.getVelY());
+                                        activeEnemiesArray.add(alien2);
+                                    }
+                                }, 1, 1f, 15);
                                 game.messageManager.dispatchMessage(MessageType.UPPER_BOUND_MOVE);
                             }
-                        }, 3);
+                        }, 37);
+                        Timer.schedule(new Timer.Task() {
+                            @Override
+                            public void run() {
+                                if(!activeEnemiesArray.isEmpty())
+                                    game.messageManager.dispatchMessage(MessageType.GO_BOTTOM_MOVE);
+                            }
+                        }, 60);
+                        Timer.schedule(new Timer.Task() {
+                            @Override
+                            public void run() {
+                                waveImageHandler.initWaveImage(wave3Tex);
+                            }
+                        }, 63);
+                        Timer.schedule(new Timer.Task() {
+                            @Override
+                            public void run() {
+                                Timer.schedule(new Timer.Task() {
+                                    @Override
+                                    public void run() {
+                                        Alien3 alien3 = genericPool.getAlien3Pool().obtain();
+                                        alien3.init(50, 150, alien3.getVelX(), alien3.getVelY());
+                                        activeEnemiesArray.add(alien3);
+                                    }
+                                }, 1, 1f, 18);
+                                game.messageManager.dispatchMessage(MessageType.UPPER_BOUND_MOVE);
+                            }
+                        }, 68);
+                        Timer.schedule(new Timer.Task() {
+                            @Override
+                            public void run() {
+                                if (activeObstacles.isEmpty())
+                                    messageManager.dispatchMessage(MessageType.YOU_WIN_SCREEN);
+                            }
+                        }, 88, 2f, 20);
                     }
                 });
             }

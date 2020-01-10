@@ -21,7 +21,7 @@ public final class MessageType {
     public final static int CIRCULAR_MOVE = 12;
     public final static int GO_BOTTOM_MOVE  = 13;
     public static final int UPPER_BOUND_MOVE = 14;
-
+    public static final int RAM_MOVE = 15;
 
 
 

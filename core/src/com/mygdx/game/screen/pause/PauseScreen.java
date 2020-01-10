@@ -58,9 +58,8 @@ public class PauseScreen extends AbstractScreen {
         resumeButton.addListener(new ClickListener(){
             @Override
             public void clicked (InputEvent event, float x, float y){
-                //game.gameScreenManager.setActiveScreen(GameState.LEVEL1); //TODO //////////////////
                 Timer.instance().start();
-                game.gameScreenManager.setScreen(GameState.LEVEL1, GameScreen.class);
+                game.gameScreenManager.setScreen(game.gameScreenManager.getPreviousActiveScreen(), GameScreen.class);
             }
         });
 

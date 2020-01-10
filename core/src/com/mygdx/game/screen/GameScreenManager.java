@@ -22,6 +22,7 @@ public class GameScreenManager<T extends AbstractScreen> implements Telegraph {
     private Map<GameState, AbstractScreen> gameScreens;
 
     private GameState activeScreen;
+    private GameState previousActiveScreen;
 
     public GameScreenManager(final SpaceInvaderApp game) {
         this.game = game;
@@ -36,11 +37,11 @@ public class GameScreenManager<T extends AbstractScreen> implements Telegraph {
 
     public void setScreen(GameState gameStateScreen, Class<T> clazz) {
         try {
-            if(clazz.getClass().equals(GameScreen.class)) {
+            /*if(clazz.getClass().equals(GameScreen.class)) {
                 gameScreens.put(gameStateScreen, new GameScreen(game));
-            } else {
+            } else {*/
                 gameScreens.putIfAbsent(gameStateScreen, clazz.getConstructor(game.getClass()).newInstance(game));
-            }
+            //}
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             e.printStackTrace();
         }
@@ -72,6 +73,14 @@ public class GameScreenManager<T extends AbstractScreen> implements Telegraph {
     public void clearGameStateMap() {
         GameScreen.NUMBER_OF_BULLETS = 1;
         this.gameScreens.clear();
+    }
+
+    public GameState getPreviousActiveScreen() {
+        return previousActiveScreen;
+    }
+
+    public void setPreviousActiveScreen(GameState previousActiveScreen) {
+        this.previousActiveScreen = previousActiveScreen;
     }
 
     @Override

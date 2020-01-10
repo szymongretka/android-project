@@ -95,8 +95,12 @@ public class GameScreen extends AbstractScreen {
     public static TextureRegion youDiedImage;
     public static TextureRegion youWinImage;
     public static TextureRegion boss1Image;
-    public static TextureRegion meteor1;
-    public static TextureRegion meteor2;
+    public static TextureRegion alien1Texture;
+    public static TextureRegion alien2Texture;
+    public static TextureRegion alien3Texture;
+    public TextureRegion boss2Image;
+    public TextureRegion meteor1;
+    public TextureRegion meteor2;
     private TextureAtlas textureAtlas;
     private Texture lvl1background;
 
@@ -170,7 +174,7 @@ public class GameScreen extends AbstractScreen {
         initTableStageAndPauseButton();
 
         //pools
-        genericPool = new GenericPool(world);
+        genericPool = new GenericPool(world, this);
         effectPool = new ParticleEffectPool(flameEffect, 0, 40);
 
         playerSpaceship = new PlayerSpaceship(this);
@@ -249,7 +253,8 @@ public class GameScreen extends AbstractScreen {
         updateAndDrawEffects(delta);
         updateAndDrawEnemyBullets(delta);
         updateAndDrawItems(delta);
-        if(game.gameScreenManager.getActiveScreen().equals(GameState.LEVEL3))
+        if(game.gameScreenManager.getActiveScreen().equals(GameState.LEVEL3) ||
+                game.gameScreenManager.getActiveScreen().equals(GameState.LEVEL5))
             updateAndDrawObstacles(delta);
 
         game.batch.end();
@@ -257,7 +262,7 @@ public class GameScreen extends AbstractScreen {
         updateAndDrawHPbar();
 
 
-        //box2DDebugRenderer.render(this.world, camera.combined);
+        box2DDebugRenderer.render(this.world, camera.combined);
         world.step(1 / 45f, 6, 2);
 
         stage.draw();
@@ -285,6 +290,7 @@ public class GameScreen extends AbstractScreen {
 
     @Override
     public void pause() {
+        game.gameScreenManager.setPreviousActiveScreen(game.gameScreenManager.getActiveScreen());
         game.gameScreenManager.setActiveScreen(GameState.PAUSE);
         game.gameScreenManager.setScreen(GameState.PAUSE, PauseScreen.class);
         level1Music.pause();
@@ -319,6 +325,9 @@ public class GameScreen extends AbstractScreen {
         fraction1OrangeShip2Texture = new TextureRegion(textureAtlas.findRegion("fraction1/orangeship2"));
         fraction1OrangeShip3Texture = new TextureRegion(textureAtlas.findRegion("fraction1/orangeship3"));
         fraction1OrangeShip4Texture = new TextureRegion(textureAtlas.findRegion("fraction1/orangeship4"));
+        alien1Texture = new TextureRegion(textureAtlas.findRegion("fraction3/alien1"));
+        alien2Texture = new TextureRegion(textureAtlas.findRegion("fraction3/alien2"));
+        alien2Texture = new TextureRegion(textureAtlas.findRegion("fraction3/alien3"));
         pauseTexture = new TextureRegion(textureAtlas.findRegion("menu/pause_buttons/pause"));
         lvl1background = game.assets.manager.get("background/lvl1.jpg");
         bulletImage = new TextureRegion(textureAtlas.findRegion("bullet/bullet3"));
@@ -327,6 +336,7 @@ public class GameScreen extends AbstractScreen {
         wave2 = new TextureRegion(textureAtlas.findRegion("waves/wave2"));
         wave3 = new TextureRegion(textureAtlas.findRegion("waves/wave3"));
         boss1Image = new TextureRegion(textureAtlas.findRegion("boss/boss1/spacestation"));
+        boss2Image = new TextureRegion(textureAtlas.findRegion("boss/boss3/tribase-u1-d0"));
         youDiedImage = new TextureRegion(textureAtlas.findRegion("menu/event_screen/lose"));
         youWinImage = new TextureRegion(textureAtlas.findRegion("menu/event_screen/win"));
         meteor1 = new TextureRegion(textureAtlas.findRegion("obstacle/met1"));

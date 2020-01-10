@@ -1,5 +1,6 @@
 package com.mygdx.game.game_object.obstacle;
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Timer;
@@ -11,13 +12,11 @@ import java.util.Random;
 
 public class Meteor1 extends Obstacle {
 
-    public Meteor1(World world) {
+    public Meteor1(World world, TextureRegion textureRegion) {
         super(world, 0, 0, Constants.METEOR1_WIDTH, Constants.METEOR1_HEIGHT, 8, 1);
+        this.texture = textureRegion;
 
-        if(MathUtils.randomBoolean(0.7f))
-            this.texture = GameScreen.meteor1;
-        else {
-            this.texture = GameScreen.meteor2;
+        if(MathUtils.randomBoolean(0.3f)) {
             setWidth(Constants.METEOR1_WIDTH * 1.5f);
             setHeight(Constants.METEOR1_HEIGHT * 1.5f);
         }

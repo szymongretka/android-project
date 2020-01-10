@@ -1,5 +1,6 @@
 package com.mygdx.game.handler;
 
+import com.badlogic.gdx.ai.msg.MessageManager;
 import com.badlogic.gdx.ai.msg.Telegram;
 import com.badlogic.gdx.ai.msg.Telegraph;
 import com.badlogic.gdx.math.CatmullRomSpline;
@@ -16,19 +17,19 @@ import static com.mygdx.game.util.Constants.HEIGHT;
 
 public class EnemyMovementHandler implements Telegraph {
 
-    private enum State {DEFAULT, CLASSIC, LEFT_RIGHT, CIRCULAR, GO_BOTTOM, UPPER_BOUND, RANDOM}
+    private enum State {DEFAULT, CLASSIC, LEFT_RIGHT, CIRCULAR, GO_BOTTOM, UPPER_BOUND, RAM, RANDOM}
 
     private State currentLevelAndWave;
     private Array<Enemy> enemyArray;
     private SpaceInvaderApp game;
-    private float screenX = WIDTH/PPM;
-    private float screenY = HEIGHT/PPM;
+    private float screenX = WIDTH / PPM;
+    private float screenY = HEIGHT / PPM;
 
 
     private CatmullRomSpline<Vector2> enemyCirclePath;
     private CatmullRomSpline<Vector2> enemyUpperBoundPath;
-    private boolean enemyIsHunting = true;
-    private float enemyTime = 0.0f;
+    private CatmullRomSpline<Vector2> playerPositionPath;
+    private CatmullRomSpline<Vector2> goBottomPath;
     private Vector2 targetPosition = new Vector2();
 
     public EnemyMovementHandler(SpaceInvaderApp game, Array<Enemy> enemyArray) {
@@ -37,7 +38,7 @@ public class EnemyMovementHandler implements Telegraph {
         currentLevelAndWave = State.DEFAULT;
         game.messageManager.addListeners(this, MessageType.CLASSIC_SPACE_INVADER_MOVE,
                 MessageType.LEFT_RIGHT_MOVE, MessageType.CIRCULAR_MOVE, MessageType.GO_BOTTOM_MOVE,
-                MessageType.UPPER_BOUND_MOVE);
+                MessageType.UPPER_BOUND_MOVE, MessageType.RAM_MOVE);
 
         initEnemyPaths();
 
@@ -61,6 +62,9 @@ public class EnemyMovementHandler implements Telegraph {
             case UPPER_BOUND:
                 upperBoundPattern(enemyArray, delta);
                 break;
+            case RAM:
+                ramPlayerPattern(enemyArray, delta);
+                break;
             case DEFAULT:
                 break;
         }
@@ -72,7 +76,7 @@ public class EnemyMovementHandler implements Telegraph {
             for (Enemy e : enemyArray) {
 
                 e.enemyTime += delta;
-                float maxHuntTime = 12.0f; // Hunt will last for 4 seconds, get a fraction value of this between 0 and 1.
+                float maxHuntTime = 6.0f; // Hunt will last for 4 seconds, get a fraction value of this between 0 and 1.
                 float f = e.enemyTime / maxHuntTime;
                 if (f <= 1.0f) {
                     Vector2 bodyPosition = e.getBody().getWorldCenter();
@@ -109,7 +113,41 @@ public class EnemyMovementHandler implements Telegraph {
 
 
     private void goBottomPattern(Array<Enemy> enemyArray, float delta) {
+        if (!enemyArray.isEmpty()) {
+            for (Enemy e : enemyArray) {
+                e.enemyTime += delta;
+                float maxHuntTime = 3.0f; // Hunt will last for 12 seconds, get a fraction value of this between 0 and 1.
+                float f = e.enemyTime / maxHuntTime;
+                if (f <= 1.0f) {
+                    Vector2 bodyPosition = e.getBody().getWorldCenter();
+                    goBottomPath.valueAt(targetPosition, f);
+                    Vector2 positionDelta = (new Vector2(targetPosition)).sub(bodyPosition);
 
+                    e.getBody().setLinearVelocity(positionDelta.scl(10));
+                } else {
+                    e.enemyTime = 0;
+                }
+            }
+        }
+    }
+
+    private void ramPlayerPattern(Array<Enemy> enemyArray, float delta) {
+        if (!enemyArray.isEmpty()) {
+            for (Enemy e : enemyArray) {
+                e.enemyTime += delta;
+                float maxHuntTime = 3.0f; // Hunt will last for 12 seconds, get a fraction value of this between 0 and 1.
+                float f = e.enemyTime / maxHuntTime;
+                if (f <= 1.0f) {
+                    Vector2 bodyPosition = e.getBody().getWorldCenter();
+                    playerPositionPath.valueAt(targetPosition, f);
+                    Vector2 positionDelta = (new Vector2(targetPosition)).sub(bodyPosition);
+
+                    e.getBody().setLinearVelocity(positionDelta.scl(10));
+                } else {
+                    e.ramComplete = true;
+                }
+            }
+        }
     }
 
     private void classicPattern(Array<Enemy> enemyArray, float delta) {
@@ -143,19 +181,25 @@ public class EnemyMovementHandler implements Telegraph {
 
     private void initEnemyPaths() {
         enemyCirclePath = new CatmullRomSpline<>(new Vector2[]{
-                new Vector2(0.75f*screenX, 0.5f*screenY),
-                new Vector2(0.5f*screenX, 0.3f*screenY),
-                new Vector2(0.25f*screenX, 0.5f*screenY),
-                new Vector2(0.5f*screenX, 0.7f*screenY),
+                new Vector2(0.75f * screenX, 0.5f * screenY),
+                new Vector2(0.5f * screenX, 0.3f * screenY),
+                new Vector2(0.25f * screenX, 0.5f * screenY),
+                new Vector2(0.5f * screenX, 0.7f * screenY),
         }, true);
 
         enemyUpperBoundPath = new CatmullRomSpline<>(new Vector2[]{
-                new Vector2(0.5f*screenX, 0.8f*screenY),
-                new Vector2(0.8f*screenX, 0.65f*screenY),
-                new Vector2(0.5f*screenX, 0.8f*screenY),
-                new Vector2(0.2f*screenX, 0.65f*screenY),
+                new Vector2(0.5f * screenX, 0.8f * screenY),
+                new Vector2(0.8f * screenX, 0.65f * screenY),
+                new Vector2(0.5f * screenX, 0.8f * screenY),
+                new Vector2(0.2f * screenX, 0.65f * screenY),
 
         }, true);
+
+        goBottomPath = new CatmullRomSpline<>(new Vector2[]{
+                new Vector2(0f, -10f),
+
+        }, true);
+
 
     }
 
@@ -186,6 +230,10 @@ public class EnemyMovementHandler implements Telegraph {
                 return true;
             case MessageType.UPPER_BOUND_MOVE:
                 currentLevelAndWave = State.UPPER_BOUND;
+                return true;
+            case MessageType.RAM_MOVE:
+                playerPositionPath = new CatmullRomSpline<>((Vector2[]) msg.extraInfo, true);
+                currentLevelAndWave = State.RAM;
                 return true;
         }
 

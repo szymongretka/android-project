@@ -3,6 +3,7 @@ package com.mygdx.game.game_object.boss;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ai.fsm.DefaultStateMachine;
 import com.badlogic.gdx.ai.fsm.StateMachine;
+import com.badlogic.gdx.ai.msg.MessageManager;
 import com.badlogic.gdx.ai.msg.Telegram;
 import com.badlogic.gdx.ai.msg.Telegraph;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -14,6 +15,7 @@ import com.mygdx.game.game_object.enemy.Enemy;
 import com.mygdx.game.game_object.player.PlayerSpaceship;
 import com.mygdx.game.screen.game.GameScreen;
 import com.mygdx.game.util.Constants;
+import com.mygdx.game.util.MessageType;
 
 import static com.mygdx.game.util.Constants.BOSS1_HEIGHT;
 import static com.mygdx.game.util.Constants.BOSS1_WIDTH;
@@ -59,6 +61,7 @@ public class Boss1 extends Enemy implements Telegraph {
         if(this.getHp() <= 0 && this.getBody().isActive()) {
             this.onDestroyCoordX = this.getX();
             this.onDestroyCoordY = this.getY();
+            MessageManager.getInstance().dispatchMessage(MessageType.YOU_DIED_SCREEN);
             reset();
         }
     }

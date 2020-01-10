@@ -1,12 +1,12 @@
 package com.mygdx.game.game_object.boss.bossStates;
 
 import com.badlogic.gdx.ai.fsm.State;
+import com.badlogic.gdx.ai.msg.MessageManager;
 import com.badlogic.gdx.ai.msg.Telegram;
 import com.badlogic.gdx.math.MathUtils;
-import com.mygdx.game.game_object.boss.Boss1;
+import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.game_object.boss.Boss2;
-
-import static com.mygdx.game.util.Constants.BASIC_SHIP_HP;
+import com.mygdx.game.util.MessageType;
 
 public enum Boss2State implements State<Boss2> {
 
@@ -14,8 +14,57 @@ public enum Boss2State implements State<Boss2> {
     GLOBAL_STATE() {
         @Override
         public void update(Boss2 boss2) {
+            if (MathUtils.randomBoolean(0.5f) && boss2.getPlayer().hasLessThanHalfHp() && boss2.mana >= 250)
+                boss2.getStateMachine().changeState(RAM_PLAYER);
+            else if (MathUtils.randomBoolean(0.5f) && boss2.mana >= 250)
+                boss2.getStateMachine().changeState(ATTACK);
 
+        }
 
+    },
+
+    ATTACK() {
+        @Override
+        public void update(Boss2 boss2) {
+            MessageManager.getInstance().dispatchMessage(MessageType.BOSS_SHOOT_BULLET, boss2.getBody().getPosition());
+            boss2.getStateMachine().changeState(GLOBAL_STATE);
+        }
+
+        @Override
+        public void exit(Boss2 boss2) {
+            boss2.mana = 0;
+            MessageManager.getInstance().dispatchMessage(MessageType.UPPER_BOUND_MOVE);
+        }
+
+    },
+    RAM_PLAYER() {
+
+        float playerPosX;
+        float playerPosY;
+
+        @Override
+        public void enter(Boss2 boss2) {
+            playerPosX = boss2.getPlayer().getBody().getPosition().x;
+            playerPosY = boss2.getPlayer().getBody().getPosition().y;
+
+            MessageManager.getInstance().dispatchMessage(MessageType.RAM_MOVE, new Vector2[]{
+                    new Vector2(playerPosX, playerPosY), new Vector2(boss2.getBody().getPosition())});
+        }
+
+        @Override
+        public void update(Boss2 boss2) {
+
+            if (boss2.ramComplete) {
+                MessageManager.getInstance().dispatchMessage(MessageType.UPPER_BOUND_MOVE);
+                boss2.getStateMachine().changeState(GLOBAL_STATE);
+            }
+            //boss2.mana = 0;
+        }
+
+        @Override
+        public void exit(Boss2 boss2) {
+            boss2.mana = 0;
+            boss2.ramComplete = false;
         }
 
     };
