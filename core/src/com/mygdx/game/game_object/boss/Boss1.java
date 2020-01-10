@@ -36,7 +36,7 @@ public class Boss1 extends Enemy implements Telegraph {
     private PlayerSpaceship player;
 
     public Boss1(World world, PlayerSpaceship playerSpaceship) {
-        super(world, 0, 0, BOSS1_WIDTH, BOSS1_HEIGHT, 500, 5);
+        super(world, 0, 0, BOSS1_WIDTH, BOSS1_HEIGHT, 50, 5);
         this.texture = new TextureRegion(GameScreen.boss1Image);
         moveLeft = false;
         moveRight = true;
@@ -61,7 +61,7 @@ public class Boss1 extends Enemy implements Telegraph {
         if(this.getHp() <= 0 && this.getBody().isActive()) {
             this.onDestroyCoordX = this.getX();
             this.onDestroyCoordY = this.getY();
-            MessageManager.getInstance().dispatchMessage(MessageType.YOU_DIED_SCREEN);
+            MessageManager.getInstance().dispatchMessage(MessageType.YOU_WIN_SCREEN);
             reset();
         }
     }

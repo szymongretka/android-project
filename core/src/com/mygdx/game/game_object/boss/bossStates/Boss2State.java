@@ -5,6 +5,7 @@ import com.badlogic.gdx.ai.msg.MessageManager;
 import com.badlogic.gdx.ai.msg.Telegram;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Timer;
 import com.mygdx.game.game_object.boss.Boss2;
 import com.mygdx.game.util.MessageType;
 
@@ -26,7 +27,12 @@ public enum Boss2State implements State<Boss2> {
     ATTACK() {
         @Override
         public void update(Boss2 boss2) {
-            MessageManager.getInstance().dispatchMessage(MessageType.BOSS_SHOOT_BULLET, boss2.getBody().getPosition());
+            Timer.schedule(new Timer.Task() {
+                @Override
+                public void run() {
+                    MessageManager.getInstance().dispatchMessage(MessageType.BOSS_SHOOT_BULLET, boss2.getBody().getPosition());
+                }
+            }, 1, 0.3f, 2);
             boss2.getStateMachine().changeState(GLOBAL_STATE);
         }
 

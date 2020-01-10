@@ -149,4 +149,7 @@ public abstract class Box2DObject implements Pool.Poolable {
         return this.getBody().getPosition().y;
     }
 
+    public int getTotalHp() {
+        return totalHp;
+    }
 }

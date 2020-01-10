@@ -150,7 +150,9 @@ public class GameScreen extends AbstractScreen {
     private ShapeRenderer shapeRenderer;
     private float hpBarWidth = Constants.WIDTH/4f, hpBarHeight = Constants.HEIGHT/40f;
     private float hpBarX = hpBarWidth/8f, hpBarY = Constants.HEIGHT - (1.5f*hpBarHeight);
-    private float hpUnit;
+    private float hpEnemyBarWidth = 140f, hpEnemyBarHeight = 14f;
+    private float hpUnit, hpEnemyUnit;
+
 
     public GameScreen(final SpaceInvaderApp game) {
         super(game);
@@ -259,6 +261,9 @@ public class GameScreen extends AbstractScreen {
 
         game.batch.end();
 
+        if(game.gameScreenManager.getActiveScreen().equals(GameState.LEVEL2) ||
+                game.gameScreenManager.getActiveScreen().equals(GameState.LEVEL4))
+            updateAndDrawEnemyHpBar();
         updateAndDrawHPbar();
 
 
@@ -364,6 +369,26 @@ public class GameScreen extends AbstractScreen {
         effect.setPosition(x, y);
         activeEffects.add(effect);
         effect.start();
+    }
+
+    private void updateAndDrawEnemyHpBar() {
+        if(!activeEnemies.isEmpty()) {
+            Enemy enemy = activeEnemies.get(0); //only boos on the screen
+            float x = enemy.getBody().getPosition().x * PPM;
+            float y = (enemy.getBody().getPosition().y + enemy.getHeight()/2f)* PPM;
+            hpEnemyUnit = hpEnemyBarWidth/enemy.getTotalHp();
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+            shapeRenderer.setColor(Color.RED);
+            shapeRenderer.rect(x - (hpEnemyBarWidth/2f) , y, hpEnemyBarWidth, hpEnemyBarHeight);
+
+            Gdx.gl20.glDisable(GL20.GL_BLEND);
+
+            int missingHP = enemy.getTotalHp() - enemy.getHp();
+
+            shapeRenderer.setColor(Color.GREEN);
+            shapeRenderer.rect(x - (hpEnemyBarWidth/2f), y, hpEnemyBarWidth - (hpEnemyUnit * missingHP), hpEnemyBarHeight);
+            shapeRenderer.end();
+        }
     }
 
     private void updateAndDrawHPbar() {
