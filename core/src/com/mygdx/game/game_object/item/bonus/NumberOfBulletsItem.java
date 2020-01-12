@@ -14,8 +14,8 @@ public class NumberOfBulletsItem extends Item {
 
     public NumberOfBulletsItem(World world) {
         super(world, 0, 0, ITEM_WIDTH, ITEM_HEIGHT, 0, 0);
-        this.texture = GameScreen.shieldImage;
-        this.velY = (-1500f);
+        this.texture = GameScreen.increaseNumberOfBulletsImage;
+        this.velY = (-2500f);
         this.body.setLinearVelocity(0, velY);
     }
 

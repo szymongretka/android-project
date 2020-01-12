@@ -14,7 +14,6 @@ import com.mygdx.game.game_object.bullet.player_bullet.BasicBullet;
 import com.mygdx.game.game_object.bullet.player_bullet.RedBullet;
 import com.mygdx.game.game_object.pool.GenericPool;
 import com.mygdx.game.screen.game.GameScreen;
-import com.mygdx.game.util.Constants;
 import com.mygdx.game.util.MessageType;
 
 import static com.mygdx.game.util.Constants.ORANGE_SPACESHIP1_WIDTH;
@@ -46,7 +45,7 @@ public class BulletHandler implements Telegraph {
         BasicBullet basicBullet2;
         BasicBullet basicBullet3;
         BasicBullet basicBullet4;
-        float width = PLAYER_WIDTH/2f;
+        float width = PLAYER_WIDTH / 2f;
 
         switch (GameScreen.NUMBER_OF_BULLETS) {
 
@@ -77,8 +76,8 @@ public class BulletHandler implements Telegraph {
                 basicBullet3 = (BasicBullet) basicBulletPool.obtain();
                 basicBullet4 = (BasicBullet) basicBulletPool.obtain();
                 basicBullet.init(x - width, y, basicBullet.getVelX(), basicBullet.getVelY());
-                basicBullet2.init(x - width/2f, y + PLAYER_HEIGHT / 2f, basicBullet.getVelX(), basicBullet.getVelY());
-                basicBullet3.init(x + width/2f, y + PLAYER_HEIGHT / 2f, basicBullet.getVelX(), basicBullet.getVelY());
+                basicBullet2.init(x - width / 2f, y + PLAYER_HEIGHT / 2f, basicBullet.getVelX(), basicBullet.getVelY());
+                basicBullet3.init(x + width / 2f, y + PLAYER_HEIGHT / 2f, basicBullet.getVelX(), basicBullet.getVelY());
                 basicBullet4.init(x + width, y, basicBullet.getVelX(), basicBullet.getVelY());
                 bullets.add(basicBullet, basicBullet2, basicBullet3, basicBullet4);
                 break;
@@ -87,28 +86,24 @@ public class BulletHandler implements Telegraph {
 
     public void spawnBasicBullets(float x, float y) {
 
-        new Thread(new Runnable() {
+
+        prepareBulletsToInit(x, y);
+
+        Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
-
-                prepareBulletsToInit(x, y);
-
-                Gdx.app.postRunnable(new Runnable() {
-                    @Override
-                    public void run() {
-                        activeBullets.addAll(bullets);
-                        GameScreen.lastBulletTime = TimeUtils.nanoTime();
-                        bullets.clear();
-                    }
-                });
+                activeBullets.addAll(bullets);
+                GameScreen.lastBulletTime = TimeUtils.nanoTime();
+                bullets.clear();
             }
-        }).start();
+        });
+
 
     }
 
     public void spawnRedBullets(float x, float y) {
         RedBullet redBullet = (RedBullet) redBulletPool.obtain();
-        redBullet.init(x, y + PLAYER_HEIGHT/2f, redBullet.getVelX(), redBullet.getVelY());
+        redBullet.init(x, y + PLAYER_HEIGHT / 2f, redBullet.getVelX(), redBullet.getVelY());
         activeBullets.add(redBullet);
         GameScreen.lastBulletTime = TimeUtils.nanoTime();
     }
@@ -116,25 +111,25 @@ public class BulletHandler implements Telegraph {
     public void spawnBossBullets(Object bossCoordsInfo) {
         Vector2 vector2 = (Vector2) bossCoordsInfo;
         EnemyBasicBullet enemyBullet = (EnemyBasicBullet) enemyBulletPool.obtain();
-        enemyBullet.init(vector2.x, vector2.y + PLAYER_HEIGHT/2f, enemyBullet.getVelX(), enemyBullet.getVelY());
+        enemyBullet.init(vector2.x, vector2.y + PLAYER_HEIGHT / 2f, enemyBullet.getVelX(), enemyBullet.getVelY());
         activeEnemyBullets.add(enemyBullet);
     }
 
     public void spawnEnemyBullets(Object enemyCoordsInfo) {
         Vector2 vector2 = (Vector2) enemyCoordsInfo;
         EnemyBasicBullet enemyBullet = (EnemyBasicBullet) enemyBulletPool.obtain();
-        enemyBullet.init(vector2.x, vector2.y + ORANGE_SPACESHIP1_WIDTH/2f, enemyBullet.getVelX(), enemyBullet.getVelY());
+        enemyBullet.init(vector2.x, vector2.y + ORANGE_SPACESHIP1_WIDTH / 2f, enemyBullet.getVelX(), enemyBullet.getVelY());
         activeEnemyBullets.add(enemyBullet);
     }
 
 
     @Override
     public boolean handleMessage(Telegram msg) {
-        if(msg.message == MessageType.BOSS_SHOOT_BULLET) {
+        if (msg.message == MessageType.BOSS_SHOOT_BULLET) {
             spawnBossBullets(msg.extraInfo);
             return true;
         }
-        if(msg.message == MessageType.ENEMY_SHOOT) {
+        if (msg.message == MessageType.ENEMY_SHOOT) {
             spawnEnemyBullets(msg.extraInfo);
             return true;
         }

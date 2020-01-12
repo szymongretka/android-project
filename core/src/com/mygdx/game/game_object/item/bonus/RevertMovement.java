@@ -15,7 +15,7 @@ public class RevertMovement extends Item {
     public RevertMovement(World world) {
         super(world, 0, 0, ITEM_WIDTH, ITEM_HEIGHT, 0, 0);
         this.texture = GameScreen.revertImage;
-        this.velY = (-1500f);
+        this.velY = (-2500f);
         this.body.setLinearVelocity(0, velY);
     }
 

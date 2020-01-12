@@ -9,12 +9,12 @@ import com.mygdx.game.screen.game.GameScreen;
 import static com.mygdx.game.util.Constants.ITEM_HEIGHT;
 import static com.mygdx.game.util.Constants.ITEM_WIDTH;
 
-public class BasicShield extends Item {
+public class AddHealth extends Item {
 
-    public BasicShield(World world) {
+    public AddHealth(World world) {
         super(world, 0, 0, ITEM_WIDTH, ITEM_HEIGHT, 0, 0);
-        this.texture = GameScreen.shieldImage;
-        this.velY = (-1500f);
+        this.texture = GameScreen.addHealthImage;
+        this.velY = (-2500f);
         this.body.setLinearVelocity(0, velY);
     }
 
@@ -26,13 +26,8 @@ public class BasicShield extends Item {
     @Override
     public void takenByPlayer(PlayerSpaceship playerSpaceship) {
         super.takenByPlayer(playerSpaceship);
-
-        Timer.schedule(new Timer.Task() {
-            @Override
-            public void run() {
-                System.out.println("player pos x: " + playerSpaceship.getBody().getPosition().x);
-            }
-        }, 0, 2);
+        if(playerSpaceship.getHp() < playerSpaceship.getTotalHP())
+            playerSpaceship.setHp(playerSpaceship.getHp() + 1);
     }
 
 

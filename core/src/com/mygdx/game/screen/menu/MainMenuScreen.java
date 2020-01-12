@@ -17,6 +17,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.SpaceInvaderApp;
 import com.mygdx.game.enums.GameState;
 import com.mygdx.game.screen.AbstractScreen;
+import com.mygdx.game.screen.event.ErrorScreen;
 import com.mygdx.game.screen.game.GameScreen;
 import com.mygdx.game.util.Constants;
 import com.mygdx.game.util.IRequestCallback;
@@ -99,7 +100,8 @@ public class MainMenuScreen extends AbstractScreen {
 
                     @Override
                     public void onError() {
-                        //TODO
+                        game.gameScreenManager.setActiveScreen(GameState.ERROR);
+                        game.gameScreenManager.setScreen(GameState.ERROR, ErrorScreen.class);
                     }
                 });
             }

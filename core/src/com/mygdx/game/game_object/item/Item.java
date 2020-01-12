@@ -1,6 +1,6 @@
 package com.mygdx.game.game_object.item;
 
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.game.game_object.Box2DObject;
@@ -11,7 +11,7 @@ import static com.mygdx.game.util.Constants.BIT_PLAYER;
 
 public abstract class Item extends Box2DObject {
 
-    protected Texture texture;
+    protected TextureRegion texture;
     protected boolean toDestroy;
 
     public Item(World world, float x, float y, float width, float height, int hp, int damage) {
@@ -23,7 +23,7 @@ public abstract class Item extends Box2DObject {
         this.setToDestroy(true);
     }
 
-    public Texture getTexture() {
+    public TextureRegion getTexture() {
         return texture;
     }
 

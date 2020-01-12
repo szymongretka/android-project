@@ -14,7 +14,7 @@ public class Coin extends Item {
     public Coin(World world) {
         super(world, 0, 0, COIN_WIDTH, COIN_HEIGHT, 0, 0);
         this.texture = GameScreen.coinImage;
-        this.velY = (-1500f);
+        this.velY = (-2500f);
         this.body.setLinearVelocity(0, velY);
     }
 

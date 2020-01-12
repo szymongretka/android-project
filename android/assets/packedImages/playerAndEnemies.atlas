@@ -245,6 +245,40 @@ size: 1024,1024
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
+items/addBullet
+  rotate: false
+  xy: 2, 546
+  size: 284, 284
+  orig: 284, 284
+  offset: 0, 0
+  index: -1
+items/coin
+  rotate: false
+  xy: 2, 2
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+items/health
+  rotate: false
+  xy: 2, 260
+  size: 284, 284
+  orig: 284, 284
+  offset: 0, 0
+  index: -1
+items/revertMovement
+  rotate: false
+  xy: 288, 546
+  size: 284, 284
+  orig: 284, 284
+  offset: 0, 0
+  index: -1
+
+playerAndEnemies13.png
+size: 1024,1024
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
 menu/SAVE
   rotate: false
   xy: 2, 332
@@ -260,7 +294,7 @@ menu/SAVEk
   offset: 0, 0
   index: -1
 
-playerAndEnemies13.png
+playerAndEnemies14.png
 size: 1024,1024
 format: RGBA8888
 filter: Nearest,Nearest
@@ -287,7 +321,7 @@ menu/customize_spaceship/SELECT
   offset: 0, 0
   index: -1
 
-playerAndEnemies14.png
+playerAndEnemies15.png
 size: 1024,1024
 format: RGBA8888
 filter: Nearest,Nearest
@@ -314,7 +348,7 @@ menu/customize_spaceship/attk
   offset: 0, 0
   index: -1
 
-playerAndEnemies15.png
+playerAndEnemies16.png
 size: 1024,1024
 format: RGBA8888
 filter: Nearest,Nearest
@@ -348,11 +382,18 @@ menu/customize_spaceship/arrowk
   offset: 0, 0
   index: -1
 
-playerAndEnemies16.png
+playerAndEnemies17.png
 size: 1024,1024
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
+menu/event_screen/CONNECTION
+  rotate: false
+  xy: 2, 606
+  size: 831, 328
+  orig: 831, 328
+  offset: 0, 0
+  index: -1
 menu/event_screen/lose
   rotate: false
   xy: 2, 304
@@ -368,7 +409,7 @@ menu/event_screen/win
   offset: 0, 0
   index: -1
 
-playerAndEnemies17.png
+playerAndEnemies18.png
 size: 1024,1024
 format: RGBA8888
 filter: Nearest,Nearest
@@ -395,7 +436,7 @@ menu/level_buttons/level3
   offset: 0, 0
   index: -1
 
-playerAndEnemies18.png
+playerAndEnemies19.png
 size: 1024,1024
 format: RGBA8888
 filter: Nearest,Nearest
@@ -422,7 +463,7 @@ menu/level_buttons/level5
   offset: 0, 0
   index: -1
 
-playerAndEnemies19.png
+playerAndEnemies20.png
 size: 1024,1024
 format: RGBA8888
 filter: Nearest,Nearest
@@ -449,7 +490,7 @@ menu/level_buttons/level4k
   offset: 0, 0
   index: -1
 
-playerAndEnemies20.png
+playerAndEnemies21.png
 size: 1024,1024
 format: RGBA8888
 filter: Nearest,Nearest
@@ -476,7 +517,7 @@ menu/level_buttons/strzalka1
   offset: 0, 0
   index: -1
 
-playerAndEnemies21.png
+playerAndEnemies22.png
 size: 1024,1024
 format: RGBA8888
 filter: Nearest,Nearest
@@ -503,7 +544,7 @@ menu/main_menu_buttons/SEND SCORE
   offset: 0, 0
   index: -1
 
-playerAndEnemies22.png
+playerAndEnemies23.png
 size: 1024,1024
 format: RGBA8888
 filter: Nearest,Nearest
@@ -530,7 +571,7 @@ menu/main_menu_buttons/SPACESHIPk
   offset: 0, 0
   index: -1
 
-playerAndEnemies23.png
+playerAndEnemies24.png
 size: 1024,1024
 format: RGBA8888
 filter: Nearest,Nearest
@@ -557,7 +598,7 @@ menu/main_menu_buttons/Start
   offset: 0, 0
   index: -1
 
-playerAndEnemies24.png
+playerAndEnemies25.png
 size: 1024,1024
 format: RGBA8888
 filter: Nearest,Nearest
@@ -584,7 +625,7 @@ menu/main_menu_buttons/opcje1
   offset: 0, 0
   index: -1
 
-playerAndEnemies25.png
+playerAndEnemies26.png
 size: 1024,1024
 format: RGBA8888
 filter: Nearest,Nearest
@@ -604,7 +645,7 @@ menu/pause_buttons/Menuk
   offset: 0, 0
   index: -1
 
-playerAndEnemies26.png
+playerAndEnemies27.png
 size: 1024,1024
 format: RGBA8888
 filter: Nearest,Nearest
@@ -624,7 +665,7 @@ menu/pause_buttons/RESUMEk
   offset: 0, 0
   index: -1
 
-playerAndEnemies27.png
+playerAndEnemies28.png
 size: 512,512
 format: RGBA8888
 filter: Nearest,Nearest
@@ -637,7 +678,7 @@ menu/pause_buttons/pause
   offset: 0, 0
   index: -1
 
-playerAndEnemies28.png
+playerAndEnemies29.png
 size: 1024,1024
 format: RGBA8888
 filter: Nearest,Nearest
@@ -650,7 +691,7 @@ obstacle/met1
   offset: 0, 0
   index: -1
 
-playerAndEnemies29.png
+playerAndEnemies30.png
 size: 1024,1024
 format: RGBA8888
 filter: Nearest,Nearest
@@ -663,7 +704,7 @@ obstacle/met2
   offset: 0, 0
   index: -1
 
-playerAndEnemies30.png
+playerAndEnemies31.png
 size: 512,256
 format: RGBA8888
 filter: Nearest,Nearest

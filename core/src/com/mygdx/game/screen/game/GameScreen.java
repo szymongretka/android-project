@@ -34,12 +34,11 @@ import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.SpaceInvaderApp;
 import com.mygdx.game.enums.GameState;
-import com.mygdx.game.game_object.boss.Boss1;
 import com.mygdx.game.game_object.bullet.Bullet;
 import com.mygdx.game.game_object.bullet.EnemyBullet;
 import com.mygdx.game.game_object.enemy.Enemy;
 import com.mygdx.game.game_object.item.Item;
-import com.mygdx.game.game_object.item.bonus.BasicShield;
+import com.mygdx.game.game_object.item.bonus.AddHealth;
 import com.mygdx.game.game_object.item.bonus.NumberOfBulletsItem;
 import com.mygdx.game.game_object.item.bonus.RevertMovement;
 import com.mygdx.game.game_object.item.coin.Coin;
@@ -86,9 +85,10 @@ public class GameScreen extends AbstractScreen {
     private TextureRegion bulletImage;
     private TextureRegion enemyBulletImage;
     private TextureRegion pauseTexture;
-    public static Texture coinImage;
-    public static Texture revertImage;
-    public static Texture shieldImage;
+    public static TextureRegion coinImage;
+    public static TextureRegion revertImage;
+    public static TextureRegion addHealthImage;
+    public static TextureRegion increaseNumberOfBulletsImage;
     public TextureRegion wave1;
     public TextureRegion wave2;
     public TextureRegion wave3;
@@ -200,10 +200,10 @@ public class GameScreen extends AbstractScreen {
 
         logger = new FPSLogger();
 
-        itemChanceList.addEntry(Coin.class, 10f);
-        itemChanceList.addEntry(RevertMovement.class, 10f);
-        itemChanceList.addEntry(BasicShield.class, 10f);
-        itemChanceList.addEntry(NumberOfBulletsItem.class, 70f);
+        itemChanceList.addEntry(Coin.class, 85f);
+        itemChanceList.addEntry(RevertMovement.class, 5f);
+        itemChanceList.addEntry(AddHealth.class, 5f);
+        itemChanceList.addEntry(NumberOfBulletsItem.class, 5f);
 
     }
 
@@ -267,7 +267,7 @@ public class GameScreen extends AbstractScreen {
         updateAndDrawHPbar();
 
 
-        box2DDebugRenderer.render(this.world, camera.combined);
+        //box2DDebugRenderer.render(this.world, camera.combined);
         world.step(1 / 45f, 6, 2);
 
         stage.draw();
@@ -310,8 +310,6 @@ public class GameScreen extends AbstractScreen {
 
     @Override
     public void dispose() {
-        coinImage.dispose();
-        revertImage.dispose();
         shootSound.dispose();
         level1Music.dispose();
         box2DDebugRenderer.dispose();
@@ -332,7 +330,7 @@ public class GameScreen extends AbstractScreen {
         fraction1OrangeShip4Texture = new TextureRegion(textureAtlas.findRegion("fraction1/orangeship4"));
         alien1Texture = new TextureRegion(textureAtlas.findRegion("fraction3/alien1"));
         alien2Texture = new TextureRegion(textureAtlas.findRegion("fraction3/alien2"));
-        alien2Texture = new TextureRegion(textureAtlas.findRegion("fraction3/alien3"));
+        alien3Texture = new TextureRegion(textureAtlas.findRegion("fraction3/alien3"));
         pauseTexture = new TextureRegion(textureAtlas.findRegion("menu/pause_buttons/pause"));
         lvl1background = game.assets.manager.get("background/lvl1.jpg");
         bulletImage = new TextureRegion(textureAtlas.findRegion("bullet/bullet3"));
@@ -351,10 +349,10 @@ public class GameScreen extends AbstractScreen {
         level1Music = game.assets.manager.get("music/level1Music.wav", Music.class);
         flameEffect = game.assets.manager.get("effects/explosion.flame", ParticleEffect.class);
         engineEffect = game.assets.manager.get("effects/engine2.flame", ParticleEffect.class);
-
-        coinImage = game.assets.manager.get("coin.png", Texture.class);
-        revertImage = game.assets.manager.get("revert.png", Texture.class);
-        shieldImage = game.assets.manager.get("shield.png", Texture.class);
+        coinImage = new TextureRegion(textureAtlas.findRegion("items/coin"));
+        revertImage =  new TextureRegion(textureAtlas.findRegion("items/revertMovement"));
+        addHealthImage = new TextureRegion(textureAtlas.findRegion("items/health"));
+        increaseNumberOfBulletsImage =  new TextureRegion(textureAtlas.findRegion("items/addBullet"));
     }
 
     private void initMessages() {

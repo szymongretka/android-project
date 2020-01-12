@@ -23,11 +23,6 @@ public class Assets implements Disposable {
         //skin
         manager.load("skin/uiskin.json", Skin.class);
 
-        //items
-        manager.load("revert.png", Texture.class);
-        manager.load("coin.png", Texture.class);
-        manager.load("shield.png", Texture.class);
-
         //Particle effects
         manager.load("effects/explosion.flame", ParticleEffect.class);
         manager.load("effects/engine2.flame", ParticleEffect.class);

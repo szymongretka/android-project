@@ -437,7 +437,7 @@ public class SpawningSystem {
                         Timer.schedule(new Timer.Task() {
                             @Override
                             public void run() {
-                                if (activeObstacles.isEmpty())
+                                if (activeEnemiesArray.isEmpty())
                                     messageManager.dispatchMessage(MessageType.YOU_WIN_SCREEN);
                             }
                         }, 88, 2f, 20);

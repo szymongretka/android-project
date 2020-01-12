@@ -13,17 +13,11 @@ import static com.mygdx.game.util.Constants.WIDTH;
 
 public class OrangeSpaceship1 extends Enemy {
 
-    private boolean moveLeft;
-    private boolean moveRight;
-
-
     public OrangeSpaceship1(World world) {
         super(world, 0, 0, ORANGE_SPACESHIP1_WIDTH, ORANGE_SPACESHIP1_HEIGHT, 1, 1);
         this.texture = GameScreen.fraction1OrangeShipTexture;
-        moveLeft = false;
-        moveRight = true;
-        this.velX = 1500f;
-        this.velY = (-1500f);
+        this.velX = 1200f;
+        this.velY = (-500f);
     }
 
     @Override
@@ -33,30 +27,8 @@ public class OrangeSpaceship1 extends Enemy {
             this.onDestroyCoordY = this.getY();
             reset();
         }
-        /*if(!isInLeftBound() && moveLeft)
-            moveRight(deltaTime);
-        else if(!isInRightBound() && moveRight)
-            moveLeft(deltaTime);*/
     }
 
-    private boolean isInLeftBound() {
-        return this.body.getPosition().x > 0;
-    }
-
-    private boolean isInRightBound() {
-        return this.body.getPosition().x < WIDTH/PPM;
-    }
-
-    private void moveLeft(float deltaTime) {
-        this.body.setLinearVelocity(-velX * deltaTime, velY * deltaTime);
-        moveLeft = true;
-        moveRight = false;
-    }
-    private void moveRight(float deltaTime) {
-        this.body.setLinearVelocity(velX * deltaTime, velY * deltaTime);
-        moveLeft = false;
-        moveRight = true;
-    }
 
     @Override
     public void hitPlayer(PlayerSpaceship playerSpaceship) {

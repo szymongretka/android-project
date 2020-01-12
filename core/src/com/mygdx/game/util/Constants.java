@@ -39,8 +39,8 @@ public class Constants {
     public static final int COIN_WIDTH = 4;
     public static final int COIN_HEIGHT = 6;
 
-    public static final int ITEM_WIDTH = 4;
-    public static final int ITEM_HEIGHT = 5;
+    public static final int ITEM_WIDTH = 8;
+    public static final int ITEM_HEIGHT = 8;
 
     public static final int BASIC_SHIELD_WIDTH = 10;
     public static final int BASIC_SHIELD_HEIGHT = 10;

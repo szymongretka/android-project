@@ -16,5 +16,6 @@ public enum GameState {
     SHOP,
     STATISTICS,
     SPACESHIP_CUSTOMIZATION,
-    SPECIFY_NICKNAME
+    SPECIFY_NICKNAME,
+    ERROR;
 }
