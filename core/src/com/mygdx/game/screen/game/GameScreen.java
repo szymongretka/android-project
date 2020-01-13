@@ -201,8 +201,8 @@ public class GameScreen extends AbstractScreen {
         logger = new FPSLogger();
 
         itemChanceList.addEntry(Coin.class, 85f);
-        itemChanceList.addEntry(RevertMovement.class, 5f);
-        itemChanceList.addEntry(AddHealth.class, 5f);
+        itemChanceList.addEntry(RevertMovement.class, 1f);
+        itemChanceList.addEntry(AddHealth.class, 4f);
         itemChanceList.addEntry(NumberOfBulletsItem.class, 5f);
 
     }

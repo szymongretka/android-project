@@ -20,8 +20,8 @@ public class OrangeSpaceship4 extends Enemy {
         this.texture = GameScreen.fraction1OrangeShip4Texture;
         isMovingLeft = false;
         isMovingRight = true;
-        this.velX = 1200f;
-        this.velY = (-1200f);
+        this.velX = 800f;
+        this.velY = (-400f);
     }
 
     @Override

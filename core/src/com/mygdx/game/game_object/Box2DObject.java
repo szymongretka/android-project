@@ -80,7 +80,7 @@ public abstract class Box2DObject implements Pool.Poolable {
     @Override
     public void reset() {
         this.body.setActive(false);
-        this.body.setTransform(0, 0, 0);
+        this.body.setTransform(-20, -20, 0);
         this.body.setLinearVelocity(0, 0);
     }
 
