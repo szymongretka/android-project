@@ -29,6 +29,10 @@ public class Constants {
 
     public static final float BASICBULLETWIDTH = 4f;
     public static final float BASICBULLETHEIGHT = 5f;
+
+    public static final float BOMB_WIDTH = 10f;
+    public static final float BOMB_HEIGHT = 10f;
+
     public static final float BASIC_BULLET_RoF = 2000f;
 
     public static final int PLAYER_WIDTH = 12;
@@ -70,6 +74,6 @@ public class Constants {
     public static final String BIG_SHIP = "bigShip";
     public static final String BASIC_SHIP = "basicShip";
 
-    public static final String LOCALHOST_URL = "http://192.168.1.103:8080/";
+    public static final String LOCALHOST_URL = "http://192.168.0.85:8080/";
 
 }

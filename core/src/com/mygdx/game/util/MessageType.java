@@ -1,6 +1,7 @@
 package com.mygdx.game.util;
 
 public final class MessageType {
+
     private MessageType() {}
 
     public final static int PLAYER_MOVE = 0;
@@ -26,5 +27,6 @@ public final class MessageType {
 
 
     public final static int ENEMY_SHOOT = 20;
+    public static final int ENEMY_SHOOT_BOMB = 21;
 
 }

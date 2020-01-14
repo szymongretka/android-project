@@ -10,6 +10,7 @@ import com.badlogic.gdx.utils.TimeUtils;
 import com.mygdx.game.game_object.bullet.Bullet;
 import com.mygdx.game.game_object.bullet.EnemyBullet;
 import com.mygdx.game.game_object.bullet.enemy_bullet.EnemyBasicBullet;
+import com.mygdx.game.game_object.bullet.enemy_bullet.EnemyBomb;
 import com.mygdx.game.game_object.bullet.player_bullet.BasicBullet;
 import com.mygdx.game.game_object.bullet.player_bullet.RedBullet;
 import com.mygdx.game.game_object.pool.GenericPool;
@@ -25,6 +26,7 @@ public class BulletHandler implements Telegraph {
     private Pool basicBulletPool;
     private Pool redBulletPool;
     private Pool enemyBulletPool;
+    private Pool enemyBombPool;
     private Array<Bullet> activeBullets;
     private Array<EnemyBullet> activeEnemyBullets;
 
@@ -36,6 +38,7 @@ public class BulletHandler implements Telegraph {
         this.redBulletPool = genericPool.getRedBulletPool();
         this.enemyBulletPool = genericPool.getEnemyBulletPool();
         this.activeBullets = activeBullets;
+        this.enemyBombPool = genericPool.getEnemyBombPool();
         this.activeEnemyBullets = activeEnemyBullets;
     }
 
@@ -122,6 +125,13 @@ public class BulletHandler implements Telegraph {
         activeEnemyBullets.add(enemyBullet);
     }
 
+    private void spawnBomb(Object bossCoordsInfo) {
+        Vector2 vector2 = (Vector2) bossCoordsInfo;
+        EnemyBomb enemyBomb = (EnemyBomb) enemyBombPool.obtain();
+        enemyBomb.init(vector2.x, vector2.y + ORANGE_SPACESHIP1_WIDTH / 2f, enemyBomb.getVelX(), enemyBomb.getVelY());
+        activeEnemyBullets.add(enemyBomb);
+    }
+
 
     @Override
     public boolean handleMessage(Telegram msg) {
@@ -131,6 +141,10 @@ public class BulletHandler implements Telegraph {
         }
         if (msg.message == MessageType.ENEMY_SHOOT) {
             spawnEnemyBullets(msg.extraInfo);
+            return true;
+        }
+        if (msg.message == MessageType.BOSS_SHOOT_BOMB) {
+            spawnBomb(msg.extraInfo);
             return true;
         }
 

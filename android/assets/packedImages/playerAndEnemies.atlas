@@ -85,13 +85,13 @@ boss/boss3/tribase-u1-d0
   index: -1
 
 playerAndEnemies7.png
-size: 256,128
+size: 1024,256
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
 bullet/bullet
   rotate: false
-  xy: 166, 34
+  xy: 1004, 136
   size: 18, 48
   orig: 18, 48
   offset: 0, 0
@@ -108,6 +108,13 @@ bullet/bullet3
   xy: 84, 2
   size: 80, 80
   orig: 80, 80
+  offset: 0, 0
+  index: -1
+bullet/enemyBomb
+  rotate: false
+  xy: 2, 84
+  size: 1000, 100
+  orig: 1000, 100
   offset: 0, 0
   index: -1
 

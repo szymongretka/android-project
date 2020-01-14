@@ -15,11 +15,34 @@ public enum Boss2State implements State<Boss2> {
     GLOBAL_STATE() {
         @Override
         public void update(Boss2 boss2) {
-            if (MathUtils.randomBoolean(0.5f) && boss2.getPlayer().hasLessThanHalfHp() && boss2.mana >= 250)
+            if (MathUtils.randomBoolean(0.5f) && boss2.getPlayer().hasLessThanHalfHp() && boss2.mana >= 150)
                 boss2.getStateMachine().changeState(RAM_PLAYER);
-            else if (MathUtils.randomBoolean(0.5f) && boss2.mana >= 250)
+            else if (MathUtils.randomBoolean(0.5f) && boss2.mana >= 150)
                 boss2.getStateMachine().changeState(ATTACK);
+            else if (MathUtils.randomBoolean(0.5f) && boss2.mana >= 150)
+                boss2.getStateMachine().changeState(SHOOT_BOMB);
 
+        }
+
+    },
+
+    SHOOT_BOMB() {
+        @Override
+        public void update(Boss2 boss2) {
+            System.out.println("shoot bomb");
+            Timer.schedule(new Timer.Task() {
+                @Override
+                public void run() {
+                    MessageManager.getInstance().dispatchMessage(MessageType.BOSS_SHOOT_BOMB, boss2.getBody().getPosition());
+                }
+            }, 1);
+            boss2.getStateMachine().changeState(GLOBAL_STATE);
+        }
+
+        @Override
+        public void exit(Boss2 boss2) {
+            boss2.mana = 0;
+            MessageManager.getInstance().dispatchMessage(MessageType.UPPER_BOUND_MOVE);
         }
 
     },

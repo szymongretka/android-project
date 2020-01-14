@@ -1,5 +1,6 @@
 package com.mygdx.game.game_object.bullet;
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Timer;
@@ -12,10 +13,11 @@ import static com.mygdx.game.util.Constants.BIT_PLAYER;
 public abstract class EnemyBullet extends Box2DObject {
 
     protected boolean toDestroy;
+    protected TextureRegion texture;
 
-    public EnemyBullet(World world, float x, float y, float width, float height, int hp, int damage) {
+    public EnemyBullet(World world, float x, float y, float width, float height, int hp, int damage, boolean isBullet) {
         super(world, x, y, width, height, hp, damage, BodyDef.BodyType.DynamicBody,
-                BIT_ENEMY_BULLET, BIT_PLAYER, (short) 0, true);
+                BIT_ENEMY_BULLET, BIT_PLAYER, (short) 0, isBullet);
     }
 
     @Override
@@ -41,5 +43,15 @@ public abstract class EnemyBullet extends Box2DObject {
 
     public void setToDestroy(boolean toDestroy) {
         this.toDestroy = toDestroy;
+    }
+
+    public abstract TextureRegion getFrame(float delta);
+
+    public TextureRegion getTexture() {
+        return texture;
+    }
+
+    public void setTexture(TextureRegion texture) {
+        this.texture = texture;
     }
 }

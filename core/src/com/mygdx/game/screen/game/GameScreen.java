@@ -78,12 +78,13 @@ public class GameScreen extends AbstractScreen {
     //textures
     public TextureAtlas.AtlasRegion spaceshipAtlasRegion;
     public TextureAtlas.AtlasRegion spaceshipHitAtlasRegion;
+    public static TextureAtlas.AtlasRegion bombAtlasRegion;
     public static TextureRegion fraction1OrangeShipTexture;
     public static TextureRegion fraction1OrangeShip2Texture;
     public static TextureRegion fraction1OrangeShip3Texture;
     public static TextureRegion fraction1OrangeShip4Texture;
     private TextureRegion bulletImage;
-    private TextureRegion enemyBulletImage;
+    public static TextureRegion enemyBulletImage;
     private TextureRegion pauseTexture;
     public static TextureRegion coinImage;
     public static TextureRegion revertImage;
@@ -324,6 +325,7 @@ public class GameScreen extends AbstractScreen {
         textureAtlas = game.assets.manager.get("packedImages/playerAndEnemies.atlas", TextureAtlas.class);
         spaceshipAtlasRegion = textureAtlas.findRegion("basicPlayerSpaceship");
         spaceshipHitAtlasRegion = textureAtlas.findRegion("basicPlayerShipHIT");
+        bombAtlasRegion = textureAtlas.findRegion("bullet/enemyBomb");
         fraction1OrangeShipTexture = new TextureRegion(textureAtlas.findRegion("fraction1/orangeship"));
         fraction1OrangeShip2Texture = new TextureRegion(textureAtlas.findRegion("fraction1/orangeship2"));
         fraction1OrangeShip3Texture = new TextureRegion(textureAtlas.findRegion("fraction1/orangeship3"));
@@ -358,7 +360,7 @@ public class GameScreen extends AbstractScreen {
     private void initMessages() {
         messageManager = game.messageManager;
         messageManager.addListeners(playerSpaceship, MessageType.PLAYER_MOVE, MessageType.PLAYER_STOP);
-        messageManager.addListeners(bulletHandler, MessageType.BOSS_SHOOT_BULLET, MessageType.ENEMY_SHOOT);
+        messageManager.addListeners(bulletHandler, MessageType.BOSS_SHOOT_BULLET, MessageType.ENEMY_SHOOT, MessageType.BOSS_SHOOT_BOMB);
     }
 
 
@@ -439,7 +441,7 @@ public class GameScreen extends AbstractScreen {
         for (EnemyBullet enemyBullet : activeEnemyBullets) {
             enemyBullet.update(delta);
 
-            game.batch.draw(enemyBulletImage, enemyBullet.getBody().getPosition().x - (enemyBullet.getWidth() / 2),
+            game.batch.draw(enemyBullet.getFrame(delta), enemyBullet.getBody().getPosition().x - (enemyBullet.getWidth() / 2),
                     enemyBullet.getBody().getPosition().y - (enemyBullet.getHeight() / 2), enemyBullet.getWidth(), enemyBullet.getHeight());
 
             if (enemyBullet.getBody().getPosition().y < 0 || !enemyBullet.getBody().isActive() || enemyBullet.isToDestroy()) {
