@@ -147,6 +147,7 @@ public class GameScreen extends AbstractScreen {
     public static int POINTS;
     public static int NUMBER_OF_BULLETS = 1;
     private boolean wasTouched = false;
+    private long timerDelay;
 
     private ShapeRenderer shapeRenderer;
     private float hpBarWidth = Constants.WIDTH/4f, hpBarHeight = Constants.HEIGHT/40f;
@@ -281,6 +282,7 @@ public class GameScreen extends AbstractScreen {
 
     @Override
     public void show() {
+        Timer.instance().delay((TimeUtils.nanosToMillis(TimeUtils.nanoTime()) - timerDelay));
         Timer.instance().start();
         level1Music.play();
         Gdx.input.setInputProcessor(stage);
@@ -300,6 +302,7 @@ public class GameScreen extends AbstractScreen {
         game.gameScreenManager.setActiveScreen(GameState.PAUSE);
         game.gameScreenManager.setScreen(GameState.PAUSE, PauseScreen.class);
         level1Music.pause();
+        timerDelay = TimeUtils.nanosToMillis(TimeUtils.nanoTime());
         Timer.instance().stop();
     }
 
