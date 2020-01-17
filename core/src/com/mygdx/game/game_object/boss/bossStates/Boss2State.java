@@ -29,7 +29,6 @@ public enum Boss2State implements State<Boss2> {
     SHOOT_BOMB() {
         @Override
         public void update(Boss2 boss2) {
-            System.out.println("shoot bomb");
             Timer.schedule(new Timer.Task() {
                 @Override
                 public void run() {

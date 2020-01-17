@@ -22,7 +22,7 @@ public abstract class Obstacle extends Box2DObject {
 
     public Obstacle(World world, float x, float y, float width, float height, int hp, int damage) {
         super(world, x, y, width, height, hp, damage,BodyDef.BodyType.DynamicBody,
-                BIT_OBSTACLE, (short) (BIT_OBSTACLE | BIT_PLAYER | BIT_BULLET), (short) 0, false);
+                BIT_OBSTACLE, (short) (BIT_OBSTACLE | BIT_PLAYER | BIT_BULLET), (short) 0, 40.0f);
     }
 
 

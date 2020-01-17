@@ -23,7 +23,7 @@ public abstract class Enemy extends Box2DObject {
 
     public Enemy(World world, float x, float y, float width, float height, int hp, int damage) {
         super(world, x, y, width, height, hp, damage, BodyDef.BodyType.DynamicBody,
-                BIT_ENEMY, (short) (BIT_BULLET | BIT_PLAYER), (short) 0, false);
+                BIT_ENEMY, (short) (BIT_BULLET | BIT_PLAYER), (short) 0, 40.0f);
     }
 
     public void hitPlayer(PlayerSpaceship playerSpaceship) {

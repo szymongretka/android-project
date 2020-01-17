@@ -16,7 +16,7 @@ public abstract class Item extends Box2DObject {
 
     public Item(World world, float x, float y, float width, float height, int hp, int damage) {
         super(world, x, y, width, height, hp, damage, BodyDef.BodyType.DynamicBody,
-                BIT_ITEM, BIT_PLAYER, (short) 0, false);
+                BIT_ITEM, BIT_PLAYER, (short) 0, 40.0f);
     }
 
     public void takenByPlayer(PlayerSpaceship playerSpaceship) {

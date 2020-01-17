@@ -57,7 +57,7 @@ public class PlayerSpaceship extends Box2DObject implements Telegraph {
 
     public PlayerSpaceship(GameScreen screen) {
         super(screen.world, 32, 32, PLAYER_WIDTH, PLAYER_HEIGHT, BASIC_SHIP_HP, 0,
-                BodyDef.BodyType.DynamicBody, BIT_PLAYER, (short) (BIT_ENEMY | BIT_ITEM | BIT_ENEMY_BULLET | BIT_OBSTACLE), (short) 0, false);
+                BodyDef.BodyType.DynamicBody, BIT_PLAYER, (short) (BIT_ENEMY | BIT_ITEM | BIT_ENEMY_BULLET | BIT_OBSTACLE), (short) 0, 8.0f);
 
         this.ship = screen.preferences.getActiveShip();
         this.setHp(ship.getHP());

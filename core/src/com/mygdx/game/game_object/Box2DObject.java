@@ -19,18 +19,18 @@ public abstract class Box2DObject implements Pool.Poolable {
 
     public Box2DObject(World world, float x, float y, float width, float height,
                        int hp, int damage, BodyDef.BodyType bodyType,
-                       short categoryBits, short maskBits, short gIndex, boolean isBullet) {
+                       short categoryBits, short maskBits, short gIndex, float density) {
         this.width = width;
         this.height = height;
         this.hp = hp;
         this.damage = damage;
         this.body = this.createBox(world, x, y, this.width, this.height, bodyType, categoryBits,
-                maskBits, gIndex, isBullet);
+                maskBits, gIndex, density);
         this.totalHp = hp;
     }
 
     private Body createBox(World world, float x, float y, float width, float height,
-                             BodyDef.BodyType bodyType, short categoryBits, short maskBits, short gIndex, boolean isBullet) {
+                             BodyDef.BodyType bodyType, short categoryBits, short maskBits, short gIndex, float density) {
         Body body;
 
         BodyDef bodyDef = new BodyDef();
@@ -51,10 +51,7 @@ public abstract class Box2DObject implements Pool.Poolable {
         FixtureDef def = new FixtureDef();
         def.shape = polygonShape;
 
-        if(isBullet)
-            def.density = 0.0f;
-        else
-            def.density = 8.0f;
+        def.density = density;
 
         def.filter.categoryBits = categoryBits; //Is a
         def.filter.maskBits = maskBits; //Collides with
