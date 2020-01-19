@@ -170,10 +170,10 @@ public class SpaceshipScreen extends AbstractScreen {
         shipPriceLabel = new Label("Cost: " + shipArray[shipNumber].getPrice() , skin);
         skin.getFont("default-font").getData().setScale(2f);
 
-        table.add(playerMoneyLabel).padBottom(100f).colspan(2).center();
+        table.add(playerMoneyLabel).padBottom(100f).colspan(2).center().padBottom(Constants.HEIGHT/2f + (shipWidth/2f));
         table.row();
-        table.add(attachmentsButton).colspan(2).center().height(200f).width(350f).padBottom(800f);
-        table.row();
+       // table.add(attachmentsButton).colspan(2).center().height(200f).width(350f).padBottom(800f);
+       // table.row();
         table.add(shipPriceLabel).padBottom(100f).colspan(2).center();
         table.row();
         table.add(selectButton).height(200f).width(350f);
