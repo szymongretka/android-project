@@ -78,6 +78,7 @@ public class GameScreen extends AbstractScreen {
     //textures
     public TextureAtlas.AtlasRegion spaceshipAtlasRegion;
     public TextureAtlas.AtlasRegion spaceshipHitAtlasRegion;
+    public TextureAtlas.AtlasRegion bigSpaceshipAtlasRegion;
     public static TextureAtlas.AtlasRegion bombAtlasRegion;
     public static TextureRegion fraction1OrangeShipTexture;
     public static TextureRegion fraction1OrangeShip2Texture;
@@ -328,6 +329,7 @@ public class GameScreen extends AbstractScreen {
         textureAtlas = game.assets.manager.get("packedImages/playerAndEnemies.atlas", TextureAtlas.class);
         spaceshipAtlasRegion = textureAtlas.findRegion("basicPlayerSpaceship");
         spaceshipHitAtlasRegion = textureAtlas.findRegion("basicPlayerShipHIT");
+        bigSpaceshipAtlasRegion = textureAtlas.findRegion("bigShip");
         bombAtlasRegion = textureAtlas.findRegion("bullet/enemyBomb");
         fraction1OrangeShipTexture = new TextureRegion(textureAtlas.findRegion("fraction1/orangeship"));
         fraction1OrangeShip2Texture = new TextureRegion(textureAtlas.findRegion("fraction1/orangeship2"));

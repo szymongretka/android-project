@@ -13,6 +13,13 @@ basicPlayerShipHIT
   index: -1
 basicPlayerSpaceship
   rotate: false
+  xy: 2, 260
+  size: 880, 127
+  orig: 880, 127
+  offset: 0, 0
+  index: -1
+bigShip
+  rotate: false
   xy: 2, 131
   size: 880, 127
   orig: 880, 127

@@ -237,7 +237,7 @@ public class SpaceshipScreen extends AbstractScreen {
         arrowLeftTextureDown = new TextureRegion(textureAtlas.findRegion("menu/customize_spaceship/arrowLeftk"));
 
         basicShipTex = new TextureRegion(textureAtlas.findRegion("basicPlayerSpaceship"), 5 * 80, 0, 80, 127);
-        bigShipTex = new TextureRegion(textureAtlas.findRegion("basicPlayerShipHIT"), 0, 0, 80, 127);
+        bigShipTex = new TextureRegion(textureAtlas.findRegion("bigShip"), 0, 0, 80, 127);
 
         buyTextureUp = new TextureRegion(textureAtlas.findRegion("menu/customize_spaceship/BUY"));
         buyTextureDown = new TextureRegion(textureAtlas.findRegion("menu/customize_spaceship/BUYk"));

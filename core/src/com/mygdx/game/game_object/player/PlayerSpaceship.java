@@ -63,6 +63,7 @@ public class PlayerSpaceship extends Box2DObject implements Telegraph {
         this.setHp(ship.getHP());
         this.setSpeed(ship.getSpeed());
         this.totalHP = getHp();
+        this.totalHp = getHp(); //
         //this.width = getShip().getWidth();
 
         currentState = State.STRAIGHT;
@@ -101,7 +102,29 @@ public class PlayerSpaceship extends Box2DObject implements Telegraph {
             playerStraight = new TextureRegion(screen.spaceshipAtlasRegion, 5 * tileWidth, 0, tileWidth, tileHeight);
 
         } else if (ship.getName().equals(Constants.BIG_SHIP)) {
-            //TODO ADD NEW SPACESHIP
+            //get run animation frames and add them to animation
+            for (int i = 5; i >= 1; i--)
+                frames.add(new TextureRegion(screen.bigSpaceshipAtlasRegion, i * tileWidth, 0, tileWidth, tileHeight));
+            playerMoveLeftAnimation = new Animation(0.1f, frames);
+
+            frames.clear();
+
+            for (int i = 6; i <= 11; i++)
+                frames.add(new TextureRegion(screen.bigSpaceshipAtlasRegion, i * tileWidth, 0, tileWidth, tileHeight));
+            playerMoveRightAnimation = new Animation(0.1f, frames);
+
+            frames.clear();
+
+            for (int i = 4; i >= 1; i--)
+                frames.add(new TextureRegion(screen.spaceshipHitAtlasRegion, i * tileWidth, 0, tileWidth, tileHeight));
+            for (int i = 1; i <= 4; i++)
+                frames.add(new TextureRegion(screen.spaceshipHitAtlasRegion, i * tileWidth, 0, tileWidth, tileHeight));
+            playerGotHitAnimation = new Animation(0.1f, frames);
+
+            frames.clear();
+
+            playerStraight = new TextureRegion(screen.bigSpaceshipAtlasRegion, 5 * tileWidth, 0, tileWidth, tileHeight);
+
         }
     }
 
